@@ -55,7 +55,7 @@ Features are activated in `app.js` using the following pattern:
 *   **Fail-Safe**: If a feature is disabled in `config.json`, no part of its code executes, ensuring unfinished features cannot compromise the production environment.
 *   **Singleton Pattern**: By requiring `config.js` across different files, the application uses a cached, single instance of settings, optimizing performance for your hardware.
 
-## 4. Collaborative Git Workflow
+## 5. Collaborative GitHub Workflow
 Collaborators must follow these steps for all feature development:
 
 ### I. Branch Creation
@@ -91,7 +91,7 @@ git branch -d feature/feature_name
 git branch -D feature/feature_name
 ```
 
-## 5. Design Principles
+## 6. Design Principles
 *   **Lean Core**: The `main` file remains as small as possible, acting only as a librarian that calls external modules.
 *   **Fail-Safe**: If a feature is disabled in `config.json`, no part of its code executes, ensuring unfinished features cannot compromise the production environment.
 *   **Singleton Pattern**: By requiring `config.js` across different files, the application uses a cached, single instance of settings, optimizing performance for our development environments.
