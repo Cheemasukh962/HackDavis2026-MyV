@@ -1,0 +1,12 @@
+# Private environment variables
+.env
+.env.*
+!.env.example
+.venv/
+
+# OS generated files
+*.DS_Store
+
+# Node.js dependencies
+node_modules/
+
