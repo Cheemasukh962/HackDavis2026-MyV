@@ -57,6 +57,8 @@ A healthy boot prints this sequence to the terminal:
 [PwaFeature] PWA ready. Safe-exit URL: ...
 [AuthFeature] Zero-trace auth system initialized.
 [ChatFeature] Anonymous chat enabled.
+[JournalFeature] Private evidence journal initialized.
+[JournalFeature] Attachment storage: MongoDB GridFS (journal_attachments).
 > Ready on http://localhost:3000 [dev]
 [AuthFeature] MongoDB connected.
 ```
@@ -91,13 +93,17 @@ HackDavis 2026/
     ├── features/
     │   ├── auth_feature.js    ← Zero-trace auth: register, login, logout controllers.
     │   ├── chat_feature.js    ← Anonymous Socket.io chat rooms.
+    │   ├── journal_feature.js ← Private evidence journal init + readiness logging.
     │   └── pwa_feature.js     ← Validates PWA manifests exist at startup.
     ├── models/
-    │   └── User.js            ← Mongoose schema: username, bcrypt hashes, display name.
+    │   ├── User.js            ← Mongoose schema: username, bcrypt hashes, display name.
+    │   └── JournalEntry.js    ← Schema: title, content, incidentDate, attachments[].
     ├── lib/
     │   ├── db.js              ← Cached Mongoose connection (survives hot reloads).
     │   ├── withAuth.js        ← getServerSideProps wrapper — protects pages.
-    │   └── requireAuth.js     ← API route wrapper — enforces auth on endpoints.
+    │   ├── requireAuth.js     ← API route wrapper — enforces auth on endpoints.
+    │   ├── gridfs.js          ← Lazy GridFS bucket helper (journal_attachments).
+    │   └── multerHelper.js    ← Multer adapter for Next.js: memoryStorage, 50MB, MIME guard.
     ├── middleware/
     │   └── securityHeaders.js ← Cache-prevention + security headers for auth routes.
     ├── hooks/
@@ -112,10 +118,16 @@ HackDavis 2026/
     │   ├── login.jsx          ← Login / Register page (toggles between modes).
     │   ├── app/
     │   │   └── [theme].jsx    ← Auth-gated app shell for calculator | news | weather.
-    │   └── api/auth/
-    │       ├── register.js
-    │       ├── login.js
-    │       └── logout.js
+    │   ├── api/auth/
+    │   │   ├── register.js
+    │   │   ├── login.js
+    │   │   └── logout.js
+    │   └── api/journal/
+    │       ├── index.js           ← GET (list, paginated) + POST (create entry)
+    │       ├── [id].js            ← GET / PUT / DELETE a single entry
+    │       └── attachment/
+    │           ├── index.js       ← POST upload (multipart/form-data)
+    │           └── [fileId].js    ← GET stream + DELETE a file
     └── styles/
         ├── globals.css           ← CSS custom properties, resets. Updated at Figma handoff.
         ├── Landing.module.css    ← Landing page styles. Updated at Figma handoff.
@@ -135,6 +147,7 @@ All feature flags live in `src/config/config.json`. Set a flag to `true` to acti
     "enable_pwa": true,
     "enable_auth_system": true,
     "enable_anonymous_chat": true,
+    "enable_journal": true,
     "enable_safety_alert": false,
     "enable_resource_directory": false,
     "enable_crisis_escalation": false
@@ -149,7 +162,8 @@ server.js
   └── src/app.js (orchestrator)
         ├── config.features.enable_pwa       → PwaFeature.init()
         ├── config.features.enable_auth      → AuthFeature.init()
-        └── config.features.enable_chat      → ChatFeature.init(io)
+        ├── config.features.enable_chat      → ChatFeature.init(io)
+        └── config.features.enable_journal   → JournalFeature.init()
 ```
 
 `src/config/config.js` is the **singleton bridge** — it merges `config.json` (public flags, committed) with `.env` (private secrets, local-only). Every `require('./config/config')` across the app returns the same cached object.
@@ -357,6 +371,47 @@ import ChatRoom from '../components/ChatRoom';
 ```
 
 Room IDs are arbitrary strings. Future features (resource directory, crisis escalation) will use specific room IDs per resource or counselor session.
+
+---
+
+## Evidence Journal
+
+Survivors can privately document experiences and attach proof-of-abuse media. All data is user-scoped — no entry or file is accessible by any other account.
+
+### API routes
+
+| Method | Route | Description |
+|---|---|---|
+| GET | `/api/journal` | Paginated list of the user's entries (`?page=1&limit=20`) |
+| POST | `/api/journal` | Create entry (`{ title?, content, incidentDate? }`) |
+| GET | `/api/journal/:id` | Fetch a single entry |
+| PUT | `/api/journal/:id` | Update text fields (`title`, `content`, `incidentDate`) |
+| DELETE | `/api/journal/:id` | Delete entry and all its attachments from GridFS |
+| POST | `/api/journal/attachment?entryId=` | Upload a file (multipart `file` field) |
+| GET | `/api/journal/attachment/:fileId` | Stream the file to the client (force-download) |
+| DELETE | `/api/journal/attachment/:fileId` | Remove a single attachment |
+
+### Storage
+
+| Data | Location |
+|---|---|
+| Entry text + metadata | MongoDB `journalentries` collection |
+| Binary files | MongoDB GridFS `journal_attachments` bucket |
+
+### File constraints
+
+- **Max size:** 50 MB per file
+- **Allowed types:** `image/*`, `video/*`, `audio/*`, `application/pdf`
+
+### Privacy notes
+
+- Attachment downloads use `Content-Disposition: attachment` to force a Save dialog rather than inline rendering, reducing browser history exposure.
+- DELETE on an entry cascades through GridFS — no orphaned files left behind.
+- All queries include `{ userId }` as a predicate; mismatched IDs return 404 (no data leakage).
+
+### UI
+
+Journal UI is deferred to the design handoff. All backend routes are ready and tested via API client (Postman/curl).
 
 ---
 
