@@ -18,6 +18,12 @@ const User = require('../models/User');
 
 const JWT_EXPIRY = '24h'; // Server-side safety net; the session cookie expires first.
 
+const DB_ERROR_NAMES = new Set([
+  'MongooseError', 'MongoServerError', 'MongoNetworkError',
+  'MongoNetworkTimeoutError', 'MongoTopologyClosedError', 'ValidationError',
+]);
+const isDbError = (err) => DB_ERROR_NAMES.has(err.name) || err.name?.startsWith('Mongo');
+
 class AuthFeature {
   static init() {
     if (!config.env.JWT_SECRET) {
@@ -124,8 +130,8 @@ class AuthFeature {
         displayName: user.anonymousDisplayName,
       });
     } catch (err) {
-      console.error('[AuthFeature] register error:', err.message);
-      if (err.name === 'MongooseError' || err.name === 'MongoServerError') {
+      console.error('[AuthFeature] register error:', err.name, err.message);
+      if (isDbError(err)) {
         return res.status(503).json({ error: 'Database unavailable. Try again shortly.' });
       }
       return res.status(500).json({ error: 'Registration failed. Please try again.' });
@@ -180,8 +186,8 @@ class AuthFeature {
         duressMode: duressMatch,
       });
     } catch (err) {
-      console.error('[AuthFeature] login error:', err.message);
-      if (err.name === 'MongooseError' || err.name === 'MongoServerError') {
+      console.error('[AuthFeature] login error:', err.name, err.message);
+      if (isDbError(err)) {
         return res.status(503).json({ error: 'Database unavailable. Try again shortly.' });
       }
       return res.status(500).json({ error: 'Sign in failed. Please try again.' });
