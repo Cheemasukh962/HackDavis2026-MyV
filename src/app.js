@@ -16,7 +16,7 @@ const { PwaFeature } = require('./features/pwa_feature');
 const { JournalFeature } = require('./features/journal_feature');
 const { AiChatFeature } = require('./features/ai_chat_feature');
 const { BookmarkFeature } = require('./features/bookmark_feature');
-const { LoginButtonFeature } = require('./features/login_button');
+const { ButtonFeature } = require('./features/button');
 
 /**
  * @param {import('socket.io').Server} io  - Socket.io server instance from server.js
@@ -46,8 +46,8 @@ function initFeatures(io) {
     BookmarkFeature.init();
   }
 
-  if (config.features.enable_login_button) {
-    LoginButtonFeature.init();
+  if (config.features.enable_button) {
+    ButtonFeature.init();
   }
 
   // Template for adding the next feature:

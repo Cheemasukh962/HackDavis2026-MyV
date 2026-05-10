@@ -6,7 +6,7 @@ import styles from '../styles/Login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const returnTo = router.query.returnTo || '/app/calculator';
+  const returnTo = getSafeReturnTo(router.query.returnTo);
 
   const [mode, setMode] = useState('login');
   const [fields, setFields] = useState({ username: '', password: '', duressPassword: '' });
@@ -184,15 +184,23 @@ export default function LoginPage() {
   );
 }
 
+function getSafeReturnTo(value) {
+  const candidate = Array.isArray(value) ? value[0] : value;
+  return typeof candidate === 'string' && candidate.startsWith('/app/')
+    ? candidate
+    : '/app/calculator';
+}
+
 // Redirect to app if already authenticated.
 export async function getServerSideProps(context) {
+  const returnTo = getSafeReturnTo(context.query?.returnTo);
   const token = context.req.cookies?.auth_token;
   if (token) {
     try {
       const jwt = require('jsonwebtoken');
       const config = require('../config/config');
       jwt.verify(token, config.env.JWT_SECRET);
-      return { redirect: { destination: '/app/calculator', permanent: false } };
+      return { redirect: { destination: returnTo, permanent: false } };
     } catch {
       // Invalid token — show login page normally.
     }

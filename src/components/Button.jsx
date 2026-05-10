@@ -1,27 +1,18 @@
 /**
- * LoginButton — Discrete login access button component.
+ * Button - discrete in-app switch from a disguise screen to SOS chat.
  *
- * A small, subtle orange button that provides hidden access to the login page
- * from within the disguised app shell. The button is intentionally unlabeled
- * and low-contrast to avoid drawing attention on shared or monitored devices.
- *
- * Positioned at the bottom-left corner with minimal visibility.
+ * The control stays small, unlabeled, and low-contrast so the cover identity
+ * remains the primary visible experience until the user intentionally opens
+ * the chat.
  */
 
-import { useRouter } from 'next/router';
-
-export default function LoginButton() {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push('/login');
-  };
-
+export default function Button({ onClick }) {
   return (
     <button
-      onClick={handleClick}
-      aria-label="Login"
-      title="Login"
+      type="button"
+      aria-label="Open SOS chat"
+      title="Open SOS chat"
+      onClick={onClick}
       style={{
         position: 'fixed',
         bottom: '12px',
