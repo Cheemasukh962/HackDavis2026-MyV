@@ -138,7 +138,7 @@ HackDavis 2026/
     │   ├── useSpeechToText.js ← Web Speech API hook. ⚠ NOT YET WORKING — needs investigation.
     │   └── useGeolocation.js  ← Browser watchPosition + latest-location API calls.
     ├── components/
-    │   ├── PanicExit.jsx      ← Always-on quick-exit (Escape / triple-tap / button).
+    │   ├── PanicExit.jsx      ← Always-on quick-exit (Escape / quadruple-tap / button).
     │   ├── ChatRoom.jsx       ← Anonymous real-time chat UI.
     │   ├── LocationCapture.jsx ← Live coordinate tester + clear control.
     │   ├── Button.jsx         ← Discreet SOS chat access control.
@@ -347,9 +347,9 @@ Chrome distinguishes the three as separate installed apps via the `"id"` field i
 | History lock | `usePrivacyMode` traps `popstate` — the back button goes nowhere |
 | Session wipe on hide | `sessionStorage.clear()` fires on `visibilitychange: hidden` |
 | Panic exit — Escape key | Single keypress redirects immediately |
-| Panic exit — triple-tap | Three taps within 600ms on any touch surface |
+| Panic exit — quadruple-tap | Four taps within 400ms on any touch surface |
 | Panic exit — corner button | Discreet fixed `✕` button, bottom-right |
-| Panic exit — triple tap | Detects rapid triple tap on screen to trigger safe exit |
+| Panic exit — quadruple tap | Detects rapid quadruple tap on screen to trigger safe exit |
 | Panic redirect | Calls `POST /api/auth/logout` (`keepalive: true`) to clear the auth cookie, then `window.location.replace(NEXT_PUBLIC_SAFE_EXIT_URL)` — removes history entry |
 | No indexing | `<meta name="robots" content="noindex, nofollow">` on app shell pages |
 | No referrer leakage | `Referrer-Policy: no-referrer` site-wide |

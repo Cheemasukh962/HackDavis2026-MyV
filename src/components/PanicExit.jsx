@@ -6,7 +6,7 @@ import { triggerPanicExit } from '../hooks/usePrivacyMode';
  *
  * Triggers on:
  *  1. Escape key
- *  2. Rapid triple-tap anywhere on a touch screen
+ *  2. Rapid quadruple-tap anywhere on a touch screen
  *  3. Click/tap of the visible quick-exit button when shown
  */
 const config = require('../config/config.json');
@@ -25,15 +25,15 @@ export default function PanicExit({ showButton = true }) {
   }, []);
 
   useEffect(() => {
-    const handleTripleTap = () => {
-      if (!config.features.enable_triple_tap_panic) return;
+    const handleQuadTap = () => {
+      if (!config.features.enable_quad_tap_panic) return;
 
       tapCount.current += 1;
 
-      if (tapCount.current >= 3) {
+      if (tapCount.current >= 4) {
         clearTimeout(tapTimer.current);
         tapCount.current = 0;
-        console.debug('[Tap] Triple tap detected');
+        console.debug('[Tap] Quadruple tap detected');
         triggerPanicExit();
         return;
       }
@@ -41,15 +41,15 @@ export default function PanicExit({ showButton = true }) {
       clearTimeout(tapTimer.current);
       tapTimer.current = setTimeout(() => {
         tapCount.current = 0;
-      }, 600);
+      }, 400);
     };
 
-    window.addEventListener('touchend', handleTripleTap);
-    window.addEventListener('click', handleTripleTap);
+    window.addEventListener('touchend', handleQuadTap);
+    window.addEventListener('click', handleQuadTap);
 
     return () => {
-      window.removeEventListener('touchend', handleTripleTap);
-      window.removeEventListener('click', handleTripleTap);
+      window.removeEventListener('touchend', handleQuadTap);
+      window.removeEventListener('click', handleQuadTap);
       clearTimeout(tapTimer.current);
     };
   }, []);
