@@ -1,7 +1,7 @@
 const { requireAuth } = require('../../../lib/requireAuth');
 const { parseUpload } = require('../../../lib/multerHelper');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
-const config = require('../../../config/config');
+const appConfig = require('../../../config/config');
 
 export const config = {
   api: {
@@ -16,7 +16,7 @@ export default requireAuth(async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed.' });
   }
 
-  const apiKey = config.env.ELEVENLABS_API_KEY;
+  const apiKey = appConfig.env.ELEVENLABS_API_KEY;
   if (!apiKey) {
     return res.status(501).json({ error: 'STT service not configured.' });
   }
