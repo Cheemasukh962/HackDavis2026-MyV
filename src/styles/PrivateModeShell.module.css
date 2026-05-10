@@ -1572,6 +1572,26 @@ button.emptyFriendState:hover {
   cursor: not-allowed;
 }
 
+.micButton {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pm-muted);
+  color: var(--pm-foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.micButtonActive {
+  background: var(--pm-accent-strong);
+  color: #fff;
+  animation: typingPulse 1.5s infinite;
+}
+
 .uploadGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
