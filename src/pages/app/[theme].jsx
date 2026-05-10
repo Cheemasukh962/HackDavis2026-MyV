@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import PanicExit from '../../components/PanicExit';
-import LoginButton from '../../components/LoginButton';
+import Button from '../../components/Button';
 import ChatRoom from '../../components/ChatRoom';
 import CalculatorCover from '../../components/CalculatorCover';
 import NewsCover from '../../components/NewsCover';
@@ -38,6 +38,7 @@ export default function AppShell({ themeKey, appName, manifestUrl, themeColor, a
 
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installed, setInstalled] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     const onPrompt = (e) => { e.preventDefault(); setInstallPrompt(e); };
@@ -82,7 +83,9 @@ export default function AppShell({ themeKey, appName, manifestUrl, themeColor, a
         {/* ── Real app content ── */}
         {/* Cover UI (calculator/news/weather disguise) goes here at Figma handoff. */}
         {/* ChatRoom is the functional core until cover UIs are designed.           */}
-        {themeKey === 'calculator' ? (
+        {showChat ? (
+          <ChatRoom roomId="sos" displayName={session.displayName} />
+        ) : themeKey === 'calculator' ? (
           <CalculatorCover />
         ) : themeKey === 'news' ? (
           <NewsCover />
@@ -92,7 +95,7 @@ export default function AppShell({ themeKey, appName, manifestUrl, themeColor, a
       </main>
 
       <PanicExit />
-      <LoginButton />
+      {!showChat && <Button onClick={() => setShowChat(true)} />}
     </>
   );
 }
