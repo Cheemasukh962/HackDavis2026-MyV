@@ -546,33 +546,69 @@ function ChatPanel() {
   const openPeer = openId ? chats.find((chat) => chat.id === openId) || null : null;
   const messages = openId ? threads[openId] || [] : [];
 
-  const send = () => {
-    if (!openId || !draft.trim()) return;
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [threads, openId, isTyping]);
+
+  const send = async () => {
+    if (!openId || !draft.trim() || isTyping) return;
 
     const text = draft.trim();
+    const myMsg = { id: String(Date.now()), from: 'me', text, time: 'now' };
+    
     setThreads((current) => ({
       ...current,
-      [openId]: [
-        ...(current[openId] || []),
-        { id: String(Date.now()), from: 'me', text, time: 'now' },
-      ],
+      [openId]: [...(current[openId] || []), myMsg],
     }));
     setDraft('');
 
-    window.clearTimeout(replyTimer.current);
-    replyTimer.current = window.setTimeout(() => {
-      const replyText = openPeer?.isBot
-        ? BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)]
-        : 'Thanks for sharing that with me. I am listening.';
+    if (openPeer?.isBot) {
+      setIsTyping(true);
+      try {
+        const history = [
+          ...(threads[openId] || []),
+          myMsg
+        ].map(m => ({
+          role: m.from === 'me' ? 'user' : 'assistant',
+          content: m.text
+        }));
 
-      setThreads((current) => ({
-        ...current,
-        [openId]: [
-          ...(current[openId] || []),
-          { id: String(Date.now() + 1), from: 'them', text: replyText, time: 'now' },
-        ],
-      }));
-    }, 900);
+        const res = await fetch('/api/ai-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setThreads((current) => ({
+            ...current,
+            [openId]: [
+              ...(current[openId] || []),
+              { id: String(Date.now() + 1), from: 'them', text: data.message, time: 'now' },
+            ],
+          }));
+        }
+      } catch (err) {
+        console.error('[SafeBot] AI error:', err);
+      } finally {
+        setIsTyping(false);
+      }
+    } else {
+      window.clearTimeout(replyTimer.current);
+      replyTimer.current = window.setTimeout(() => {
+        setThreads((current) => ({
+          ...current,
+          [openId]: [
+            ...(current[openId] || []),
+            { id: String(Date.now() + 1), from: 'them', text: 'Thanks for sharing. I am listening.', time: 'now' },
+          ],
+        }));
+      }, 1000);
+    }
   };
 
   if (openPeer) {
@@ -616,6 +652,14 @@ function ChatPanel() {
             <span className={styles.messageTime}>{message.time}</span>
           </div>
         ))}
+        {isTyping && (
+          <div className={styles.messageRow}>
+            <div className={`${styles.messageBubble} ${styles.messageBubbleThem}`}>
+              <span className={styles.typingIndicator}>...</span>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className={styles.composerWrap}>

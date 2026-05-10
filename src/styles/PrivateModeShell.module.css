@@ -1497,6 +1497,20 @@ button.emptyFriendState:hover {
   color: var(--pm-foreground);
 }
 
+.typingIndicator {
+  display: inline-flex;
+  gap: 3px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  animation: typingPulse 1.5s infinite;
+  opacity: 0.6;
+}
+
+@keyframes typingPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
 .messageBubbleMine {
   background: var(--pm-foreground);
   color: var(--pm-background);
