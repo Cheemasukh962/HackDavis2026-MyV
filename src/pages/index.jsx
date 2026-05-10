@@ -2,6 +2,17 @@ import Head from 'next/head';
 import Link from 'next/link';
 import styles from '../styles/Marketing.module.css';
 
+const ShieldIcon = ({ className }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+  </svg>
+);
+
 export default function LandingPage() {
   return (
     <>
@@ -18,7 +29,10 @@ export default function LandingPage() {
             Safe Harbor
           </div>
           <nav className={styles.nav}>
-            <Link href="/downloads" className={styles.navButton}>Get Protected</Link>
+            <Link href="/downloads" className={styles.navButton}>
+              <ShieldIcon className={styles.buttonIcon} />
+              Get Protected
+            </Link>
           </nav>
         </header>
 
@@ -37,7 +51,10 @@ export default function LandingPage() {
                 to find support, document your story, and reclaim your peace.
               </p>
               <div className={styles.heroActions}>
-                <Link href="/downloads" className={styles.primaryCta}>Get Started Privately</Link>
+                <Link href="/downloads" className={styles.primaryCta}>
+                  <ShieldIcon className={styles.buttonIconCta} />
+                  Get Started Privately
+                </Link>
                 <span className={styles.secondaryText}>Encrypted • Invisible • Free Forever</span>
               </div>
             </div>

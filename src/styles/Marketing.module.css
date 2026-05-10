@@ -53,12 +53,21 @@
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 12px rgba(54, 46, 40, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .navButton:hover {
   background: white;
   transform: translateY(-1px);
   box-shadow: 0 10px 20px rgba(54, 46, 40, 0.08);
+}
+
+.buttonIcon {
+  width: 14px;
+  height: 14px;
+  color: #000; /* Black shield as requested */
 }
 
 /* ── Hero Section ──────────────────────── */
@@ -141,6 +150,9 @@
   font-weight: 600;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 15px 30px rgba(54, 46, 40, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .primaryCta:hover {
@@ -149,11 +161,10 @@
   background: var(--color-accent);
 }
 
-.secondaryText {
-  font-size: 13px;
-  color: var(--color-muted);
-  font-weight: 500;
-  opacity: 0.7;
+.buttonIconCta {
+  width: 18px;
+  height: 18px;
+  color: var(--color-bg);
 }
 
 /* ── Ticker ────────────────────────────────────────────────────── */
