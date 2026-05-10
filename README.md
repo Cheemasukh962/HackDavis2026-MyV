@@ -749,3 +749,608 @@ The news cover renders a dark, mobile-friendly news reader UI. It uses live head
 Route: `/app/weather`
 
 The weather cover renders a lightweight Weather Now screen. It provides a disguised weather landing page with an `Open forecast` link.
+
+#MAIN PAGE 
+# Safe Harbor — Technical Documentation
+
+## Pages Overview
+
+---
+
+## 1. HOME PAGE (`src/pages/index.jsx`)
+
+### Purpose
+Marketing landing page that introduces Safe Harbor and its core features to new visitors.
+
+### Route
+- **URL**: `/`
+- **Public**: Yes (no auth required)
+
+### Components Used
+- Custom SVG icons (ShieldIcon, GhostIcon, LockIcon, ChatIcon, ExitIcon, CloudIcon)
+- Next.js `Head` for SEO
+- Next.js `Link` for navigation
+
+### Key Sections
+1. **Header** — Brand logo + "Get Protected" CTA button
+2. **Hero Section** — Headline, subheading, gradient text, primary CTA
+3. **Ticker** — Animated feature highlights (infinite scroll)
+4. **Feature Grid (Bento)** — 6-card layout showcasing:
+   - The Shield (Disguise)
+   - Zero Trace (Privacy)
+   - Evidence (Vault)
+   - Connect (Chat)
+   - Panic Exit
+   - Cloud (Sync)
+5. **Mission Section** — Empathy-driven message
+6. **Footer** — Links + emergency hotline disclaimer
+
+### Styling
+- **Module**: `src/styles/Marketing.module.css`
+- **Design**: Minimalist, empathy-focused, warm earth tones
+- **Responsive**: Mobile-first, uses `clamp()` for fluid typography
+
+### State Management
+- No client-side state (purely presentational)
+
+### API Calls
+- None
+
+### Key Features
+- ✅ Responsive hero with gradient text
+- ✅ Ticker animation (seamless loop)
+- ✅ Bento grid layout
+- ✅ Accessibility: semantic HTML, ARIA labels
+- ✅ SEO optimized with meta tags
+
+### File Size
+- Component: ~200 lines (includes custom icons)
+- Styling: ~400 lines
+
+### Future Enhancements
+- Add testimonial carousel
+- Integrate analytics for CTA clicks
+- Implement A/B testing variants
+
+---
+
+## 2. LOGIN / REGISTER PAGE (`src/pages/login.jsx`)
+
+### Purpose
+Unified authentication page for user login and registration with duress password support.
+
+### Route
+- **URL**: `/login`
+- **Public**: Yes (no auth required)
+- **Query Params**: `?returnTo=` (safe redirect after login)
+
+### Components Used
+- `PanicExit` (hidden exit button overlay)
+- React hooks (useState, useRouter)
+
+### Features
+1. **Dual Mode** — Toggle between "Login" and "Register"
+2. **Standard Login** — Username + Password
+3. **Duress Password** (optional) — Emergency account that logs in fake data
+4. **Password Visibility Toggle** — Show/hide password
+5. **Form Validation** — Client-side checks
+6. **Error Handling** — User-friendly error messages
+7. **Loading State** — Disabled submit during request
+8. **Auto-signin** — Registers then immediately logs in
+
+### Styling
+- **Module**: `src/styles/Login.module.css`
+- **Design**: Clean, minimal, matches brand
+- **Focus States**: High contrast for accessibility
+
+### State Management
+```javascript
+mode          // 'login' | 'register'
+fields        // { username, password, duressPassword }
+showPassword  // boolean
+showDuress    // boolean
+error         // error message string
+notice        // success/info message
+loading       // boolean (during API call)
+```
+
+### API Calls
+- `POST /api/auth/register` — Create new account
+- `POST /api/auth/login` — Authenticate user
+- `GET /api/auth/logout` — Sign out
+
+### Security Features
+- ✅ Duress password (fake account for coercion)
+- ✅ Safe return redirect (prevents open redirect)
+- ✅ Credentials sent with `same-origin` policy
+- ✅ Password never logged
+- ✅ No password stored in state longer than necessary
+
+### Key Functions
+- `getSafeReturnTo()` — Validates redirect URL to prevent phishing
+- `handleSubmit()` — Handles both register + login flows
+
+### File Size
+- Component: ~150 lines
+- Styling: ~300 lines
+
+### Future Enhancements
+- Add OAuth (Google, Apple sign-in)
+- Email-based recovery
+- TOTP 2FA option
+- Biometric login
+
+---
+
+## 3. DOWNLOADS PAGE (`src/pages/downloads.jsx`)
+
+### Purpose
+App selection page where users choose which cover app identity to install/use.
+
+### Route
+- **URL**: `/downloads`
+- **Public**: Yes (no auth required)
+
+### Components Used
+- Next.js `Head`, `Link`
+- APPS constant (configuration array)
+
+### Features
+1. **App Cards** — 3 selectable disguises:
+   - Calculator Pro
+   - Daily News Reader
+   - Weather Now
+2. **Each Card Shows**:
+   - Icon (PNG from public folder)
+   - Name
+   - Description
+   - Installation instructions
+3. **Install Modal** — Steps for PWA installation (iOS vs Android)
+4. **Installation Banner** — Persistent CTA
+
+### Styling
+- **Module**: `src/styles/Landing.module.css`
+- **Design**: Card-based layout, hover effects
+- **Responsive**: Grid adapts to mobile/tablet
+
+### State Management
+- Local: Modal visibility, selected app
+
+### API Calls
+- None (purely client-side navigation)
+
+### Key Data Structure (APPS)
+```javascript
+{
+  theme: 'calculator' | 'news' | 'weather',
+  name: string,
+  description: string,
+  icon: string (path to PNG)
+}
+```
+
+### Navigation Flow
+- User selects app → Navigates to `/app/[theme]`
+- Example: Selecting Calculator → `/app/calculator`
+
+### File Size
+- Component: ~100 lines
+- Styling: ~200 lines
+
+### Future Enhancements
+- Add app ratings/reviews
+- Show install progress indicator
+- Custom installation per platform
+- Add more cover apps
+
+---
+
+## 4. APP SHELL / PRIVATE MODE (`src/pages/app/[theme].jsx`)
+
+### Purpose
+Main application container that renders the chosen cover app or the hidden private mode shell.
+
+### Route
+- **URL**: `/app/[theme]`
+- **Dynamic Param**: `[theme]` — calculator, news, or weather
+- **Protected**: Yes (requires auth via `withAuth`)
+
+### Components Used
+- Cover components: `CalculatorCover`, `NewsCover`, `WeatherCover`
+- `PrivateModeShell` — Main hidden interface
+- `PanicExit` — Emergency exit button
+- `Button` — SOS activation button
+- `LocationCapture` — Geolocation opt-in
+- `InstallModal` — PWA installation guidance
+- Custom `ShieldIcon`
+
+### Features
+1. **Dynamic Theme Rendering**
+   - Validates theme from URL
+   - Returns 404 if invalid
+2. **Cover Apps** — Fully functional disguises
+3. **Private Mode Shell** — Hidden safe space (activated via SOS button)
+4. **PWA Installation**
+   - `beforeinstallprompt` event handling
+   - Platform detection (iOS vs Android)
+   - Install modal with instructions
+5. **Install Banner** — Persistent bottom banner
+6. **Geolocation Opt-in** — If enabled in config
+
+### Styling
+- **Module**: `src/styles/Landing.module.css`
+- **Inline Styles**: Banners (for dynamic positioning)
+- **Design**: Minimal, matches cover app theme
+
+### State Management
+```javascript
+installPrompt      // beforeinstallprompt event
+showModal          // Modal visibility
+platform           // 'ios' | 'android' | 'other'
+installed          // Boolean (PWA installed?)
+showPrivateMode    // Boolean (hidden shell active?)
+```
+
+### Server-Side Props
+```javascript
+{
+  themeKey: string,
+  appName: string,
+  manifestUrl: string,
+  themeColor: string,
+  appleTouchIcon: string,
+  geolocationEnabled: boolean
+}
+```
+
+### API Calls
+- None (but depends on auth middleware)
+
+### Key Functions
+- `renderCover()` — Conditionally renders cover app
+- `triggerNativeInstall()` — Prompts PWA install
+- `withAuth()` — Server-side auth guard
+
+### Security Features
+- ✅ Auth required (blocks unauthenticated access)
+- ✅ Safe redirects (no external links)
+- ✅ Content Security Policy headers
+- ✅ Robots metadata prevents indexing
+- ✅ No-cache headers for auth routes
+
+### File Size
+- Component: ~286 lines
+- Styling: ~200 lines
+
+### THEMES Configuration
+```javascript
+calculator: {
+  themeKey: 'calculator',
+  appName: 'Calculator Pro',
+  manifestUrl: '/manifests/calculator.json',
+  themeColor: '#1a1a2e',
+  appleTouchIcon: '/resources/images/logos/calculator_icon_192x192.png'
+}
+// ... news, weather variants
+```
+
+### Future Enhancements
+- Add theme switching UI
+- Implement app-specific settings
+- Add offline mode detection
+- Add crash recovery
+
+---
+
+## 5. JOURNAL PANEL (`src/components/JournalPanel.jsx`)
+
+### Purpose
+Evidence documentation interface with media, audio, and text entries.
+
+### Integration
+- Used within `PrivateModeShell` or as standalone component
+
+### Features
+1. **Three Upload Types**:
+   - **Media** (Photo + Video combined) — "Photo or video"
+   - **Audio** — "Record now"
+   - **Text** (new) — "Write a note"
+2. **Entry Management**:
+   - Create entries
+   - Display recent entries
+   - Show entry type & timestamp
+3. **Security Notice** — Encryption info banner
+4. **Empty State** — Helpful message when no entries
+
+### Styling
+- **Module**: `src/styles/JournalPanel.module.css`
+- **Design**: 3-column button grid, card-based entries
+- **Responsive**: Mobile-optimized
+
+### State Management
+```javascript
+entries        // Array of entry objects
+loading        // Boolean (during upload)
+showInput      // Boolean (text input expanded?)
+text           // String (textarea content)
+isSubmitting   // Boolean (text submit pending)
+```
+
+### API Calls
+- `POST /api/journal` — Create journal entry
+- `POST /api/journal/attachment?entryId=...` — Upload file attachment
+
+### Entry Types
+- `'media'` — Photo or video file
+- `'audio'` — Audio recording
+- `'text'` — Text note
+
+### Key Components
+- `UploadButton` — Media/Audio file input
+- `TextButton` — Toggleable textarea with submit
+- `EntryCard` — Displays saved entry with metadata
+
+### File Size
+- Component: ~238 lines
+- Styling: ~297 lines
+
+### Future Enhancements
+- Add video preview thumbnails
+- Implement audio playback
+- Add full-text search
+- Add entry tagging/categories
+- Implement entry deletion with confirmation
+- Add offline storage (IndexedDB)
+
+---
+
+## 6. COVER APPS
+
+### CalculatorCover (`src/components/CalculatorCover.jsx`)
+
+**Purpose**: Fully functional calculator that serves as visual disguise.
+
+**Features**:
+- Basic arithmetic (+ - × ÷)
+- Percentage, negation, decimal support
+- Error handling (division by zero)
+- Display formatting
+
+**State**:
+- `display` — Current display value
+- `previousValue` — Operand for operation
+- `operation` — Current operator
+- `waitingForOperand` — Input state flag
+
+**Styling**: `src/styles/CalculatorCover.module.css`
+
+---
+
+### NewsCover (`src/components/NewsCover.jsx`)
+
+**Purpose**: News reader interface.
+
+**Features**:
+- Fetch headlines from API
+- Display article list
+- Expandable article details
+
+**State**:
+- `headlines` — Array of news items
+- `loading` — Fetch state
+
+---
+
+### WeatherCover (`src/components/WeatherCover.jsx`)
+
+**Purpose**: Weather display interface.
+
+**Features**:
+- Fetch weather data
+- Show current conditions + forecast
+- Location detection
+
+**State**:
+- `weather` — Current weather data
+- `forecast` — 5-day forecast
+- `loading` — Fetch state
+
+---
+
+## PRIVATE MODE SHELL (`src/components/PrivateModeShell.jsx`)
+
+### Purpose
+Main hidden interface where users access real safety tools (journal, chat, bookmarks, etc.).
+
+### Activation
+- Triggered by SOS button click
+- Requires correct PIN entry
+- Panic exit available at all times
+
+### Features
+1. **Tabbed Navigation**:
+   - Journal (evidence documentation)
+   - Chat (peer support)
+   - Bookmarks (resource collection)
+   - AI Chat (support conversations)
+   - Settings
+2. **Security**:
+   - PIN entry modal
+   - Session timeout
+   - Clear data on exit
+3. **User Profile** — Display name in header
+
+### Styling
+- **Module**: `src/styles/PrivateModeShell.module.css`
+- **Design**: Dark, minimal, professional
+- **Layout**: Tab-based navigation
+
+### State Management
+- Active tab
+- Session status
+- User data
+
+---
+
+## DATA FLOW ARCHITECTURE
+
+```
+User visits `/` (Home)
+    ↓
+Click "Get Started Privately"
+    ↓
+Navigate to `/downloads` (Choose Disguise)
+    ↓
+Select app (e.g., Calculator)
+    ↓
+Navigate to `/login` (Auth)
+    ↓
+Register or Login
+    ↓
+Redirected to `/app/calculator`
+    ↓
+[Cover App Shown] — Full calculator UI
+    ↓
+Click SOS Button
+    ↓
+[Private Mode Activated] — Hidden Shell Shown
+    ↓
+PIN Entry Modal
+    ↓
+Access Journal, Chat, Bookmarks, etc.
+    ↓
+(Panic Exit) ← Returns to calculator instantly
+```
+
+---
+
+## AUTHENTICATION FLOW
+
+```
+1. User fills login/register form
+2. Submit → POST /api/auth/register or /api/auth/login
+3. Server validates credentials
+4. Server creates session (JWT or session cookie)
+5. Client receives session token
+6. Subsequent requests include auth middleware
+7. Middleware validates token
+8. If valid → access granted, else → redirect to /login
+```
+
+---
+
+## SECURITY HEADERS
+
+Applied via `next.config.js`:
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `Referrer-Policy: no-referrer`
+- `X-XSS-Protection: 1; mode=block`
+- `Cache-Control: no-store, no-cache` (auth routes)
+
+---
+
+## CONFIGURATION
+
+All feature flags in `src/config/config.js`:
+- `enable_journal` — Enable journal feature
+- `enable_geolocation` — Allow location storage
+- `enable_ai_chat` — AI support chat
+- `enable_bookmarks` — Resource bookmarks
+- etc.
+
+---
+
+## ENVIRONMENT VARIABLES
+
+```
+MONGODB_URI        # MongoDB connection string
+JWT_SECRET         # Session signing key
+NODE_ENV           # production | development
+PORT               # Server port (default 3000)
+```
+
+---
+
+## DEPLOYMENT
+
+### Build
+```bash
+npm run build
+```
+
+### Production Start
+```bash
+NODE_ENV=production npm start
+```
+
+### Docker
+```dockerfile
+FROM node:18
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+CMD ["npm", "start"]
+```
+
+---
+
+## TESTING CHECKLIST
+
+- [ ] Home page loads & links work
+- [ ] Downloads page shows 3 apps
+- [ ] Login/Register flow completes
+- [ ] Calculator, News, Weather fully functional
+- [ ] SOS button activates private mode
+- [ ] Journal entries save & display
+- [ ] Chat messages persist
+- [ ] PWA installs on mobile
+- [ ] Panic exit clears session
+- [ ] Auth middleware blocks unauthenticated access
+
+---
+
+## PERFORMANCE METRICS
+
+**Target Metrics**:
+- Home page: <2s initial load
+- App shell: <1s route navigation
+- Journal upload: <3s for 5MB file
+- Mobile Lighthouse: 90+ score
+
+**Optimization**:
+- Image optimization (next/image)
+- Code splitting per route
+- CSS module scoping
+- Service Worker caching
+
+---
+
+## ACCESSIBILITY
+
+- ✅ ARIA labels on interactive elements
+- ✅ Keyboard navigation support
+- ✅ Color contrast ratios ≥4.5:1
+- ✅ Focus indicators visible
+- ✅ Semantic HTML structure
+- ✅ Alt text on images
+
+---
+
+## FUTURE ROADMAP
+
+- [ ] Add more cover apps (Notes, Reminders, etc.)
+- [ ] Implement encrypted cloud sync
+- [ ] Add video evidence redaction
+- [ ] Integration with hotlines/resources
+- [ ] Offline-first sync
+- [ ] Multi-device support
+- [ ] Voice journal entries
+- [ ] ML-powered safety recommendations
+
+---
+
+**Last Updated**: May 10, 2026
+**Version**: 1.0.0
+**Maintainer**: Safe Harbor Team
+
