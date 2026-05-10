@@ -52,7 +52,12 @@ export default function JournalPanel() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
+      
+      // Dynamically find supported type
+      const types = ['audio/mp4', 'audio/webm', 'audio/ogg'];
+      const supportedType = types.find(type => MediaRecorder.isTypeSupported(type)) || '';
+      
+      mediaRecorder.current = new MediaRecorder(stream, supportedType ? { mimeType: supportedType } : {});
       audioChunks.current = [];
 
       mediaRecorder.current.ondataavailable = (event) => {
@@ -60,8 +65,13 @@ export default function JournalPanel() {
       };
 
       mediaRecorder.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunks.current, { type: 'audio/webm' });
-        const file = new File([audioBlob], `recording-${Date.now()}.webm`, { type: 'audio/webm' });
+        const actualType = mediaRecorder.current.mimeType || supportedType || 'audio/webm';
+        const audioBlob = new Blob(audioChunks.current, { type: actualType });
+        
+        // Extract extension from mimeType (e.g. audio/mp4;codecs=avc1 -> mp4)
+        const extension = actualType.split('/')[1]?.split(';')[0] || 'webm';
+        const file = new File([audioBlob], `recording-${Date.now()}.${extension}`, { type: actualType });
+        
         await uploadFile(file);
         stream.getTracks().forEach((track) => track.stop());
       };
