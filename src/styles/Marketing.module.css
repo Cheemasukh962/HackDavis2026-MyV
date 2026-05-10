@@ -192,7 +192,7 @@
 
 /* ── Bento Grid ──────────────────────────────────────────────────── */
 .bentoSection {
-  padding: 120px 24px;
+  padding: 120px 24px 64px;
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -277,7 +277,7 @@
 
 /* ── Mission ─────────────────────────────────────────────────────── */
 .missionSection {
-  padding: 100px 24px;
+  padding: 64px 24px 100px;
   background: linear-gradient(to bottom, transparent, rgba(201, 125, 87, 0.03));
 }
 
@@ -308,7 +308,7 @@
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 .footer {
-  padding: 80px 24px;
+  padding: 48px 24px;
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
 }
