@@ -10,9 +10,14 @@ export function usePrivacyMode() {
   useEffect(() => {
     // ── Shake Detection Implementation ───────────────────────────────────────
     const config = require('../config/config.json');
-    const SHAKE_THRESHOLD = 25; // Adjusted for "violent" shake
+    const SHAKE_THRESHOLD = 60; // Increased from 25 for much lower sensitivity
+    const SHAKE_WINDOW = 1000; // 1 second window to complete the shakes
+    const MIN_SHAKES = 3; // Minimum distinct shakes required
+
     let lastX, lastY, lastZ;
     let lastTime = 0;
+    let shakeCount = 0;
+    let lastShakeTime = 0;
 
     const onMotion = (event) => {
       if (!config.features.enable_shake_panic) return;
@@ -27,8 +32,19 @@ export function usePrivacyMode() {
         const speed = (delta / diffTime) * 10000;
 
         if (speed > SHAKE_THRESHOLD) {
-          console.debug('[Shake] Panic threshold reached');
-          triggerPanicExit();
+          // Check if this shake is within the window of the last one
+          if (currentTime - lastShakeTime > SHAKE_WINDOW) {
+            shakeCount = 1; // Start new shake sequence
+          } else {
+            shakeCount++;
+          }
+
+          lastShakeTime = currentTime;
+
+          if (shakeCount >= MIN_SHAKES) {
+            console.debug('[Shake] Multi-shake threshold reached');
+            triggerPanicExit();
+          }
         }
 
         lastX = x;
