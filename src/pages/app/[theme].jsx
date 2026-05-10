@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PanicExit from '../../components/PanicExit';
 import Button from '../../components/Button';
-import ChatRoom from '../../components/ChatRoom';
 import CalculatorCover from '../../components/CalculatorCover';
 import NewsCover from '../../components/NewsCover';
 import PrivateModeShell from '../../components/PrivateModeShell';
@@ -119,7 +118,6 @@ export default function AppShell({
   const [installPrompt, setInstallPrompt] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [platform, setPlatform] = useState('other');
-  const [showChat, setShowChat] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [showPrivateMode, setShowPrivateMode] = useState(false);
 
@@ -214,8 +212,6 @@ export default function AppShell({
         {/* ── Main Content ── */}
         {showPrivateMode ? (
           <PrivateModeShell displayName={session.displayName} />
-        ) : showChat ? (
-          <ChatRoom roomId="sos" displayName={session.displayName} />
         ) : (
           <>
             {geolocationEnabled && <LocationCapture />}
@@ -225,8 +221,7 @@ export default function AppShell({
       </main>
 
       <PanicExit showButton={!showPrivateMode} />
-      {!showPrivateMode && !showChat && <Button onClick={() => setShowChat(true)} />}
-      {!showPrivateMode && showChat && <Button onClick={() => setShowChat(false)} />}
+      {!showPrivateMode && <Button onClick={() => setShowPrivateMode(true)} />}
 
       {/* Persistent Install Trigger for non-PWA mode */}
       {installPrompt && !showModal && (
