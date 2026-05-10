@@ -16,9 +16,11 @@ function withAuth(getServerSidePropsFunc) {
   return async (context) => {
     const { req, res } = context;
     const token = req.cookies?.auth_token;
+    const returnTo = encodeURIComponent(req.url || '/app/calculator');
+    const loginDestination = `/login?returnTo=${returnTo}`;
 
     if (!token) {
-      return { redirect: { destination: '/login', permanent: false } };
+      return { redirect: { destination: loginDestination, permanent: false } };
     }
 
     let session;
@@ -35,7 +37,7 @@ function withAuth(getServerSidePropsFunc) {
         'Set-Cookie',
         'auth_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict'
       );
-      return { redirect: { destination: '/login', permanent: false } };
+      return { redirect: { destination: loginDestination, permanent: false } };
     }
 
     if (!getServerSidePropsFunc) {
