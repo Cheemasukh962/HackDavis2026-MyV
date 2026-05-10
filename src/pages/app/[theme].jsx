@@ -111,6 +111,7 @@ export default function AppShell({
   appleTouchIcon,
   session,
   geolocationEnabled,
+  sosEnabled,
 }) {
   usePrivacyMode();
   const router = useRouter();
@@ -171,7 +172,7 @@ export default function AppShell({
     if (themeKey === 'calculator') return <CalculatorCover />;
     if (themeKey === 'news') return <NewsCover />;
     if (themeKey === 'weather') return <WeatherCover />;
-    return <PrivateModeShell displayName={session.displayName} />;
+    return <PrivateModeShell displayName={session.displayName} sosEnabled={sosEnabled} />;
   };
 
   return (
@@ -212,7 +213,7 @@ export default function AppShell({
 
         {/* ── Main Content ── */}
         {showPrivateMode ? (
-          <PrivateModeShell displayName={session.displayName} />
+          <PrivateModeShell displayName={session.displayName} sosEnabled={sosEnabled} />
         ) : (
           <>
             {geolocationEnabled && <LocationCapture />}
@@ -244,6 +245,7 @@ export const getServerSideProps = withAuth(async (context) => {
     props: {
       ...theme,
       geolocationEnabled: Boolean(config.features.enable_geolocation),
+      sosEnabled: Boolean(config.features.enable_sos),
     },
   };
 });
