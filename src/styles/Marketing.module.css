@@ -322,6 +322,18 @@
   align-items: center;
 }
 
+.footerBrand {
+  position: relative;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.footerBrand .logo {
+  position: absolute;
+  left: -44px; /* Logo width (32px) + gap (12px) */
+  margin: 0;
+}
+
 .footerDisclaimer {
   font-size: 14px;
   color: var(--color-muted);
