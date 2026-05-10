@@ -7,7 +7,7 @@ Your goal is to provide a list of REAL-WORLD resources based on the user's provi
 
 You MUST respond ONLY with a valid JSON object in the following format:
 {
-  "shelter": [ { "name": "...", "meta": "distance and hours" }, ... ],
+  "shelter": [ { "name": "...", "meta": "distance and hours", "phone": "phone number", "address": "physical address" }, ... ],
   "legal": [ ... ],
   "financial": [ ... ],
   "counseling": [ ... ]
@@ -16,9 +16,11 @@ You MUST respond ONLY with a valid JSON object in the following format:
 Guidelines:
 1. Provide 2-3 real resources for each category if possible.
 2. If exact coordinates don't yield specific results, use the general city/region.
-3. Keep the 'meta' field brief (e.g., "1.2 mi - Open 24h" or "Downtown - Appt only").
-4. If you absolutely cannot find real resources, provide major national/state-wide organizations that serve that area.
-5. Do NOT include any text outside the JSON block.`;
+3. Keep the 'meta' field brief (e.g., "1.2 mi - Open 24h").
+4. 'phone' should be the actual contact number if available.
+5. 'address' should be the physical location for directions.
+6. If you absolutely cannot find real resources, provide major national/state-wide organizations that serve that area.
+7. Do NOT include any text outside the JSON block.`;
 
 export default requireAuth(async (req, res) => {
   applySecurityHeaders(res);

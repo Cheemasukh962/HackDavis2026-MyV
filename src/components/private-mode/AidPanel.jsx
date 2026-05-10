@@ -75,6 +75,17 @@ export default function AidPanel() {
     }
   }, [location, resources, loading]);
 
+  const handleCall = (phone) => {
+    if (!phone) return;
+    window.location.href = `tel:${phone.replace(/[^0-9+]/g, '')}`;
+  };
+
+  const handleDirections = (address) => {
+    if (!address) return;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const activeResources = (resources || PLACEHOLDER_RESOURCES)[activeFilter] || [];
 
   return (
@@ -127,14 +138,25 @@ export default function AidPanel() {
       <div className={styles.resourceList}>
         {activeResources.map((resource, idx) => (
           <article key={`${resource.name}-${idx}`} className={styles.resourceCard}>
-            <h2>{resource.name}</h2>
-            <p>{resource.meta}</p>
+            <div className={styles.resourceInfo}>
+              <h2>{resource.name}</h2>
+              <p className={styles.resourceMeta}>{resource.meta}</p>
+              {resource.address && <p className={styles.resourceAddress}>{resource.address}</p>}
+            </div>
             <div className={styles.resourceActions}>
-              <button type="button">
+              <button 
+                type="button" 
+                onClick={() => handleCall(resource.phone)}
+                disabled={!resource.phone}
+              >
                 <Phone className={styles.tinyIcon} aria-hidden="true" />
                 Call
               </button>
-              <button type="button">
+              <button 
+                type="button" 
+                onClick={() => handleDirections(resource.address)}
+                disabled={!resource.address}
+              >
                 <Map className={styles.tinyIcon} aria-hidden="true" />
                 Directions
               </button>
