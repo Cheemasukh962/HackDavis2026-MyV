@@ -32,6 +32,7 @@ import {
 import HomePanel from './private-mode/HomePanel';
 import AidPanel from './private-mode/AidPanel';
 import JournalPanel from './JournalPanel';
+import { useSpeechToText } from '../hooks/useSpeechToText';
 import { triggerPanicExit } from '../hooks/usePrivacyMode';
 import styles from '../styles/PrivateModeShell.module.css';
 
@@ -483,6 +484,15 @@ function ChatPanel() {
   const [threads, setThreads] = useState(SEED_THREADS);
   const [draft, setDraft] = useState('');
   const replyTimer = useRef(null);
+  
+  const { transcript, listening, startListening, stopListening, clearTranscript } = useSpeechToText();
+
+  useEffect(() => {
+    if (transcript) {
+      setDraft((prev) => prev + (prev ? ' ' : '') + transcript);
+      clearTranscript();
+    }
+  }, [transcript, clearTranscript]);
 
   useEffect(() => () => window.clearTimeout(replyTimer.current), []);
 
@@ -676,9 +686,18 @@ function ChatPanel() {
           />
           <button
             type="button"
+            className={`${styles.micButton} ${listening ? styles.micButtonActive : ''}`}
+            onClick={listening ? stopListening : startListening}
+            aria-label={listening ? 'Stop listening' : 'Start voice input'}
+            title={listening ? 'Stop listening' : 'Start voice input'}
+          >
+            <Mic className={styles.sendIcon} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
             className={styles.sendButton}
             onClick={send}
-            disabled={!draft.trim()}
+            disabled={!draft.trim() || isTyping}
             aria-label="Send message"
           >
             <Send className={styles.sendIcon} aria-hidden="true" />
