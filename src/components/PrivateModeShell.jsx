@@ -394,16 +394,17 @@ const BOT_CHAT = {
 };
 
 const SEED_FRIENDS = [
-  { id: 'f1', displayName: 'QuietRiver', emoji: 'QR', status: 'accepted', mutuals: 3, isTrusted: true },
-  { id: 'f2', displayName: 'MorningLark', emoji: 'ML', status: 'accepted', mutuals: 1 },
-  { id: 'f3', displayName: 'PaperKite', emoji: 'PK', status: 'accepted' },
-  { id: 'f4', displayName: 'SilverPine', emoji: 'SP', status: 'incoming' },
-  { id: 'f5', displayName: 'BlueHarbor', emoji: 'BH', status: 'incoming' },
-  { id: 'f6', displayName: 'EmberMoth', emoji: 'EM', status: 'outgoing' },
+  { id: 'demo-f1', displayName: 'QuietRiver', emoji: 'QR', status: 'accepted', mutuals: 3, isTrusted: true },
+  { id: 'demo-f2', displayName: 'MorningLark', emoji: 'ML', status: 'accepted', mutuals: 1 },
+  { id: 'demo-f3', displayName: 'PaperKite', emoji: 'PK', status: 'accepted', isTrusted: true },
+  { id: 'demo-f4', displayName: 'BlueHarbor', emoji: 'BH', status: 'accepted' },
+  { id: 'demo-f5', displayName: 'SilverPine', emoji: 'SP', status: 'incoming' },
+  { id: 'demo-f6', displayName: 'EmberMoth', emoji: 'EM', status: 'outgoing' },
 ];
 
 const MY_HANDLE = 'SoftFern';
 const MY_AVATAR = 'SF';
+const MONGO_ID_PATTERN = /^[a-f0-9]{24}$/i;
 
 function initialsForName(displayName) {
   return String(displayName || 'Friend')
@@ -428,6 +429,10 @@ function normalizeFriend(apiFriend, trustedFriendIds = new Set()) {
   };
 }
 
+function isPersistedFriendId(id) {
+  return MONGO_ID_PATTERN.test(String(id));
+}
+
 const SEED_THREADS = {
   bot: [
     {
@@ -437,7 +442,7 @@ const SEED_THREADS = {
       time: 'now',
     },
   ],
-  f1: [
+  'demo-f1': [
     {
       id: '1',
       from: 'them',
@@ -457,8 +462,9 @@ const SEED_THREADS = {
       time: '9:41 PM',
     },
   ],
-  f2: [{ id: '1', from: 'them', text: 'You are not alone in this.', time: '8:12 PM' }],
-  f3: [{ id: '1', from: 'them', text: 'I went through something similar last year.', time: 'Yesterday' }],
+  'demo-f2': [{ id: '1', from: 'them', text: 'You are not alone in this.', time: '8:12 PM' }],
+  'demo-f3': [{ id: '1', from: 'them', text: 'I went through something similar last year.', time: 'Yesterday' }],
+  'demo-f4': [{ id: '1', from: 'them', text: 'The trusted contact toggle helped me make a plan.', time: 'Yesterday' }],
 };
 
 const BOT_REPLIES = [
@@ -500,7 +506,7 @@ function ChatPanel() {
           .filter((friend) => friend.status === 'accepted' || friend.status === 'pending')
           .map((friend) => normalizeFriend(friend, trustedFriendIds));
 
-        if (!cancelled) {
+        if (!cancelled && nextFriends.length > 0) {
           setFriends(nextFriends);
         }
       } catch {
@@ -750,6 +756,10 @@ function FriendsPanel({ friends, setFriends }) {
     setFriends((current) => current.map((friend) => (
       friend.id === id ? { ...friend, isTrusted: value } : friend
     )));
+
+    if (!isPersistedFriendId(id)) {
+      return;
+    }
 
     try {
       const response = await fetch(`/api/friends/${id}/trusted`, {
