@@ -121,7 +121,7 @@ export default function AidPanel() {
     }
   };
 
-  const activeResources = (resources || PLACEHOLDER_RESOURCES)[activeFilter] || [];
+  const activeResources = resources ? (resources[activeFilter] || []) : [];
 
   return (
     <div className={styles.aidPanel}>
