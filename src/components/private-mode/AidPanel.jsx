@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Lock, MapPin, Phone, Map, Shield } from 'lucide-react';
 import { useGeolocation } from '../../hooks/useGeolocation';
+import MapboxMap from './MapboxMap';
 import styles from '../../styles/private-mode/aid.module.css';
 
 const FILTERS = [
@@ -96,16 +97,7 @@ export default function AidPanel() {
       </div>
 
       <div className={styles.resourceMap}>
-        <div className={styles.mapPattern} aria-hidden="true" />
-        <MapPin className={`${styles.resourcePin} ${styles.resourcePinOne}`} aria-hidden="true" />
-        <MapPin className={`${styles.resourcePin} ${styles.resourcePinTwo}`} aria-hidden="true" />
-        <MapPin className={`${styles.resourcePin} ${styles.resourcePinThree}`} aria-hidden="true" />
-        {location && (
-          <div className={styles.userPin} style={{ position: 'absolute', top: '50%', left: '50%' }}>
-            <span className={styles.pinPulse} />
-            <span className={styles.pinDot} />
-          </div>
-        )}
+        <MapboxMap latitude={location?.latitude} longitude={location?.longitude} />
         <div className={styles.mapCaption}>
           {status === 'live' ? 'Showing resources near you' : 'Finding nearby help...'}
         </div>

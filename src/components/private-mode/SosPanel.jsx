@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Check, Clock, Cloud, MapPin, Shield, Users } from 'lucide-react';
+import MapboxMap from './MapboxMap';
 import styles from '../../styles/private-mode/sos.module.css';
 
 export default function SosPanel({ enabled }) {
@@ -219,15 +220,7 @@ function LocationPreview({ sent, location }) {
   return (
     <div className={styles.locationPreview}>
       <div className={styles.mapPreview}>
-        <div className={styles.mapPattern} aria-hidden="true" />
-        <div className={styles.mapRoadHorizontal} aria-hidden="true" />
-        <div className={styles.mapRoadOne} aria-hidden="true" />
-        <div className={styles.mapRoadTwo} aria-hidden="true" />
-        <div className={styles.userPin}>
-          <span className={styles.pinPulse} aria-hidden="true" />
-          <span className={styles.pinDot} aria-hidden="true" />
-          <span className={styles.pinLabel}>You</span>
-        </div>
+        <MapboxMap latitude={location?.latitude} longitude={location?.longitude} />
       </div>
 
       <div className={styles.locationBody}>
