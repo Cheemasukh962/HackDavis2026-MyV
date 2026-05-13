@@ -30,13 +30,15 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
   }, []);
 
   useEffect(() => {
+    if (!active) return;
     fetch('/api/journal?limit=1')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => { if (data) setJournalCount(data.pagination?.total ?? 0); })
       .catch(() => {});
-  }, []);
+  }, [active]);
 
   useEffect(() => {
+    if (!active) return;
     fetch('/api/friends')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
@@ -45,7 +47,7 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
         setFriendCount(accepted);
       })
       .catch(() => {});
-  }, []);
+  }, [active]);
 
   return (
     <div className={styles.homePanel}>
