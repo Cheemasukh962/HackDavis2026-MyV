@@ -94,14 +94,7 @@ export default function AidPanel() {
       return;
     }
 
-    // If resource already has coords, use them directly
-    if (resource.latitude && resource.longitude) {
-      setSelectedResource(resource);
-      mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      return;
-    }
-
-    // Geocode the address via Mapbox if no coords provided by API
+    // Always geocode via Mapbox when address is present — AI coords are unreliable
     if (resource.address) {
       try {
         const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -114,10 +107,17 @@ export default function AidPanel() {
         if (lat && lng) {
           setSelectedResource({ ...resource, latitude: lat, longitude: lng });
           mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
         }
       } catch (err) {
         console.error('[AidPanel] Geocode error:', err);
       }
+    }
+
+    // Fallback to AI-provided coords if no address or geocoding failed
+    if (resource.latitude && resource.longitude) {
+      setSelectedResource(resource);
+      mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   };
 

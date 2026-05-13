@@ -14,11 +14,11 @@ You MUST respond ONLY with a valid JSON object in the following format:
 }
 
 Guidelines:
-1. Provide 2-3 real resources for each category if possible.
+1. Provide up to 3 real resources for each category if possible.
 2. If exact coordinates don't yield specific results, use the general city/region.
 3. Keep the 'meta' field brief (e.g., "1.2 mi - Open 24h").
 4. 'phone' should be the actual contact number if available.
-5. 'address' should be the physical location for directions.
+5. 'address' should be the precise, complete physical street address for accurate geocoding (e.g., "123 Main St, Sacramento, CA 95814").
 6. 'latitude' and 'longitude' should be the decimal coordinates of the resource's address.
 7. If you absolutely cannot find real resources, provide major national/state-wide organizations that serve that area.
 8. Do NOT include any text outside the JSON block.`;
@@ -40,7 +40,7 @@ export default requireAuth(async (req, res) => {
     const client = getAnthropicClient();
     const response = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
+      max_tokens: 2048,
       system: SYSTEM_PROMPT,
       messages: [
         {

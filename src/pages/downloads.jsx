@@ -62,9 +62,9 @@ export default function Downloads() {
 
           <section className={styles.appList}>
             {APPS.map((app) => (
-              <Link 
-                key={app.theme} 
-                href={`/app/${app.theme}?install=true`} 
+              <Link
+                key={app.theme}
+                href={`/preview/${app.theme}`}
                 className={styles.pillCard}
               >
                 <img src={app.icon} alt="" className={styles.pillIcon} />
