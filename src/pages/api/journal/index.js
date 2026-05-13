@@ -5,6 +5,14 @@ const config = require('../../../config/config');
 const JournalEntry = require('../../../models/JournalEntry');
 const { JournalPrivacyFeature } = require('../../../features/journal_privacy_feature');
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '20mb',
+    },
+  },
+};
+
 export default requireAuth(async (req, res) => {
   applySecurityHeaders(res);
 

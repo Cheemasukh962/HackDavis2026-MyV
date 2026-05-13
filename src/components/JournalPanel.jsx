@@ -50,6 +50,7 @@ export default function JournalPanel() {
   };
 
   const startRecording = async () => {
+    setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
@@ -93,6 +94,7 @@ export default function JournalPanel() {
 
   const handleTextSubmit = async (text) => {
     if (!text.trim()) return;
+    setError(null);
     setLoading(true);
     try {
       const res = await fetch('/api/journal', {
@@ -124,6 +126,11 @@ export default function JournalPanel() {
   };
 
   const uploadFile = async (file) => {
+    const MAX_BYTES = 14 * 1024 * 1024;
+    if (file.size > MAX_BYTES) {
+      setError('Upload failed: file too large (max ~14 MB)');
+      return;
+    }
     setLoading(true);
     try {
       console.log('[Journal] Converting to Base64:', file.name);
