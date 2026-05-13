@@ -440,6 +440,49 @@ button.emptyFriendState:hover {
   color: white;
 }
 
+.addFriendWrap {
+  position: relative;
+}
+
+.searchDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--pm-card);
+  border: 1px solid var(--pm-border);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.searchDropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s ease;
+}
+
+.searchDropdownItem:hover {
+  background: var(--pm-muted);
+}
+
+.searchDropdownEmpty {
+  padding: 12px 16px;
+  color: var(--pm-muted-foreground);
+  font-size: 13px;
+}
+
 .addFriendLabel {
   margin: 0 0 6px 4px;
   color: var(--pm-muted-foreground);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Bot,
   Check,
@@ -380,6 +380,9 @@ function ChatRow({ chat, onOpen }) {
 
 function FriendsPanel({ myHandle, friends, setFriends }) {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchTimer = useRef(null);
 
   const incoming = friends.filter((f) => f.status === 'incoming');
   const outgoing = friends.filter((f) => f.status === 'outgoing');
@@ -435,28 +438,50 @@ function FriendsPanel({ myHandle, friends, setFriends }) {
     }
   };
 
-  const sendRequest = async () => {
-    const handle = query.trim();
-    if (!handle) return;
-    if (friends.some((f) => f.displayName.toLowerCase() === handle.toLowerCase())) return;
+  const sendRequest = useCallback(async (handle) => {
+    const name = (handle || query).trim();
+    if (!name) return;
+    if (friends.some((f) => f.displayName.toLowerCase() === name.toLowerCase())) return;
+
+    setQuery('');
+    setResults([]);
+    setShowDropdown(false);
 
     const optimisticId = `pending-${Date.now()}`;
-    setFriends((prev) => [...prev, { id: optimisticId, displayName: handle, emoji: initialsForName(handle), status: 'outgoing' }]);
-    setQuery('');
+    setFriends((prev) => [...prev, { id: optimisticId, displayName: name, emoji: initialsForName(name), status: 'outgoing' }]);
 
     try {
       const res = await fetch('/api/friends', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ anonymousDisplayName: handle }),
+        body: JSON.stringify({ anonymousDisplayName: name }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        setFriends((prev) => prev.filter((f) => f.id !== optimisticId));
+        return;
+      }
       const body = await res.json();
       if (!body.friend) return;
       setFriends((prev) => prev.map((f) => f.id === optimisticId ? normalizeFriend(body.friend) : f));
     } catch {
-      // keep optimistic row
+      setFriends((prev) => prev.filter((f) => f.id !== optimisticId));
     }
+  }, [query, friends, setFriends]);
+
+  const handleQueryChange = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    clearTimeout(searchTimer.current);
+    if (val.trim().length < 2) { setResults([]); setShowDropdown(false); return; }
+    searchTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/users/search?q=${encodeURIComponent(val.trim())}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setResults(data.users || []);
+        setShowDropdown(true);
+      } catch { /* silent */ }
+    }, 300);
   };
 
   return (
@@ -477,21 +502,45 @@ function FriendsPanel({ myHandle, friends, setFriends }) {
         </button>
       </div>
 
-      <div>
+      <div className={styles.addFriendWrap}>
         <div className={styles.addFriendLabel}>Add by display name</div>
         <label className={styles.addFriendField}>
           <Search className={styles.smallIcon} aria-hidden="true" />
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleQueryChange}
             onKeyDown={(e) => { if (e.key === 'Enter') sendRequest(); }}
-            placeholder="e.g. QuietRiver"
+            onFocus={() => { if (results.length > 0) setShowDropdown(true); }}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+            placeholder="Search by display name"
             aria-label="Add friend by display name"
+            autoComplete="off"
           />
-          <button type="button" className={styles.requestButton} disabled={!query.trim()} onClick={sendRequest}>
-            Request
-          </button>
+          {query.trim() && (
+            <button type="button" className={styles.requestButton} onClick={() => sendRequest()}>
+              Request
+            </button>
+          )}
         </label>
+        {showDropdown && (
+          <div className={styles.searchDropdown}>
+            {results.length === 0 ? (
+              <div className={styles.searchDropdownEmpty}>No users found</div>
+            ) : (
+              results.map((u) => (
+                <button
+                  key={u.id}
+                  type="button"
+                  className={styles.searchDropdownItem}
+                  onMouseDown={(e) => { e.preventDefault(); sendRequest(u.displayName); }}
+                >
+                  <span className={styles.friendAvatar} aria-hidden="true">{initialsForName(u.displayName)}</span>
+                  <span>{u.displayName}</span>
+                </button>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {incoming.length > 0 && (
