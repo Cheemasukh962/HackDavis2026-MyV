@@ -263,21 +263,27 @@ export default function OthersJournals() {
               <span>{active.hearts} sent strength</span>
             </button>
 
-            {connectState[active.handle] !== 'connected' && (
-              <button
-                type="button"
-                className={`${styles.othersConnect} ${connectState[active.handle] === 'requested' ? styles.othersConnectSent : ''}`}
-                onClick={handleConnect}
-                disabled={!!connectState[active.handle]}
-                aria-label={connectState[active.handle] === 'requested' ? 'Friend request sent' : `Connect with ${active.handle}`}
-              >
-                {connectState[active.handle] === 'requested'
-                  ? <Check className={styles.tinyIcon} aria-hidden="true" />
-                  : <UserPlus className={styles.tinyIcon} aria-hidden="true" />
-                }
-                <span>{connectState[active.handle] === 'requested' ? 'Requested' : 'Connect'}</span>
-              </button>
-            )}
+            <button
+              type="button"
+              className={`${styles.othersConnect} ${connectState[active.handle] ? styles.othersConnectSent : ''}`}
+              onClick={handleConnect}
+              disabled={!!connectState[active.handle]}
+              aria-label={
+                connectState[active.handle] === 'connected' ? 'Already friends'
+                : connectState[active.handle] === 'requested' ? 'Friend request sent'
+                : `Connect with ${active.handle}`
+              }
+            >
+              {connectState[active.handle]
+                ? <Check className={styles.tinyIcon} aria-hidden="true" />
+                : <UserPlus className={styles.tinyIcon} aria-hidden="true" />
+              }
+              <span>
+                {connectState[active.handle] === 'connected' ? 'Friends'
+                  : connectState[active.handle] === 'requested' ? 'Requested'
+                  : 'Connect'}
+              </span>
+            </button>
           </div>
         </div>
 
