@@ -237,7 +237,7 @@ export default function AppPreview({ themeKey }) {
                 Add to Home Screen
               </button>
             )}
-            <Link href={`/login?returnTo=${encodeURIComponent(`/app/${themeKey}?enter=1`)}`} className={styles.openBtn}>
+            <Link href={`/app/${themeKey}`} className={styles.openBtn}>
               Open Private Safety Tools
             </Link>
           </div>

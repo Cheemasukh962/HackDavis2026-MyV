@@ -55,6 +55,7 @@ export function usePrivacyMode() {
       if (document.visibilityState === 'hidden') {
         sessionStorage.clear();
         postToSW({ type: 'PURGE_CACHE' });
+        navigator.sendBeacon('/api/auth/logout');
       }
     };
 

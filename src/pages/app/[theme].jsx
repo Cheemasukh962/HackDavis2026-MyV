@@ -118,24 +118,29 @@ export default function AppShell({
   const [platform, setPlatform] = useState('other');
   const [installed, setInstalled] = useState(false);
   const [showPrivateMode, setShowPrivateMode] = useState(false);
+  // Track live login state separately from SSR session prop (which is stale after logout)
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(session));
 
-  // Platform detection effect
+  // Platform detection + auto-enter on ?enter=1 after login redirect
   useEffect(() => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS) setPlatform('ios');
-
-    if (router.query.install === 'true') {
-      setShowModal(true);
-    }
-
-    // Auto-enter private mode after returning from login
-    if (router.query.enter === '1' && session) {
+    if (router.query.install === 'true') setShowModal(true);
+    if (router.query.enter === '1' && isLoggedIn) {
       setShowPrivateMode(true);
+      // Strip ?enter=1 from URL so reload doesn't re-trigger
+      router.replace(`/app/${themeKey}`, undefined, { shallow: true });
     }
-  }, [router.query.install, router.query.enter, session]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const doLogout = () => {
+    fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
+    setIsLoggedIn(false);
+  };
 
   const handleEnterPrivateMode = () => {
-    if (!session) {
+    if (!isLoggedIn) {
       const returnTo = encodeURIComponent(`/app/${themeKey}?enter=1`);
       router.push(`/login?returnTo=${returnTo}`);
       return;
@@ -147,25 +152,38 @@ export default function AppShell({
   const prevPrivateMode = useRef(false);
   useEffect(() => {
     if (prevPrivateMode.current && !showPrivateMode) {
-      fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
+      doLogout();
     }
     prevPrivateMode.current = showPrivateMode;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPrivateMode]);
 
   const handleBackToApp = () => setShowPrivateMode(false);
 
-  // Log out and show cover when back button is pressed while in private mode
+  // Log out when back button pressed while in private mode
   const showPrivateModeRef = useRef(showPrivateMode);
   showPrivateModeRef.current = showPrivateMode;
   useEffect(() => {
     const handlePopState = () => {
       if (showPrivateModeRef.current) {
-        fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
+        doLogout();
         setShowPrivateMode(false);
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Log out when navigating away from the page entirely (tab close, URL change, etc.)
+  useEffect(() => {
+    const handleUnload = () => {
+      if (showPrivateModeRef.current) {
+        navigator.sendBeacon('/api/auth/logout');
+      }
+    };
+    window.addEventListener('pagehide', handleUnload);
+    return () => window.removeEventListener('pagehide', handleUnload);
   }, []);
 
   // Install prompt event listeners effect
