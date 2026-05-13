@@ -79,7 +79,7 @@ function applyLikedCache(journals) {
   return journals.map((j) => ({ ...j, likedByMe: cache[j.id] ?? j.likedByMe }));
 }
 
-export default function OthersJournals({ active }) {
+export default function OthersJournals({ isActive }) {
   const [journals, setJournals] = useState(() => applyLikedCache(FALLBACK_JOURNALS));
   const [activeIndex, setActiveIndex] = useState(4);
   const [paused, setPaused] = useState(false);
@@ -93,7 +93,7 @@ export default function OthersJournals({ active }) {
   activeIndexRef.current = activeIndex;
 
   useEffect(() => {
-    if (!active) return;
+    if (!isActive) return;
     fetch('/api/friends')
       .then((r) => r.ok ? r.json() : null)
       .then((data) => {
@@ -108,7 +108,7 @@ export default function OthersJournals({ active }) {
         setConnectState(next);
       })
       .catch(() => {});
-  }, [active]);
+  }, [isActive]);
 
   useEffect(() => {
     let mounted = true;

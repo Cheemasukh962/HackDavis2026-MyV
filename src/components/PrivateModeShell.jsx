@@ -16,7 +16,7 @@ const TABS = [
   { id: 'aid', title: 'Resources', label: 'Aid', Icon: LifeBuoy },
 ];
 
-export default function PrivateModeShell({ displayName, sosEnabled = false }) {
+export default function PrivateModeShell({ displayName, sosEnabled = false, onBackToApp, appName }) {
   const [activeTab, setActiveTab] = useState('home');
 
   const activeTitle = useMemo(
@@ -43,7 +43,7 @@ export default function PrivateModeShell({ displayName, sosEnabled = false }) {
 
         <main className={styles.content}>
           <Panel active={activeTab === 'home'}>
-            <HomePanel onNavigate={setActiveTab} active={activeTab === 'home'} />
+            <HomePanel onNavigate={setActiveTab} active={activeTab === 'home'} onBackToApp={onBackToApp} appName={appName} />
           </Panel>
           <Panel active={activeTab === 'sos'}>
             <SosPanel enabled={sosEnabled} />

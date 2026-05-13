@@ -187,9 +187,9 @@ export default function LoginPage() {
 
 function getSafeReturnTo(value) {
   const candidate = Array.isArray(value) ? value[0] : value;
-  return typeof candidate === 'string' && candidate.startsWith('/app/')
-    ? candidate
-    : '/app/calculator';
+  if (typeof candidate !== 'string') return '/app/calculator';
+  const path = candidate.split('?')[0];
+  return path.startsWith('/app/') ? candidate : '/app/calculator';
 }
 
 // Redirect to app if already authenticated.

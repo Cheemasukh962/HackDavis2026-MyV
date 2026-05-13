@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import PanicExit from '../../components/PanicExit';
 import Button from '../../components/Button';
@@ -8,7 +8,7 @@ import NewsCover from '../../components/NewsCover';
 import PrivateModeShell from '../../components/PrivateModeShell';
 import WeatherCover from '../../components/WeatherCover';
 import { usePrivacyMode } from '../../hooks/usePrivacyMode';
-import { withAuth } from '../../lib/withAuth';
+import { withOptionalAuth } from '../../lib/withOptionalAuth';
 import landingStyles from '../../styles/Landing.module.css';
 
 const ShieldIcon = ({ className }) => (
@@ -121,15 +121,38 @@ export default function AppShell({
 
   // Platform detection effect
   useEffect(() => {
-    // Check platform
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (isIOS) setPlatform('ios');
 
-    // Auto-show modal if install flag is present
     if (router.query.install === 'true') {
       setShowModal(true);
     }
-  }, [router.query.install]);
+
+    // Auto-enter private mode after returning from login
+    if (router.query.enter === '1' && session) {
+      setShowPrivateMode(true);
+    }
+  }, [router.query.install, router.query.enter, session]);
+
+  const handleEnterPrivateMode = () => {
+    if (!session) {
+      const returnTo = encodeURIComponent(`/app/${themeKey}?enter=1`);
+      router.push(`/login?returnTo=${returnTo}`);
+      return;
+    }
+    setShowPrivateMode(true);
+  };
+
+  // Log out whenever private mode is dismissed back to the cover app
+  const prevPrivateMode = useRef(false);
+  useEffect(() => {
+    if (prevPrivateMode.current && !showPrivateMode) {
+      fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
+    }
+    prevPrivateMode.current = showPrivateMode;
+  }, [showPrivateMode]);
+
+  const handleBackToApp = () => setShowPrivateMode(false);
 
   // Install prompt event listeners effect
   useEffect(() => {
@@ -169,7 +192,7 @@ export default function AppShell({
     if (themeKey === 'calculator') return <CalculatorCover />;
     if (themeKey === 'news') return <NewsCover />;
     if (themeKey === 'weather') return <WeatherCover />;
-    return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} />;
+    return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />;
   };
 
   return (
@@ -212,7 +235,7 @@ export default function AppShell({
 
         {/* ── Main Content ── */}
         {showPrivateMode ? (
-          <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} />
+          <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />
         ) : (
           <>
             {renderCover()}
@@ -221,7 +244,7 @@ export default function AppShell({
       </main>
 
       <PanicExit showButton={!showPrivateMode} />
-      {!showPrivateMode && <Button onClick={() => setShowPrivateMode(true)} />}
+      {!showPrivateMode && <Button onClick={handleEnterPrivateMode} />}
 
       {/* Persistent Install Trigger for non-PWA mode */}
       {installPrompt && !showModal && (
@@ -234,7 +257,7 @@ export default function AppShell({
   );
 }
 
-export const getServerSideProps = withAuth(async (context) => {
+export const getServerSideProps = withOptionalAuth(async (context) => {
   const config = require('../../config/config');
   const { params } = context;
   const theme = THEMES[params.theme];

@@ -11,7 +11,7 @@ import OthersJournals from './OthersJournals';
 import MomentForYou from './MomentForYou';
 import styles from '../../styles/private-mode/home.module.css';
 
-export default function HomePanel({ onNavigate, active }) {
+export default function HomePanel({ onNavigate, active, onBackToApp, appName }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const [friendCount, setFriendCount] = useState(null);
@@ -58,7 +58,7 @@ export default function HomePanel({ onNavigate, active }) {
         </div>
       </div>
 
-      <OthersJournals active={active} />
+      <OthersJournals isActive={active} />
 
       <div>
         <div className={styles.actionHeading}>Quick actions</div>
@@ -86,6 +86,12 @@ export default function HomePanel({ onNavigate, active }) {
       </div>
 
       <p className={styles.homeFooter}>You are not alone. Help is one tap away.</p>
+
+      {onBackToApp && (
+        <button type="button" className={styles.backToAppBtn} onClick={onBackToApp}>
+          ← Back to {appName || 'App'}
+        </button>
+      )}
     </div>
   );
 }

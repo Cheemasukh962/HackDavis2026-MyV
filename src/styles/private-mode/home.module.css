@@ -213,6 +213,25 @@
   font-size: 12px;
 }
 
+.backToAppBtn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--pm-radius-lg);
+  background: transparent;
+  color: var(--pm-muted-foreground);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.backToAppBtn:hover,
+.backToAppBtn:focus-visible {
+  opacity: 1;
+}
+
 .othersJournals {
   display: flex;
   flex-direction: column;
