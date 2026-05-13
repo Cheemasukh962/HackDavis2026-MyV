@@ -10,6 +10,7 @@ const FALLBACK_JOURNALS = [
     text: 'Today I packed a small bag and hid it at my sister\'s. It felt like the first real breath I have taken in months.',
     when: '2 hours ago',
     hearts: 24,
+    likedByMe: false,
   },
   {
     id: 'shared-2',
@@ -18,6 +19,7 @@ const FALLBACK_JOURNALS = [
     text: 'I told my doctor what was happening. She believed me. I did not realize how much I needed someone to believe me.',
     when: '5 hours ago',
     hearts: 41,
+    likedByMe: false,
   },
   {
     id: 'shared-3',
@@ -26,6 +28,7 @@ const FALLBACK_JOURNALS = [
     text: 'One year out today. I painted my apartment the color I always wanted. It is a soft yellow.',
     when: 'Yesterday',
     hearts: 112,
+    likedByMe: false,
   },
   {
     id: 'shared-4',
@@ -34,6 +37,7 @@ const FALLBACK_JOURNALS = [
     text: 'I do not know if I am ready to leave. But I am writing it down so I remember why I want to.',
     when: 'Yesterday',
     hearts: 18,
+    likedByMe: false,
   },
   {
     id: 'shared-5',
@@ -42,6 +46,7 @@ const FALLBACK_JOURNALS = [
     text: 'The shelter let me bring my dog. I cried in the parking lot for an hour.',
     when: '2 days ago',
     hearts: 67,
+    likedByMe: false,
   },
   {
     id: 'shared-6',
@@ -50,8 +55,11 @@ const FALLBACK_JOURNALS = [
     text: 'Court was today. My voice did not shake. I am proud of me.',
     when: '3 days ago',
     hearts: 89,
+    likedByMe: false,
   },
 ];
+
+const REAL_ID_RE = /^[0-9a-fA-F]{24}$/;
 
 export default function OthersJournals() {
   const [journals, setJournals] = useState(FALLBACK_JOURNALS);
@@ -72,14 +80,12 @@ export default function OthersJournals() {
         setJournals(incoming.map(normalizeJournal).filter(Boolean));
         setActiveIndex(0);
       } catch {
-        // Keep the seeded examples until an anonymized community endpoint exists.
+        // Keep the seeded examples until community entries exist.
       }
     }
 
     loadSharedJournals();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
@@ -98,6 +104,47 @@ export default function OthersJournals() {
     [activeIndex, journals.length]
   );
 
+  const handleCardClick = () => {
+    setActiveIndex((i) => (i + 1) % journals.length);
+  };
+
+  const handleHeart = async (e) => {
+    e.stopPropagation();
+
+    const entry = journals[activeIndex];
+
+    // Optimistic update
+    setJournals((prev) =>
+      prev.map((j) =>
+        j.id === entry.id
+          ? { ...j, hearts: j.likedByMe ? j.hearts - 1 : j.hearts + 1, likedByMe: !j.likedByMe }
+          : j
+      )
+    );
+
+    // Only persist for real DB entries
+    if (!REAL_ID_RE.test(entry.id)) return;
+
+    try {
+      const res = await fetch(`/api/journal/${entry.id}/heart`, { method: 'POST' });
+      if (!res.ok) throw new Error('failed');
+      const data = await res.json();
+      // Sync authoritative count from server
+      setJournals((prev) =>
+        prev.map((j) => (j.id === entry.id ? { ...j, hearts: data.hearts, likedByMe: data.liked } : j))
+      );
+    } catch {
+      // Revert optimistic update
+      setJournals((prev) =>
+        prev.map((j) =>
+          j.id === entry.id
+            ? { ...j, hearts: j.likedByMe ? j.hearts - 1 : j.hearts + 1, likedByMe: !j.likedByMe }
+            : j
+        )
+      );
+    }
+  };
+
   return (
     <section
       className={styles.othersJournals}
@@ -112,7 +159,12 @@ export default function OthersJournals() {
         <span>{positionLabel}</span>
       </div>
 
-      <div className={styles.othersCard} aria-live="polite">
+      <div
+        className={styles.othersCard}
+        aria-live="polite"
+        onClick={handleCardClick}
+        style={{ cursor: 'pointer' }}
+      >
         <Quote className={styles.othersQuoteIcon} aria-hidden="true" />
         <div key={active.id} className={styles.othersSlide}>
           <div className={styles.othersPerson}>
@@ -131,10 +183,20 @@ export default function OthersJournals() {
 
           <p>&quot;{active.text}&quot;</p>
 
-          <div className={styles.othersStrength}>
-            <Heart className={styles.tinyIcon} aria-hidden="true" />
+          <button
+            type="button"
+            className={`${styles.othersStrength} ${active.likedByMe ? styles.othersStrengthLiked : ''}`}
+            onClick={handleHeart}
+            aria-label={active.likedByMe ? 'Unlike' : 'Send strength'}
+            aria-pressed={active.likedByMe}
+          >
+            <Heart
+              className={styles.tinyIcon}
+              aria-hidden="true"
+              style={{ fill: active.likedByMe ? 'currentColor' : 'none' }}
+            />
             <span>{active.hearts} sent strength</span>
-          </div>
+          </button>
         </div>
 
         <div className={styles.othersDots} aria-label="Shared journal pages">
@@ -145,7 +207,7 @@ export default function OthersJournals() {
               className={index === activeIndex ? styles.othersDotActive : ''}
               aria-label={`Show shared journal ${index + 1}`}
               aria-pressed={index === activeIndex}
-              onClick={() => setActiveIndex(index)}
+              onClick={(e) => { e.stopPropagation(); setActiveIndex(index); }}
             />
           ))}
         </div>
@@ -169,6 +231,7 @@ function normalizeJournal(entry) {
     text: content.length > 165 ? `${content.slice(0, 162)}...` : content,
     when: entry.when || formatWhen(entry.createdAt),
     hearts: Number(entry.hearts || entry.strength || entry.reactions || 0),
+    likedByMe: Boolean(entry.likedByMe),
   };
 }
 

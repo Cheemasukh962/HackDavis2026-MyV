@@ -52,6 +52,18 @@ const journalEntrySchema = new mongoose.Schema({
     index: true,
   },
 
+  hearts: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+
+  likedBy: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: [],
+  },
+
   createdAt: { type: Date, default: Date.now, immutable: true },
   updatedAt: { type: Date, default: Date.now },
 });
