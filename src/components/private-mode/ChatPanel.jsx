@@ -81,7 +81,7 @@ export default function ChatPanel({ displayName }) {
     }
   }, [transcript, clearTranscript]);
 
-  // Load real friend list
+  // Load real friend list (and prefetch threads so last-message preview is populated)
   useEffect(() => {
     let cancelled = false;
 
@@ -104,6 +104,30 @@ export default function ChatPanel({ displayName }) {
           .map((f) => normalizeFriend(f, trustedFriendIds));
 
         if (!cancelled && nextFriends.length > 0) setFriends(nextFriends);
+
+        // Prefetch message threads for accepted friends so chat list shows real last message
+        const toFetch = nextFriends.filter((f) => f.status === 'accepted' && isRealId(f.id));
+        if (toFetch.length === 0) return;
+
+        const settled = await Promise.allSettled(
+          toFetch.map((f) =>
+            fetch(`/api/messages/${f.id}`)
+              .then((r) => (r.ok ? r.json() : null))
+              .then((data) => ({ id: f.id, messages: data?.messages || [] }))
+          )
+        );
+
+        if (cancelled) return;
+        setThreads((prev) => {
+          const next = { ...prev };
+          settled.forEach((r) => {
+            if (r.status === 'fulfilled' && r.value.messages.length > 0) {
+              next[r.value.id] = normalizeApiMessages(r.value.messages);
+              loadedRef.current.add(r.value.id);
+            }
+          });
+          return next;
+        });
       } catch {
         // keep empty list on error
       }
