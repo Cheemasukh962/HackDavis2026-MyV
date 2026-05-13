@@ -154,6 +154,20 @@ export default function AppShell({
 
   const handleBackToApp = () => setShowPrivateMode(false);
 
+  // Log out and show cover when back button is pressed while in private mode
+  const showPrivateModeRef = useRef(showPrivateMode);
+  showPrivateModeRef.current = showPrivateMode;
+  useEffect(() => {
+    const handlePopState = () => {
+      if (showPrivateModeRef.current) {
+        fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
+        setShowPrivateMode(false);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Install prompt event listeners effect
   useEffect(() => {
     const onPrompt = (event) => {
