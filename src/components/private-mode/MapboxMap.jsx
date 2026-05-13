@@ -21,9 +21,8 @@ function createMarker(mapboxgl, map, lng, lat) {
 
 export default function MapboxMap({ latitude, longitude }) {
   const containerRef = useRef(null);
-  const mapRef = useRef(null);
+  const mapRef = useRef(null);      // only set AFTER map 'load' fires
   const markerRef = useRef(null);
-  // Always holds the latest coords so async init can read them on completion
   const coordsRef = useRef({ latitude, longitude });
   coordsRef.current = { latitude, longitude };
 
@@ -37,24 +36,26 @@ export default function MapboxMap({ latitude, longitude }) {
 
       mapboxgl.accessToken = TOKEN;
 
-      // Read latest coords at the time map finishes loading (not stale closure)
-      const { latitude: lat, longitude: lng } = coordsRef.current;
-      const center = lat && lng ? [lng, lat] : DEFAULT_CENTER;
-
       const map = new mapboxgl.Map({
         container: containerRef.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: DEFAULT_CENTER,
         zoom: 14,
         scrollZoom: false,
         attributionControl: false,
       });
 
-      if (lat && lng) {
-        markerRef.current = createMarker(mapboxgl, map, lng, lat);
-      }
-
-      mapRef.current = map;
+      map.once('load', () => {
+        if (cancelled) return;
+        // Read latest coords — may have arrived during the async gap
+        const { latitude: lat, longitude: lng } = coordsRef.current;
+        if (lat && lng) {
+          map.setCenter([lng, lat]);
+          markerRef.current = createMarker(mapboxgl, map, lng, lat);
+        }
+        // Only expose the map ref after it's fully ready
+        mapRef.current = map;
+      });
     }
 
     init();
@@ -69,6 +70,7 @@ export default function MapboxMap({ latitude, longitude }) {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Runs when location updates after the map is already loaded
   useEffect(() => {
     if (!mapRef.current || !latitude || !longitude) return;
 

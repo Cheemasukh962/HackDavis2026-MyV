@@ -33,14 +33,11 @@ export default function AidPanel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { location, startLiveLocation, status } = useGeolocation();
+  const { location, startLiveLocation } = useGeolocation();
 
   useEffect(() => {
-    // Start getting location when the panel mounts
-    if (!location) {
-      startLiveLocation();
-    }
-  }, [location, startLiveLocation]);
+    startLiveLocation();
+  }, [startLiveLocation]); // startLiveLocation is stable; this runs once on mount
 
   useEffect(() => {
     async function fetchNearbyAid() {
@@ -97,9 +94,12 @@ export default function AidPanel() {
       </div>
 
       <div className={styles.resourceMap}>
-        <MapboxMap latitude={location?.latitude} longitude={location?.longitude} />
+        <MapboxMap
+          latitude={location ? Math.round(location.latitude * 10000) / 10000 : undefined}
+          longitude={location ? Math.round(location.longitude * 10000) / 10000 : undefined}
+        />
         <div className={styles.mapCaption}>
-          {status === 'live' ? 'Showing resources near you' : 'Finding nearby help...'}
+          {location ? 'Showing resources near you' : 'Finding nearby help...'}
         </div>
       </div>
 
