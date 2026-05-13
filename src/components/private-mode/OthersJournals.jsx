@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Heart, Quote } from 'lucide-react';
 import styles from '../../styles/private-mode/home.module.css';
 
@@ -128,47 +128,59 @@ export default function OthersJournals() {
     [activeIndex, journals.length]
   );
 
-  const handleCardClick = () => {
+  // Ref on the heart wrapper — lets handleCardClick skip clicks from inside it
+  const heartRef = useRef(null);
+
+  const handleCardClick = (e) => {
+    if (heartRef.current?.contains(e.target)) return;
     setActiveIndex((i) => (i + 1) % journals.length);
   };
 
-  const handleHeart = async (e) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleHeart = async () => {
+    const entryId = journals[activeIndex]?.id;
+    if (!entryId) return;
 
-    const entry = journals[activeIndex];
-    const nowLiked = !entry.likedByMe;
-
-    // Optimistic update + cache
-    writeLikedCache(entry.id, nowLiked);
-    setJournals((prev) =>
-      prev.map((j) =>
-        j.id === entry.id
+    // Derive nowLiked from latest state inside the updater to avoid stale closures
+    let nowLiked;
+    setJournals((prev) => {
+      const target = prev.find((j) => j.id === entryId);
+      if (!target) return prev;
+      nowLiked = !target.likedByMe;
+      writeLikedCache(entryId, nowLiked);
+      return prev.map((j) =>
+        j.id === entryId
           ? { ...j, hearts: nowLiked ? j.hearts + 1 : Math.max(0, j.hearts - 1), likedByMe: nowLiked }
           : j
-      )
-    );
+      );
+    });
 
-    if (!REAL_ID_RE.test(entry.id)) return;
+    if (!REAL_ID_RE.test(entryId)) return;
+
+    // Wait one tick so nowLiked is set from the updater above
+    await Promise.resolve();
+    if (nowLiked === undefined) return;
 
     try {
-      const res = await fetch(`/api/journal/${entry.id}/heart`, { method: 'POST' });
+      const res = await fetch(`/api/journal/${entryId}/heart`, { method: 'POST' });
       if (!res.ok) throw new Error('failed');
       const data = await res.json();
-      writeLikedCache(entry.id, data.liked);
+      writeLikedCache(entryId, data.liked);
       setJournals((prev) =>
-        prev.map((j) => (j.id === entry.id ? { ...j, hearts: data.hearts, likedByMe: data.liked } : j))
+        prev.map((j) => (j.id === entryId ? { ...j, hearts: data.hearts, likedByMe: data.liked } : j))
       );
     } catch {
-      // Revert
-      writeLikedCache(entry.id, !nowLiked);
-      setJournals((prev) =>
-        prev.map((j) =>
-          j.id === entry.id
-            ? { ...j, hearts: nowLiked ? Math.max(0, j.hearts - 1) : j.hearts + 1, likedByMe: !nowLiked }
+      // Revert on API failure
+      setJournals((prev) => {
+        const target = prev.find((j) => j.id === entryId);
+        if (!target) return prev;
+        const reverted = !target.likedByMe;
+        writeLikedCache(entryId, reverted);
+        return prev.map((j) =>
+          j.id === entryId
+            ? { ...j, hearts: reverted ? j.hearts + 1 : Math.max(0, j.hearts - 1), likedByMe: reverted }
             : j
-        )
-      );
+        );
+      });
     }
   };
 
@@ -210,22 +222,21 @@ export default function OthersJournals() {
 
           <p>&quot;{active.text}&quot;</p>
 
-          {/* Stop-propagation wrapper keeps heart click from advancing the card */}
-          <div onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            className={`${styles.othersStrength} ${active.likedByMe ? styles.othersStrengthLiked : ''}`}
-            onClick={handleHeart}
-            aria-label={active.likedByMe ? 'Unlike' : 'Send strength'}
-            aria-pressed={active.likedByMe}
-          >
-            <Heart
-              className={styles.tinyIcon}
-              aria-hidden="true"
-              style={{ fill: active.likedByMe ? 'currentColor' : 'none' }}
-            />
-            <span>{active.hearts} sent strength</span>
-          </button>
+          <div ref={heartRef}>
+            <button
+              type="button"
+              className={`${styles.othersStrength} ${active.likedByMe ? styles.othersStrengthLiked : ''}`}
+              onClick={handleHeart}
+              aria-label={active.likedByMe ? 'Unlike' : 'Send strength'}
+              aria-pressed={active.likedByMe}
+            >
+              <Heart
+                className={styles.tinyIcon}
+                aria-hidden="true"
+                style={{ fill: active.likedByMe ? 'currentColor' : 'none' }}
+              />
+              <span>{active.hearts} sent strength</span>
+            </button>
           </div>
         </div>
 
