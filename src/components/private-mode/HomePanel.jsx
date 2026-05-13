@@ -16,6 +16,7 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const [friendCount, setFriendCount] = useState(null);
   const [locationOn, setLocationOn] = useState(false);
+  const [journalCount, setJournalCount] = useState(null);
 
   useEffect(() => {
     if (!navigator.permissions) return;
@@ -26,6 +27,13 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
       status.onchange = () => setLocationOn(status.state === 'granted');
     }).catch(() => {});
     return () => { if (permStatus) permStatus.onchange = null; };
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/journal?limit=1')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data) setJournalCount(data.pagination?.total ?? 0); })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -66,7 +74,7 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
         <div className={styles.miniGrid}>
           <Mini label="Contacts" value={friendCount === null ? '—' : String(friendCount)} />
           <Mini label="Location" value={locationOn ? 'On' : 'Off'} on={locationOn} />
-          <Mini label="Backup" value="0" />
+          <Mini label="Backup" value={journalCount === null ? '—' : String(journalCount)} />
         </div>
       </div>
 
