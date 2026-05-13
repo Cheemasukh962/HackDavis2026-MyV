@@ -43,7 +43,7 @@ export default function PrivateModeShell({ displayName, sosEnabled = false }) {
 
         <main className={styles.content}>
           <Panel active={activeTab === 'home'}>
-            <HomePanel onNavigate={setActiveTab} />
+            <HomePanel onNavigate={setActiveTab} active={activeTab === 'home'} />
           </Panel>
           <Panel active={activeTab === 'sos'}>
             <SosPanel enabled={sosEnabled} />

@@ -11,7 +11,7 @@ import OthersJournals from './OthersJournals';
 import MomentForYou from './MomentForYou';
 import styles from '../../styles/private-mode/home.module.css';
 
-export default function HomePanel({ onNavigate }) {
+export default function HomePanel({ onNavigate, active }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const [friendCount, setFriendCount] = useState(null);
@@ -58,7 +58,7 @@ export default function HomePanel({ onNavigate }) {
         </div>
       </div>
 
-      <OthersJournals />
+      <OthersJournals active={active} />
 
       <div>
         <div className={styles.actionHeading}>Quick actions</div>
