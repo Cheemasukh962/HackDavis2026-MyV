@@ -137,6 +137,10 @@
   font-size: 11px;
 }
 
+.miniValueOn {
+  color: #2d8a4e;
+}
+
 .miniCard strong {
   display: block;
   margin-top: 3px;

@@ -15,6 +15,18 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const [friendCount, setFriendCount] = useState(null);
+  const [locationOn, setLocationOn] = useState(false);
+
+  useEffect(() => {
+    if (!navigator.permissions) return;
+    let permStatus;
+    navigator.permissions.query({ name: 'geolocation' }).then((status) => {
+      permStatus = status;
+      setLocationOn(status.state === 'granted');
+      status.onchange = () => setLocationOn(status.state === 'granted');
+    }).catch(() => {});
+    return () => { if (permStatus) permStatus.onchange = null; };
+  }, []);
 
   useEffect(() => {
     fetch('/api/friends')
@@ -53,7 +65,7 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
         </div>
         <div className={styles.miniGrid}>
           <Mini label="Contacts" value={friendCount === null ? '—' : String(friendCount)} />
-          <Mini label="Location" value="Off" />
+          <Mini label="Location" value={locationOn ? 'On' : 'Off'} on={locationOn} />
           <Mini label="Backup" value="0" />
         </div>
       </div>
@@ -96,11 +108,11 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
   );
 }
 
-function Mini({ label, value }) {
+function Mini({ label, value, on }) {
   return (
     <div className={styles.miniCard}>
       <span>{label}</span>
-      <strong>{value}</strong>
+      <strong className={on ? styles.miniValueOn : undefined}>{value}</strong>
     </div>
   );
 }
