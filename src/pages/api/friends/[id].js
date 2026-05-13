@@ -57,6 +57,18 @@ export default requireAuth(async (req, res) => {
       return res.status(404).json({ error: 'Friend request not found.' });
     }
 
+    // Requester cancels their own pending outgoing request.
+    if (action === 'cancel') {
+      if (friend.requesterId._id.toString() !== userId) {
+        return res.status(403).json({ error: 'Only the requester can cancel a request.' });
+      }
+      if (friend.status !== 'pending') {
+        return res.status(400).json({ error: 'Only pending requests can be cancelled.' });
+      }
+      await Friend.findByIdAndDelete(id);
+      return res.status(200).json({ message: 'Request cancelled.' });
+    }
+
     if (friend.recipientId._id.toString() !== userId) {
       return res.status(403).json({ error: 'Only the recipient can respond to a friend request.' });
     }
@@ -70,7 +82,7 @@ export default requireAuth(async (req, res) => {
     } else if (action === 'reject') {
       friend.status = 'rejected';
     } else {
-      return res.status(400).json({ error: 'action must be accept or reject.' });
+      return res.status(400).json({ error: 'action must be accept, reject, or cancel.' });
     }
 
     friend.updatedAt = new Date();

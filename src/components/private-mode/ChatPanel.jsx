@@ -417,8 +417,39 @@ function FriendsPanel({ myHandle, friends, setFriends }) {
   const accepted = friends.filter((f) => f.status === 'accepted');
   const trustedCount = accepted.filter((f) => f.isTrusted).length;
 
-  const accept = (id) => setFriends((prev) => prev.map((f) => f.id === id ? { ...f, status: 'accepted' } : f));
-  const remove = (id) => setFriends((prev) => prev.filter((f) => f.id !== id));
+  const accept = async (id) => {
+    setFriends((prev) => prev.map((f) => f.id === id ? { ...f, status: 'accepted' } : f));
+    if (!isRealId(id)) return;
+    try {
+      await fetch(`/api/friends/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'accept' }),
+      });
+    } catch { /* keep optimistic */ }
+  };
+
+  const remove = async (id, friendStatus) => {
+    setFriends((prev) => prev.filter((f) => f.id !== id));
+    if (!isRealId(id)) return;
+    try {
+      if (friendStatus === 'accepted') {
+        await fetch(`/api/friends/${id}`, { method: 'DELETE' });
+      } else if (friendStatus === 'incoming') {
+        await fetch(`/api/friends/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reject' }),
+        });
+      } else {
+        await fetch(`/api/friends/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'cancel' }),
+        });
+      }
+    } catch { /* keep optimistic */ }
+  };
 
   const toggleTrusted = async (id, value) => {
     setFriends((prev) => prev.map((f) => f.id === id ? { ...f, isTrusted: value } : f));
@@ -501,7 +532,7 @@ function FriendsPanel({ myHandle, friends, setFriends }) {
               <button type="button" className={styles.acceptButton} aria-label={`Accept ${f.displayName}`} onClick={() => accept(f.id)}>
                 <Check className={styles.tinyIcon} aria-hidden="true" />
               </button>
-              <button type="button" className={styles.friendIconButton} aria-label={`Decline ${f.displayName}`} onClick={() => remove(f.id)}>
+              <button type="button" className={styles.friendIconButton} aria-label={`Decline ${f.displayName}`} onClick={() => remove(f.id, 'incoming')}>
                 <X className={styles.tinyIcon} aria-hidden="true" />
               </button>
             </FriendRow>
@@ -514,7 +545,7 @@ function FriendsPanel({ myHandle, friends, setFriends }) {
           {outgoing.map((f) => (
             <FriendRow key={f.id} friend={f}>
               <span className={styles.friendMutedText}>Waiting...</span>
-              <button type="button" className={styles.friendIconButton} aria-label={`Cancel request to ${f.displayName}`} onClick={() => remove(f.id)}>
+              <button type="button" className={styles.friendIconButton} aria-label={`Cancel request to ${f.displayName}`} onClick={() => remove(f.id, 'outgoing')}>
                 <X className={styles.tinyIcon} aria-hidden="true" />
               </button>
             </FriendRow>
@@ -541,7 +572,12 @@ function FriendsPanel({ myHandle, friends, setFriends }) {
           </div>
         ) : (
           accepted.map((f) => (
-            <AcceptedFriendRow key={f.id} friend={f} onToggle={(v) => toggleTrusted(f.id, v)} />
+            <AcceptedFriendRow
+              key={f.id}
+              friend={f}
+              onToggle={(v) => toggleTrusted(f.id, v)}
+              onRemove={() => remove(f.id, 'accepted')}
+            />
           ))
         )}
       </FriendSection>
@@ -558,7 +594,7 @@ function FriendSection({ title, children }) {
   );
 }
 
-function AcceptedFriendRow({ friend, onToggle }) {
+function AcceptedFriendRow({ friend, onToggle, onRemove }) {
   const trusted = Boolean(friend.isTrusted);
   return (
     <div className={`${styles.acceptedFriendRow} ${trusted ? styles.acceptedFriendRowTrusted : ''}`}>
@@ -581,6 +617,9 @@ function AcceptedFriendRow({ friend, onToggle }) {
           onClick={() => onToggle(!trusted)}
         >
           <span aria-hidden="true" />
+        </button>
+        <button type="button" className={styles.friendIconButton} aria-label={`Remove ${friend.displayName}`} onClick={onRemove}>
+          <X className={styles.tinyIcon} aria-hidden="true" />
         </button>
       </div>
       {trusted && (

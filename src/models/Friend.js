@@ -43,6 +43,12 @@ const friendSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  // Exempt from the 30-day pending-expiry rule (used for seeded demo requests).
+  noExpiry: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 friendSchema.pre('save', function (next) {

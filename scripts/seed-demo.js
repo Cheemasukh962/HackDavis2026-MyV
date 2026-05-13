@@ -45,6 +45,7 @@ const friendSchema = new mongoose.Schema({
   recipientId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   pairKey: { type: String, required: true, unique: true },
   status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+  noExpiry: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now, immutable: true },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -155,7 +156,8 @@ const DEMO_JOURNALS = [
   },
 ];
 
-// ── Demo chats (main user ↔ each demo user) ───────────────────────────────────
+// ── Demo chats (main user ↔ accepted friends only) ────────────────────────────
+// SilverPine and EmberMoth are pending requests — no chat history for them.
 // Each entry: sender is 'main' or the demo username; minutesAgo counts back from now.
 
 const DEMO_CHATS = {
@@ -181,28 +183,12 @@ const DEMO_CHATS = {
     { sender: 'main', text: "Your own keys. That's everything.", minutesAgo: 3 * 24 * 60 },
   ],
 
-  demo_silverpine: [
-    { sender: 'main', text: "Are you okay? Your last entry stayed with me.", minutesAgo: 5 * 24 * 60 + 60 },
-    { sender: 'demo_silverpine', text: "Still here. Still writing. That counts for something I think.", minutesAgo: 5 * 24 * 60 + 30 },
-    { sender: 'main', text: "It counts for a lot. Please reach out anytime.", minutesAgo: 5 * 24 * 60 + 10 },
-    { sender: 'demo_silverpine', text: "I will. It helps knowing someone reads it.", minutesAgo: 5 * 24 * 60 },
-  ],
-
   demo_blueharbor: [
     { sender: 'demo_blueharbor', text: "The shelter let me bring my dog. I almost didn't go because of him.", minutesAgo: 4 * 24 * 60 + 90 },
     { sender: 'main', text: "I am so glad you went. Both of you.", minutesAgo: 4 * 24 * 60 + 60 },
     { sender: 'demo_blueharbor', text: "He keeps me going honestly.", minutesAgo: 4 * 24 * 60 + 45 },
     { sender: 'main', text: "That sounds like a very good dog.", minutesAgo: 4 * 24 * 60 + 30 },
     { sender: 'demo_blueharbor', text: "The best. His name is Chester.", minutesAgo: 4 * 24 * 60 },
-  ],
-
-  demo_embermoth: [
-    { sender: 'demo_embermoth', text: "Court is today. I'm terrified.", minutesAgo: 3 * 24 * 60 + 240 },
-    { sender: 'main', text: "You've prepared for this. You've got this.", minutesAgo: 3 * 24 * 60 + 220 },
-    { sender: 'demo_embermoth', text: "What if I freeze up?", minutesAgo: 3 * 24 * 60 + 210 },
-    { sender: 'main', text: "Your advocate will be right there. You don't have to do it alone.", minutesAgo: 3 * 24 * 60 + 200 },
-    { sender: 'demo_embermoth', text: "It went okay. My voice didn't shake.", minutesAgo: 3 * 24 * 60 + 60 },
-    { sender: 'main', text: "I knew it. I am so proud of you.", minutesAgo: 3 * 24 * 60 },
   ],
 };
 
@@ -259,7 +245,11 @@ async function seed() {
     console.log(`  Created journal for ${j.username}`);
   }
 
-  // ── 3. Create accepted friend relationships between main and each demo user ──
+  // ── 3. Create friend relationships ─────────────────────────────────────────
+  // Accepted:  demo_main ↔ QuietRiver, MorningLark, PaperKite, BlueHarbor
+  // Incoming:  SilverPine → demo_main  (pending, noExpiry)
+  // Outgoing:  demo_main → EmberMoth   (pending, noExpiry)
+
   const mainId = userMap['demo_main'];
   if (!mainId) {
     console.error('  demo_main user not found — skipping friend/chat seeding.');
@@ -267,18 +257,25 @@ async function seed() {
     return;
   }
 
+  const ACCEPTED_FRIENDS = ['demo_quietriver', 'demo_morninglark', 'demo_paperkite', 'demo_blueharbor'];
   const friendMap = {}; // demo_username → Friend._id
 
-  for (const u of DEMO_USERS) {
-    const otherId = userMap[u.username];
+  for (const username of ACCEPTED_FRIENDS) {
+    const otherId = userMap[username];
     if (!otherId) continue;
 
     const pairKey = makePairKey(mainId, otherId);
     const existing = await Friend.findOne({ pairKey });
-    if (existing) {
-      console.log(`  Friendship demo_main ↔ ${u.username} already exists — skipping.`);
-      friendMap[u.username] = existing._id;
+
+    if (existing && existing.status === 'accepted') {
+      console.log(`  Friendship demo_main ↔ ${username} already accepted — skipping.`);
+      friendMap[username] = existing._id;
       continue;
+    }
+
+    if (existing) {
+      // Wrong status (e.g. from a previous seed run) — fix it.
+      await Friend.findByIdAndDelete(existing._id);
     }
 
     const friendship = await Friend.create({
@@ -286,9 +283,52 @@ async function seed() {
       recipientId: otherId,
       pairKey,
       status: 'accepted',
+      noExpiry: true,
     });
-    friendMap[u.username] = friendship._id;
-    console.log(`  Created friendship: demo_main ↔ ${u.username}`);
+    friendMap[username] = friendship._id;
+    console.log(`  Created accepted friendship: demo_main ↔ ${username}`);
+  }
+
+  // SilverPine → demo_main  (incoming request to demo_main)
+  const silverPineId = userMap['demo_silverpine'];
+  if (silverPineId) {
+    const pairKey = makePairKey(mainId, silverPineId);
+    const existing = await Friend.findOne({ pairKey });
+
+    if (existing && existing.status === 'pending') {
+      console.log(`  Pending request demo_silverpine → demo_main already exists — skipping.`);
+    } else {
+      if (existing) await Friend.findByIdAndDelete(existing._id);
+      await Friend.create({
+        requesterId: silverPineId,
+        recipientId: mainId,
+        pairKey,
+        status: 'pending',
+        noExpiry: true,
+      });
+      console.log(`  Created pending request: demo_silverpine → demo_main`);
+    }
+  }
+
+  // demo_main → EmberMoth  (outgoing request from demo_main)
+  const emberMothId = userMap['demo_embermoth'];
+  if (emberMothId) {
+    const pairKey = makePairKey(mainId, emberMothId);
+    const existing = await Friend.findOne({ pairKey });
+
+    if (existing && existing.status === 'pending') {
+      console.log(`  Pending request demo_main → demo_embermoth already exists — skipping.`);
+    } else {
+      if (existing) await Friend.findByIdAndDelete(existing._id);
+      await Friend.create({
+        requesterId: mainId,
+        recipientId: emberMothId,
+        pairKey,
+        status: 'pending',
+        noExpiry: true,
+      });
+      console.log(`  Created pending request: demo_main → demo_embermoth`);
+    }
   }
 
   // ── 4. Seed chat messages ───────────────────────────────────────────────────
