@@ -349,6 +349,109 @@
   opacity: 1;
 }
 
+.momentCard strong {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.momentCard {
+  position: relative;
+  min-height: 144px;
+  padding: 16px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-lg);
+  background: var(--pm-card);
+  color: var(--pm-foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.momentHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.momentCounter {
+  font-size: 10px;
+  color: var(--pm-muted-foreground);
+}
+
+.momentSlide {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  animation: othersSlideIn 0.35s ease-out;
+}
+
+.momentQuote {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--pm-muted-foreground);
+  font-style: italic;
+}
+
+.momentBreathing {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  width: 100%;
+}
+
+.momentBreathStep {
+  padding: 3px 2px;
+  border-radius: 7px;
+  background: oklch(0.91 0.03 78);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.momentBreathStep strong {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pm-foreground);
+}
+
+.momentBreathStep span {
+  font-size: 8px;
+  color: var(--pm-muted-foreground);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.momentDots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.momentDot {
+  width: 5px;
+  height: 5px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: oklch(0.78 0.04 75);
+  cursor: pointer;
+  font-family: inherit;
+  transition: width 0.18s ease, background-color 0.18s ease;
+}
+
+.momentDotActive {
+  width: 14px;
+  background: oklch(0.4 0.08 45);
+}
+
 .tinyIcon {
   width: 14px;
   height: 14px;

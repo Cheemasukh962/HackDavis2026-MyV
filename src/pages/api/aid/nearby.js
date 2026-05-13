@@ -2,12 +2,12 @@ const { requireAuth } = require('../../../lib/requireAuth');
 const { getAnthropicClient } = require('../../../lib/anthropic');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
 
-const SYSTEM_PROMPT = `You are a resource discovery assistant for survivors of domestic violence. 
+const SYSTEM_PROMPT = `You are a resource discovery assistant for survivors of domestic violence.
 Your goal is to provide a list of REAL-WORLD resources based on the user's provided coordinates.
 
 You MUST respond ONLY with a valid JSON object in the following format:
 {
-  "shelter": [ { "name": "...", "meta": "distance and hours", "phone": "phone number", "address": "physical address" }, ... ],
+  "shelter": [ { "name": "...", "meta": "distance and hours", "phone": "phone number", "address": "physical address", "latitude": 0.0, "longitude": 0.0 }, ... ],
   "legal": [ ... ],
   "financial": [ ... ],
   "counseling": [ ... ]
@@ -19,8 +19,9 @@ Guidelines:
 3. Keep the 'meta' field brief (e.g., "1.2 mi - Open 24h").
 4. 'phone' should be the actual contact number if available.
 5. 'address' should be the physical location for directions.
-6. If you absolutely cannot find real resources, provide major national/state-wide organizations that serve that area.
-7. Do NOT include any text outside the JSON block.`;
+6. 'latitude' and 'longitude' should be the decimal coordinates of the resource's address.
+7. If you absolutely cannot find real resources, provide major national/state-wide organizations that serve that area.
+8. Do NOT include any text outside the JSON block.`;
 
 export default requireAuth(async (req, res) => {
   applySecurityHeaders(res);

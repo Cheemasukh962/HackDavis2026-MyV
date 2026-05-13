@@ -1,13 +1,13 @@
 import {
   BookLock,
   ChevronRight,
-  Heart,
   LifeBuoy,
   MessageCircle,
   Shield,
   Siren,
 } from 'lucide-react';
 import OthersJournals from './OthersJournals';
+import MomentForYou from './MomentForYou';
 import styles from '../../styles/private-mode/home.module.css';
 
 export default function HomePanel({ onNavigate }) {
@@ -68,11 +68,7 @@ export default function HomePanel({ onNavigate }) {
             subtitle="Shelters and aid"
             onClick={() => onNavigate('aid')}
           />
-          <ActionCard
-            icon={<Heart />}
-            title="A moment for you"
-            subtitle="Quotes and breathing"
-          />
+          <MomentForYou />
         </div>
       </div>
 

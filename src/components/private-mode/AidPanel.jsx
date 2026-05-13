@@ -87,13 +87,38 @@ export default function AidPanel() {
     );
   };
 
-  const handleCardClick = (resource) => {
-    if (!resource.latitude || !resource.longitude) return;
-    setSelectedResource((prev) =>
-      prev?.name === resource.name ? null : resource
-    );
-    // Scroll map into view
-    mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const handleCardClick = async (resource) => {
+    // Toggle off if already selected
+    if (selectedResource?.name === resource.name) {
+      setSelectedResource(null);
+      return;
+    }
+
+    // If resource already has coords, use them directly
+    if (resource.latitude && resource.longitude) {
+      setSelectedResource(resource);
+      mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return;
+    }
+
+    // Geocode the address via Mapbox if no coords provided by API
+    if (resource.address) {
+      try {
+        const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+        const query = encodeURIComponent(resource.address);
+        const res = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${token}&limit=1`
+        );
+        const data = await res.json();
+        const [lng, lat] = data.features?.[0]?.center || [];
+        if (lat && lng) {
+          setSelectedResource({ ...resource, latitude: lat, longitude: lng });
+          mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } catch (err) {
+        console.error('[AidPanel] Geocode error:', err);
+      }
+    }
   };
 
   const activeResources = (resources || PLACEHOLDER_RESOURCES)[activeFilter] || [];
@@ -145,10 +170,10 @@ export default function AidPanel() {
           return (
             <article
               key={`${resource.name}-${idx}`}
-              className={`${styles.resourceCard} ${isSelected ? styles.resourceCardSelected : ''} ${resource.latitude ? styles.resourceCardClickable : ''}`}
+              className={`${styles.resourceCard} ${isSelected ? styles.resourceCardSelected : ''} ${resource.latitude || resource.address ? styles.resourceCardClickable : ''}`}
               onClick={() => handleCardClick(resource)}
-              role={resource.latitude ? 'button' : undefined}
-              tabIndex={resource.latitude ? 0 : undefined}
+              role={resource.latitude || resource.address ? 'button' : undefined}
+              tabIndex={resource.latitude || resource.address ? 0 : undefined}
               onKeyDown={(e) => e.key === 'Enter' && handleCardClick(resource)}
             >
               <div className={styles.resourceInfo}>
