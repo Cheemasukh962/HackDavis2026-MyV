@@ -366,7 +366,10 @@ export default function ChatPanel() {
 
 function MessagesList({ chats, onOpen, onGoFriends }) {
   const [query, setQuery] = useState('');
-  const filtered = chats.filter((chat) => chat.handle.toLowerCase().includes(query.toLowerCase()));
+  const q = query.toLowerCase();
+  const filtered = chats.filter((chat) =>
+    chat.handle.toLowerCase().includes(q) || chat.lastMsg.toLowerCase().includes(q)
+  );
   const friendChats = filtered.filter((chat) => !chat.isBot);
 
   return (
