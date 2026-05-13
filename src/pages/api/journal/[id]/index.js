@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
-const { requireAuth } = require('../../../lib/requireAuth');
-const { connectDB } = require('../../../lib/db');
-const { getAttachmentBucket } = require('../../../lib/gridfs');
-const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
-const config = require('../../../config/config');
-const JournalEntry = require('../../../models/JournalEntry');
-const { JournalPrivacyFeature } = require('../../../features/journal_privacy_feature');
+const { requireAuth } = require('../../../../lib/requireAuth');
+const { connectDB } = require('../../../../lib/db');
+const { getAttachmentBucket } = require('../../../../lib/gridfs');
+const { applySecurityHeaders } = require('../../../../middleware/securityHeaders');
+const config = require('../../../../config/config');
+const JournalEntry = require('../../../../models/JournalEntry');
+const { JournalPrivacyFeature } = require('../../../../features/journal_privacy_feature');
 
 export default requireAuth(async (req, res) => {
   applySecurityHeaders(res);

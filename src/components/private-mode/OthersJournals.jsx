@@ -84,6 +84,12 @@ export default function OthersJournals() {
   const [activeIndex, setActiveIndex] = useState(4);
   const [paused, setPaused] = useState(false);
 
+  // Always-current mirror of journals state — safe to read inside async callbacks
+  const journalsRef = useRef(journals);
+  journalsRef.current = journals;
+  const activeIndexRef = useRef(activeIndex);
+  activeIndexRef.current = activeIndex;
+
   useEffect(() => {
     let mounted = true;
 
@@ -137,28 +143,23 @@ export default function OthersJournals() {
   };
 
   const handleHeart = async () => {
-    const entryId = journals[activeIndex]?.id;
-    if (!entryId) return;
+    // Read from ref — always current even in async context
+    const entry = journalsRef.current[activeIndexRef.current];
+    if (!entry) return;
 
-    // Derive nowLiked from latest state inside the updater to avoid stale closures
-    let nowLiked;
-    setJournals((prev) => {
-      const target = prev.find((j) => j.id === entryId);
-      if (!target) return prev;
-      nowLiked = !target.likedByMe;
-      writeLikedCache(entryId, nowLiked);
-      return prev.map((j) =>
+    const { id: entryId, likedByMe: wasLiked } = entry;
+    const nowLiked = !wasLiked;
+
+    writeLikedCache(entryId, nowLiked);
+    setJournals((prev) =>
+      prev.map((j) =>
         j.id === entryId
           ? { ...j, hearts: nowLiked ? j.hearts + 1 : Math.max(0, j.hearts - 1), likedByMe: nowLiked }
           : j
-      );
-    });
+      )
+    );
 
     if (!REAL_ID_RE.test(entryId)) return;
-
-    // Wait one tick so nowLiked is set from the updater above
-    await Promise.resolve();
-    if (nowLiked === undefined) return;
 
     try {
       const res = await fetch(`/api/journal/${entryId}/heart`, { method: 'POST' });
@@ -169,18 +170,13 @@ export default function OthersJournals() {
         prev.map((j) => (j.id === entryId ? { ...j, hearts: data.hearts, likedByMe: data.liked } : j))
       );
     } catch {
-      // Revert on API failure
-      setJournals((prev) => {
-        const target = prev.find((j) => j.id === entryId);
-        if (!target) return prev;
-        const reverted = !target.likedByMe;
-        writeLikedCache(entryId, reverted);
-        return prev.map((j) =>
-          j.id === entryId
-            ? { ...j, hearts: reverted ? j.hearts + 1 : Math.max(0, j.hearts - 1), likedByMe: reverted }
-            : j
-        );
-      });
+      // Revert
+      writeLikedCache(entryId, wasLiked);
+      setJournals((prev) =>
+        prev.map((j) =>
+          j.id === entryId ? { ...j, hearts: wasLiked ? j.hearts + 1 : Math.max(0, j.hearts - 1), likedByMe: wasLiked } : j
+        )
+      );
     }
   };
 
