@@ -29,6 +29,14 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
     return () => { if (permStatus) permStatus.onchange = null; };
   }, []);
 
+  const handleLocationToggle = () => {
+    if (locationOn) return;
+    navigator.geolocation?.getCurrentPosition(
+      () => setLocationOn(true),
+      () => setLocationOn(false),
+    );
+  };
+
   useEffect(() => {
     if (!active) return;
     fetch('/api/journal?limit=1')
@@ -75,7 +83,7 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
         </div>
         <div className={styles.miniGrid}>
           <Mini label="Contacts" value={friendCount === null ? '—' : String(friendCount)} />
-          <Mini label="Location" value={locationOn ? 'On' : 'Off'} on={locationOn} />
+          <LocationMini on={locationOn} onToggle={handleLocationToggle} />
           <Mini label="Backup" value={journalCount === null ? '—' : String(journalCount)} />
         </div>
       </div>
@@ -124,6 +132,26 @@ function Mini({ label, value, on }) {
       <span>{label}</span>
       <strong className={on ? styles.miniValueOn : undefined}>{value}</strong>
     </div>
+  );
+}
+
+function LocationMini({ on, onToggle }) {
+  return (
+    <button
+      type="button"
+      className={styles.miniCardBtn}
+      onClick={onToggle}
+      aria-label={on ? 'Location sharing on' : 'Enable location sharing'}
+      aria-pressed={on}
+    >
+      <span>Location</span>
+      <div className={styles.miniToggleRow}>
+        <div className={`${styles.miniToggle} ${on ? styles.miniToggleOn : ''}`} aria-hidden="true">
+          <span />
+        </div>
+        <span className={`${styles.miniToggleLabel} ${on ? styles.miniToggleLabelOn : ''}`}>{on ? 'On' : 'Off'}</span>
+      </div>
+    </button>
   );
 }
 

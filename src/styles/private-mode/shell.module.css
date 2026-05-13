@@ -66,21 +66,21 @@
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: 8px;
   background: transparent;
-  color: oklch(0.48 0.22 25);
+  color: #c41e1e;
   cursor: pointer;
+  transition: color 0.15s;
 }
 
 .exitButton:hover,
 .exitButton:focus-visible {
-  background: oklch(0.93 0.04 25);
-  color: oklch(0.45 0.22 25);
+  color: #9b1515;
 }
 
 .exitIcon {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 
 .content {
@@ -111,6 +111,7 @@
   padding: 8px 8px 12px;
   border-top: 1px solid var(--pm-border);
   background: rgba(250, 248, 242, 0.95);
+  -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   display: flex;
   align-items: stretch;

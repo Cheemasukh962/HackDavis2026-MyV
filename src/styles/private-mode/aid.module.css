@@ -137,10 +137,10 @@
   white-space: nowrap;
 }
 
-.filterButtonActive {
-  border-color: var(--pm-foreground);
-  background: var(--pm-foreground);
-  color: var(--pm-background);
+.filterButton.filterButtonActive {
+  border-color: #000;
+  background: #000;
+  color: #fff;
 }
 
 .resourceList {

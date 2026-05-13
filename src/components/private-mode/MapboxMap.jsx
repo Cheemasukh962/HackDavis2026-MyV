@@ -22,6 +22,7 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
   const mapRef = useRef(null);
   const userMarkerRef = useRef(null);
   const resourceMarkerRef = useRef(null);
+  const hasInitialCenterRef = useRef(false);
   const coordsRef = useRef({ latitude, longitude });
   coordsRef.current = { latitude, longitude };
 
@@ -81,6 +82,7 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
       }
       userMarkerRef.current = null;
       resourceMarkerRef.current = null;
+      hasInitialCenterRef.current = false;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -99,8 +101,9 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
       });
     }
 
-    // Only re-center on user if no resource is selected
-    if (!resourceMarkerRef.current) {
+    // Only fly to center the first time we get a location; after that just update the marker
+    if (!resourceMarkerRef.current && !hasInitialCenterRef.current) {
+      hasInitialCenterRef.current = true;
       mapRef.current.flyTo({ center: [longitude, latitude], zoom: 14, duration: 800 });
     }
   }, [latitude, longitude]);

@@ -275,7 +275,7 @@ export default function AppShell({
         )}
       </main>
 
-      <PanicExit showButton={!showPrivateMode} />
+      <PanicExit showButton={false} />
       {!showPrivateMode && <Button onClick={handleEnterPrivateMode} />}
 
       {/* Persistent Install Trigger for non-PWA mode */}

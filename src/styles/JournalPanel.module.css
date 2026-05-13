@@ -52,6 +52,21 @@
   font-family: var(--font-sans);
 }
 
+.uploadBtnActive {
+  border-color: var(--color-accent);
+  background-color: rgba(125, 113, 102, 0.06);
+}
+
+.textForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background-color: var(--color-surface);
+}
+
 .uploadBtnBase:hover {
   background-color: rgba(125, 113, 102, 0.04);
   border-color: var(--color-accent);
@@ -89,7 +104,6 @@
 
 /* Text Input Wrapper */
 .textInputWrapper {
-  min-height: auto;
   padding: 0.75rem;
   gap: 0.5rem;
 }
@@ -114,8 +128,46 @@
 
 .textActions {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
-  justify-content: flex-end;
+}
+
+.textActionEnd {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.noteMicButton {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pm-muted);
+  color: var(--pm-foreground);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.noteMicButtonActive {
+  background: var(--pm-accent-strong);
+  color: #fff;
+  animation: micPulse 1.5s infinite;
+}
+
+.noteMicIcon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+@keyframes micPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.08); }
 }
 
 .cancelBtn,
@@ -171,6 +223,107 @@
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.1); opacity: 0.8; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+/* Search */
+.searchField {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--pm-border);
+  border-radius: 999px;
+  background: var(--pm-card);
+  color: var(--pm-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchFieldIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--pm-muted-foreground);
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  appearance: none;
+}
+
+.searchInput::placeholder {
+  color: var(--pm-muted-foreground);
+}
+
+.searchClear {
+  background: none;
+  border: none;
+  color: var(--pm-muted-foreground);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.searchClear:hover {
+  color: var(--pm-foreground);
+}
+
+/* Filter Bar */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filterChip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filterChip:hover {
+  background: rgba(125, 113, 102, 0.06);
+  color: var(--color-foreground);
+}
+
+.filterChip.filterChipActive {
+  background: #000;
+  border-color: #000;
+  color: white;
+}
+
+.sortBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sortLabel {
+  font-size: 12px;
+  color: var(--color-muted);
+  font-weight: 500;
+  flex-shrink: 0;
 }
 
 /* Recent Entries Header */
@@ -258,11 +411,12 @@
 }
 
 .entryDot {
-  color: var(--color-border);
+  display: none;
 }
 
 .entryTime {
   font-size: 12px;
+  margin-left: auto;
 }
 
 .entryText {
@@ -342,6 +496,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   z-index: 10000;
   display: flex;
@@ -465,7 +620,9 @@
   padding: 1.25rem;
   border-top: 1px solid var(--color-border);
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
 .deleteBtn {
@@ -482,9 +639,85 @@
   cursor: pointer;
 }
 
+.ttsButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ttsButton:hover {
+  background: rgba(125, 113, 102, 0.06);
+  border-color: var(--color-accent);
+}
+
+.ttsButtonActive {
+  background: var(--pm-accent-strong, #7c6a5e);
+  border-color: var(--pm-accent-strong, #7c6a5e);
+  color: #fff;
+  animation: ttsPulse 2s infinite;
+}
+
+@keyframes ttsPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
 .tinyIcon {
   width: 14px;
   height: 14px;
+}
+
+/* Edit Modal */
+.editField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.editInput {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: rgba(125, 113, 102, 0.05);
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-foreground);
+  outline: none;
+}
+
+.editInput:focus {
+  border-color: var(--color-accent);
+}
+
+.editTextarea {
+  min-height: 160px;
+}
+
+.editFooter {
+  padding: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 /* Mobile Responsiveness */

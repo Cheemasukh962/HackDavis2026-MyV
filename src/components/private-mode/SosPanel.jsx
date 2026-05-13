@@ -6,6 +6,7 @@ import styles from '../../styles/private-mode/sos.module.css';
 export default function SosPanel({ enabled }) {
   const [status, setStatus] = useState('ready');
   const [locationOn, setLocationOn] = useState(false);
+  const [shareLocation, setShareLocation] = useState(true);
   const [error, setError] = useState('');
   const [sentCount, setSentCount] = useState(0);
   const [lastLocation, setLastLocation] = useState(null);
@@ -71,28 +72,33 @@ export default function SosPanel({ enabled }) {
     setError('');
 
     try {
-      setStatus('requesting');
-      let location = lastLocation;
+      let location = null;
 
-      if (!location || Date.now() - new Date(location.capturedAt).getTime() > 60 * 1000) {
-        const position = await requestCurrentLocation();
-        const { coords, timestamp } = position;
-        location = {
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          accuracy: coords.accuracy,
-          capturedAt: new Date(timestamp).toISOString(),
-        };
+      if (shareLocation) {
+        setStatus('requesting');
+        location = lastLocation;
+
+        if (!location || Date.now() - new Date(location.capturedAt).getTime() > 60 * 1000) {
+          const position = await requestCurrentLocation();
+          const { coords, timestamp } = position;
+          location = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            accuracy: coords.accuracy,
+            capturedAt: new Date(timestamp).toISOString(),
+          };
+        }
+
+        setLocationOn(true);
+        setLastLocation(location);
       }
 
-      setLocationOn(true);
-      setLastLocation(location);
       setStatus('sending');
 
       const response = await fetch('/api/sos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(location),
+        body: JSON.stringify(location ?? {}),
       });
       const body = await response.json().catch(() => ({}));
 
@@ -120,6 +126,14 @@ export default function SosPanel({ enabled }) {
           ? 'SOS is unavailable'
         : 'Ready to alert your contacts';
 
+  const heroText = status === 'sent'
+    ? `Your trusted contacts were alerted${shareLocation ? ' and received your location' : ''}.`
+    : enabled
+      ? shareLocation
+        ? 'One tap alerts your trusted contacts and shares your current location with them.'
+        : 'One tap alerts your trusted contacts. Your location will not be shared with them.'
+      : 'The SOS feature is currently disabled.';
+
   return (
     <div className={styles.sosPanel}>
       <div className={styles.heroCard}>
@@ -128,13 +142,7 @@ export default function SosPanel({ enabled }) {
           <span>Emergency Alert</span>
         </div>
         <h1 className={styles.heroTitle}>{heroLabel}</h1>
-        <p className={styles.heroText}>
-          {status === 'sent'
-            ? `Your current location was sent to ${sentCount} trusted contact${sentCount === 1 ? '' : 's'}.`
-            : enabled
-              ? 'One tap gets your current location and sends it to your trusted contacts in chat.'
-              : 'The SOS feature is currently disabled.'}
-        </p>
+        <p className={styles.heroText}>{heroText}</p>
         {error && <p className={styles.heroText}>{error}</p>}
         {locationError && <p className={styles.heroText}>{locationError}</p>}
       </div>
@@ -163,7 +171,7 @@ export default function SosPanel({ enabled }) {
           label="Trusted Contacts"
           value={trustedCount === null ? '—' : `${trustedCount} contact${trustedCount === 1 ? '' : 's'}`}
         />
-        <LocationCard on={locationOn} />
+        <LocationCard on={shareLocation} onToggle={() => setShareLocation((v) => !v)} />
         <StatusCard
           icon={<Cloud className={styles.smallIcon} aria-hidden="true" />}
           label="Evidence Backup"
@@ -176,7 +184,7 @@ export default function SosPanel({ enabled }) {
         />
       </div>
 
-      {enabled && <LocationPreview sent={status === 'sent'} location={lastLocation} />}
+      {enabled && shareLocation && <LocationPreview sent={status === 'sent'} location={lastLocation} />}
 
       <div className={styles.notice}>
         <AlertTriangle className={styles.noticeIcon} aria-hidden="true" />
@@ -198,25 +206,27 @@ function StatusCard({ icon, label, value }) {
   );
 }
 
-function LocationCard({ on }) {
+function LocationCard({ on, onToggle }) {
   return (
     <div className={`${styles.statusCard} ${on ? styles.statusCardActive : ''}`}>
       <div className={styles.locationHeader}>
         <div className={styles.statusLabel}>
           <MapPin className={styles.smallIcon} aria-hidden="true" />
-          <span>Location Sharing</span>
+          <span>Share Location</span>
         </div>
-        <span
-          role="status"
-          aria-label={on ? 'Location included' : 'Location required'}
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-pressed={on}
+          aria-label={on ? 'Stop sharing location with contacts' : 'Share location with contacts'}
           className={`${styles.switch} ${on ? styles.switchOn : ''}`}
         >
           <span aria-hidden="true" />
-        </span>
+        </button>
       </div>
-      <div className={styles.statusValue}>{on ? 'Included' : 'Required'}</div>
+      <div className={styles.statusValue}>{on ? 'On' : 'Off'}</div>
       <div className={styles.statusHint}>
-        {on ? 'Contacts receive your current location' : 'Requested when SOS is sent'}
+        {on ? 'Trusted contacts receive your location when SOS is sent' : 'Trusted contacts alerted without location'}
       </div>
     </div>
   );

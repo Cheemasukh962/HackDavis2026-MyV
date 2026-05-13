@@ -1,5 +1,16 @@
 import { useMemo, useState } from 'react';
-import { BookLock, Home, LifeBuoy, MessageCircle, Siren, X } from 'lucide-react';
+import { BookLock, Home, LifeBuoy, MessageCircle, Siren } from 'lucide-react';
+
+function RedLockIcon({ className }) {
+  return (
+    <svg viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
+      <path d="M7 11V8a5 5 0 0 1 10 0" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <rect x="4" y="11" width="16" height="13" rx="3" fill="currentColor" />
+      <circle cx="12" cy="17" r="2" fill="white" />
+      <rect x="11" y="18" width="2" height="3" rx="1" fill="white" />
+    </svg>
+  );
+}
 import HomePanel from './private-mode/HomePanel';
 import SosPanel from './private-mode/SosPanel';
 import ChatPanel from './private-mode/ChatPanel';
@@ -37,7 +48,7 @@ export default function PrivateModeShell({ displayName, sosEnabled = false, onBa
             title="Quick exit"
             onClick={triggerPanicExit}
           >
-            <X className={styles.exitIcon} aria-hidden="true" />
+            <RedLockIcon className={styles.exitIcon} />
           </button>
         </header>
 

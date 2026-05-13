@@ -1,6 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { triggerPanicExit } from '../hooks/usePrivacyMode';
 
+function RedLockIcon({ size = 24 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      {/* open shackle */}
+      <path d="M7 11V8a5 5 0 0 1 10 0" stroke="#c41e1e" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      {/* body */}
+      <rect x="4" y="11" width="16" height="13" rx="3" fill="#c41e1e" />
+      {/* keyhole */}
+      <circle cx="12" cy="17" r="2" fill="white" />
+      <rect x="11" y="18" width="2" height="3" rx="1" fill="white" />
+    </svg>
+  );
+}
+
 /**
  * PanicExit - always-on quick-exit system.
  *
@@ -81,26 +95,22 @@ export default function PanicExit({ showButton = true }) {
       title="Quick exit"
       style={{
         position: 'fixed',
-        bottom: '12px',
-        right: '12px',
+        bottom: '14px',
+        right: '14px',
         zIndex: 9999,
-        width: '28px',
-        height: '28px',
-        borderRadius: '50%',
         border: 'none',
-        background: 'rgba(180, 180, 180, 0.25)',
-        color: 'rgba(120, 120, 120, 0.6)',
-        fontSize: '14px',
-        lineHeight: 1,
+        background: 'transparent',
+        color: '#c41e1e',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         userSelect: 'none',
         WebkitTapHighlightColor: 'transparent',
+        padding: 0,
       }}
     >
-      x
+      <RedLockIcon size={24} />
     </button>
   );
 }

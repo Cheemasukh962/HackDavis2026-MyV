@@ -141,6 +141,8 @@
   border-radius: 999px;
   background: oklch(0.82 0.04 75);
   cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
 }
 
 .switch span {

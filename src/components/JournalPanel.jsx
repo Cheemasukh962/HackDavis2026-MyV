@@ -1,15 +1,50 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, Download, FileText, Lock, Mic, Shuffle, Square, Trash2, Type, X } from 'lucide-react';
+import { Camera, Download, FileText, Lock, Mic, Search, Shuffle, Square, Trash2, Type, Volume2, VolumeX, X } from 'lucide-react';
+import { useSpeechToText } from '../hooks/useSpeechToText';
 import styles from '../styles/JournalPanel.module.css';
 
 export default function JournalPanel() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [showTextInput, setShowTextInput] = useState(false);
+  const [textName, setTextName] = useState('');
+  const [textNote, setTextNote] = useState('');
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [editingEntry, setEditingEntry] = useState(null);
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState('date');
+  const [sortDir, setSortDir] = useState('desc');
+  const [sortDirToggled, setSortDirToggled] = useState(false);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
+  const textInputAreaRef = useRef(null);
+  const { transcript, listening, startListening, stopListening, clearTranscript } = useSpeechToText();
+
+  useEffect(() => {
+    if (!transcript) return;
+    setTextNote((prev) => prev + (prev ? ' ' : '') + transcript);
+    clearTranscript();
+  }, [transcript, clearTranscript]);
+
+  useEffect(() => {
+    if (!showTextInput) return;
+    const handler = (e) => {
+      if (textInputAreaRef.current && !textInputAreaRef.current.contains(e.target)) {
+        setShowTextInput(false);
+        setTextName('');
+        setTextNote('');
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [showTextInput]);
 
   const fileToBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -92,8 +127,8 @@ export default function JournalPanel() {
     }
   };
 
-  const handleTextSubmit = async (text) => {
-    if (!text.trim()) return;
+  const handleTextSubmit = async () => {
+    if (!textNote.trim()) return;
     setError(null);
     setLoading(true);
     try {
@@ -101,8 +136,8 @@ export default function JournalPanel() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          content: text,
-          title: '',
+          content: textNote,
+          title: textName,
           incidentDate: new Date(),
         }),
       });
@@ -110,6 +145,9 @@ export default function JournalPanel() {
       if (res.ok) {
         const { entry } = await res.json();
         setEntries((current) => [entry, ...current]);
+        setTextName('');
+        setTextNote('');
+        setShowTextInput(false);
       }
     } finally {
       setLoading(false);
@@ -166,6 +204,23 @@ export default function JournalPanel() {
     }
   };
 
+  const handleSaveEdit = async (id, updates) => {
+    try {
+      const res = await fetch(`/api/journal/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (res.ok) {
+        const { entry } = await res.json();
+        setEntries((current) => current.map((e) => (e._id === id ? entry : e)));
+        setEditingEntry(null);
+      }
+    } catch (err) {
+      console.error('Edit failed:', err);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this entry?')) return;
     try {
@@ -193,6 +248,7 @@ export default function JournalPanel() {
         </div>
       )}
 
+      <div ref={textInputAreaRef}>
       <div className={styles.buttonGrid}>
         <UploadButton
           label="Media"
@@ -206,13 +262,85 @@ export default function JournalPanel() {
           onStart={startRecording}
           onStop={stopRecording}
         />
-        <TextButton
-          label="Text"
-          hint="Write a note"
-          onSubmit={handleTextSubmit}
-          icon={<Type className={styles.icon} />}
-        />
+        <button
+          type="button"
+          className={`${styles.uploadButton} ${styles.uploadBtnBase} ${showTextInput ? styles.uploadBtnActive : ''}`}
+          onClick={() => setShowTextInput((v) => !v)}
+        >
+          <div className={styles.uploadIcon}><Type className={styles.icon} /></div>
+          <span className={styles.uploadLabel}>Text</span>
+          <span className={styles.uploadHint}>Write a note</span>
+        </button>
       </div>
+
+      {showTextInput && (
+        <div className={styles.textForm}>
+          <input
+            type="text"
+            value={textName}
+            onChange={(e) => setTextName(e.target.value)}
+            placeholder="Name (optional)"
+            className={styles.editInput}
+          />
+          <textarea
+            value={textNote}
+            onChange={(e) => setTextNote(e.target.value)}
+            placeholder="Write your note..."
+            className={`${styles.textInput} ${styles.editTextarea}`}
+            autoFocus
+          />
+          <div className={styles.textActions}>
+            <button
+              type="button"
+              className={`${styles.noteMicButton} ${listening ? styles.noteMicButtonActive : ''}`}
+              onClick={listening ? stopListening : startListening}
+              aria-label={listening ? 'Stop listening' : 'Start voice input'}
+            >
+              <Mic className={styles.noteMicIcon} aria-hidden="true" />
+            </button>
+            <div className={styles.textActionEnd}>
+              <button
+                type="button"
+                className={styles.cancelBtn}
+                onClick={() => { setShowTextInput(false); setTextName(''); setTextNote(''); }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={styles.submitBtn}
+                onClick={handleTextSubmit}
+                disabled={loading || !textNote.trim()}
+              >
+                {loading ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      </div>
+
+      <label className={styles.searchField}>
+        <Search className={styles.searchFieldIcon} aria-hidden="true" />
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search entries..."
+          className={styles.searchInput}
+          aria-label="Search journal entries"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            className={styles.searchClear}
+            onClick={() => setSearchQuery('')}
+            aria-label="Clear search"
+          >
+            <X className={styles.tinyIcon} />
+          </button>
+        )}
+      </label>
 
       <div className={styles.recentHeader}>
         <div className={styles.recentTitleGroup}>
@@ -224,25 +352,111 @@ export default function JournalPanel() {
         <span className={styles.recentCount}>{entries.length} saved</span>
       </div>
 
-      <div className={styles.entryList}>
-        {entries.map((entry) => (
-          <EntryCard 
-            key={entry._id} 
-            entry={entry} 
-            type={getEntryType(entry)}
-            onClick={() => {
-              console.log('[Journal] Selecting entry:', entry._id, 'type:', getEntryType(entry));
-              setSelectedEntry(entry);
-            }} 
-          />
+      <div className={styles.filterBar} role="group" aria-label="Filter by type">
+        <span className={styles.sortLabel}>Type</span>
+        {['all', 'text', 'image', 'video', 'audio', 'file'].map((f) => (
+          <button
+            key={f}
+            type="button"
+            className={`${styles.filterChip} ${filter === f ? styles.filterChipActive : ''}`}
+            onClick={() => setFilter(f)}
+            aria-pressed={filter === f}
+          >
+            {f === 'all' ? 'All' : f === 'image' ? 'Photo' : f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
         ))}
-        {entries.length === 0 && !loading && (
-          <p className={styles.emptyState}>No entries yet. Start documenting when ready.</p>
-        )}
-        {loading && entries.length === 0 && (
-          <p className={styles.emptyState}>Loading your journal...</p>
-        )}
       </div>
+
+      <div className={styles.sortBar} role="group" aria-label="Sort entries">
+        <span className={styles.sortLabel}>Sort</span>
+        {[
+          { field: 'date', label: 'Date', defaultDir: 'desc' },
+          { field: 'name', label: 'Name', defaultDir: 'asc' },
+          { field: 'type', label: 'Type', defaultDir: 'asc' },
+          { field: 'size', label: 'Size', defaultDir: 'desc' },
+        ].map(({ field, label, defaultDir }) => {
+          const active = sortField === field;
+          return (
+            <button
+              key={field}
+              type="button"
+              className={`${styles.filterChip} ${active ? styles.filterChipActive : ''}`}
+              aria-pressed={active}
+              onClick={() => {
+                if (active) {
+                  if (!sortDirToggled) {
+                    setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+                    setSortDirToggled(true);
+                  } else {
+                    setSortField(null);
+                    setSortDirToggled(false);
+                  }
+                } else {
+                  setSortField(field);
+                  setSortDir(defaultDir);
+                  setSortDirToggled(false);
+                }
+              }}
+            >
+              {label}{active ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className={styles.entryList}>
+        {(() => {
+          const q = searchQuery.trim().toLowerCase();
+          const filtered = entries.filter((e) => {
+            if (filter !== 'all' && getEntryType(e) !== filter) return false;
+            if (!q) return true;
+            return (
+              (e.title || '').toLowerCase().includes(q) ||
+              (e.content || '').toLowerCase().includes(q) ||
+              (e.mediaName || '').toLowerCase().includes(q)
+            );
+          });
+          if (loading && entries.length === 0) {
+            return <p className={styles.emptyState}>Loading your journal...</p>;
+          }
+          if (filtered.length === 0) {
+            const msg = entries.length === 0
+              ? 'No entries yet. Start documenting when ready.'
+              : q
+                ? `No entries match "${searchQuery}".`
+                : `No ${filter === 'image' ? 'photo' : filter} entries yet.`;
+            return <p className={styles.emptyState}>{msg}</p>;
+          }
+          const sorted = sortField
+            ? [...filtered].sort((a, b) => {
+                let cmp = 0;
+                if (sortField === 'date') cmp = new Date(a.createdAt) - new Date(b.createdAt);
+                else if (sortField === 'name') cmp = (a.mediaName || a.content || '').localeCompare(b.mediaName || b.content || '');
+                else if (sortField === 'type') cmp = getEntryType(a).localeCompare(getEntryType(b));
+                else if (sortField === 'size') cmp = (a.mediaData?.length ?? 0) - (b.mediaData?.length ?? 0);
+                return sortDir === 'asc' ? cmp : -cmp;
+              })
+            : filtered;
+          return sorted.map((entry) => (
+            <EntryCard
+              key={entry._id}
+              entry={entry}
+              type={getEntryType(entry)}
+              onClick={() => setSelectedEntry(entry)}
+              onLongPress={() => setEditingEntry(entry)}
+            />
+          ));
+        })()}
+      </div>
+
+      {editingEntry && (
+        <EditEntryModal
+          entry={editingEntry}
+          type={getEntryType(editingEntry)}
+          onClose={() => setEditingEntry(null)}
+          onSave={(updates) => handleSaveEdit(editingEntry._id, updates)}
+        />
+      )}
 
       {selectedEntry && (
         <EntryPreview
@@ -257,7 +471,41 @@ export default function JournalPanel() {
 }
 
 function EntryPreview({ entry, type, onClose, onDelete }) {
-  console.log('[Journal] Previewing:', type);
+  const [ttsPlaying, setTtsPlaying] = useState(false);
+  const [ttsLoading, setTtsLoading] = useState(false);
+  const audioRef = useRef(null);
+
+  const handleTts = async () => {
+    if (ttsPlaying) {
+      audioRef.current?.pause();
+      audioRef.current = null;
+      setTtsPlaying(false);
+      return;
+    }
+    setTtsLoading(true);
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: entry.content }),
+      });
+      if (!res.ok) throw new Error('TTS failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { setTtsPlaying(false); URL.revokeObjectURL(url); };
+      audio.play();
+      setTtsPlaying(true);
+    } catch {
+      setTtsPlaying(false);
+    } finally {
+      setTtsLoading(false);
+    }
+  };
+
+  // Stop audio when modal closes
+  useEffect(() => () => { audioRef.current?.pause(); }, []);
 
   return (
     <div className={styles.previewBackdrop} onClick={onClose}>
@@ -314,6 +562,20 @@ function EntryPreview({ entry, type, onClose, onDelete }) {
         </div>
 
         <footer className={styles.previewFooter}>
+          {type === 'text' && (
+            <button
+              type="button"
+              className={`${styles.ttsButton} ${ttsPlaying ? styles.ttsButtonActive : ''}`}
+              onClick={handleTts}
+              disabled={ttsLoading}
+              aria-label={ttsPlaying ? 'Stop reading' : 'Read note aloud'}
+            >
+              {ttsPlaying
+                ? <VolumeX className={styles.tinyIcon} aria-hidden="true" />
+                : <Volume2 className={styles.tinyIcon} aria-hidden="true" />}
+              {ttsLoading ? 'Loading...' : ttsPlaying ? 'Stop' : 'Read aloud'}
+            </button>
+          )}
           <button type="button" onClick={onDelete} className={styles.deleteBtn}>
             <Trash2 className={styles.tinyIcon} />
             Delete Entry
@@ -357,68 +619,26 @@ function RecordButton({ isRecording, onStart, onStop }) {
   );
 }
 
-function TextButton({ label, hint, onSubmit, icon }) {
-  const [showInput, setShowInput] = useState(false);
-  const [text, setText] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!text.trim()) return;
-    setIsSubmitting(true);
-    try {
-      await onSubmit(text);
-      setText('');
-      setShowInput(false);
-    } finally {
-      setIsSubmitting(false);
-    }
+function EntryCard({ entry, type, onClick, onLongPress }) {
+  const timerRef = useRef(null);
+  const didLongPressRef = useRef(false);
+
+  const startPress = () => {
+    didLongPressRef.current = false;
+    timerRef.current = setTimeout(() => {
+      didLongPressRef.current = true;
+      onLongPress?.();
+    }, 500);
   };
 
-  if (!showInput) {
-    return (
-      <button
-        onClick={() => setShowInput(true)}
-        className={`${styles.uploadButton} ${styles.uploadBtnBase}`}
-      >
-        <div className={styles.uploadIcon}>{icon}</div>
-        <span className={styles.uploadLabel}>{label}</span>
-        <span className={styles.uploadHint}>{hint}</span>
-      </button>
-    );
-  }
+  const cancelPress = () => clearTimeout(timerRef.current);
 
-  return (
-    <div className={`${styles.uploadButton} ${styles.textInputWrapper}`}>
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Write your note..."
-        className={styles.textInput}
-        autoFocus
-      />
-      <div className={styles.textActions}>
-        <button
-          onClick={() => {
-            setText('');
-            setShowInput(false);
-          }}
-          className={styles.cancelBtn}
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSubmit}
-          disabled={isSubmitting || !text.trim()}
-          className={styles.submitBtn}
-        >
-          {isSubmitting ? 'Saving...' : 'Save'}
-        </button>
-      </div>
-    </div>
-  );
-}
+  const handleClick = () => {
+    if (didLongPressRef.current) return;
+    onClick?.();
+  };
 
-function EntryCard({ entry, type, onClick }) {
   const formatTime = (date) => {
     try {
       const d = new Date(date);
@@ -439,7 +659,18 @@ function EntryCard({ entry, type, onClick }) {
   const labels = { text: 'Note', audio: 'Audio', image: 'Photo', video: 'Video', media: 'Media', file: 'File' };
 
   return (
-    <div className={styles.entryCard} onClick={onClick} role="button" tabIndex={0}>
+    <div
+      className={styles.entryCard}
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onMouseDown={startPress}
+      onMouseUp={cancelPress}
+      onMouseLeave={cancelPress}
+      onTouchStart={startPress}
+      onTouchEnd={cancelPress}
+      onTouchCancel={cancelPress}
+    >
       <div className={styles.entryIcon}>
         <TypeIcon className={styles.entryTypeIcon} />
       </div>
@@ -449,7 +680,76 @@ function EntryCard({ entry, type, onClick }) {
           <span className={styles.entryDot}>-</span>
           <span className={styles.entryTime}>{formatTime(entry.createdAt)}</span>
         </div>
-        <div className={styles.entryText}>{entry.content || 'No content'}</div>
+        <div className={styles.entryText}>{entry.title || entry.content || 'No content'}</div>
+      </div>
+    </div>
+  );
+}
+
+function EditEntryModal({ entry, type, onClose, onSave }) {
+  const isText = type === 'text';
+  const [name, setName] = useState(entry.title || (isText ? '' : entry.mediaName || entry.content || ''));
+  const [note, setNote] = useState(entry.content || '');
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const updates = { title: name };
+    if (isText) updates.content = note;
+    await onSave(updates);
+    setSaving(false);
+  };
+
+  return (
+    <div className={styles.previewBackdrop} onClick={onClose}>
+      <div className={styles.previewContent} onClick={(e) => e.stopPropagation()}>
+        <header className={styles.previewHeader}>
+          <div className={styles.previewTitle}>
+            <strong>EDIT ENTRY</strong>
+            <span>{new Date(entry.createdAt).toLocaleString()}</span>
+          </div>
+          <button type="button" onClick={onClose} className={styles.closeBtn} aria-label="Close">
+            <X className={styles.icon} />
+          </button>
+        </header>
+
+        <div className={styles.previewBody}>
+          <div className={styles.editField}>
+            <label className={styles.editLabel}>{isText ? 'Name' : 'File name'}</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={styles.editInput}
+              placeholder={isText ? 'Entry name...' : 'File name...'}
+            />
+          </div>
+          {isText && (
+            <div className={styles.editField}>
+              <label className={styles.editLabel}>Note</label>
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                className={`${styles.textInput} ${styles.editTextarea}`}
+                placeholder="Write your note..."
+              />
+            </div>
+          )}
+        </div>
+
+        <footer className={styles.editFooter}>
+          <button type="button" onClick={onClose} className={styles.cancelBtn}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className={styles.submitBtn}
+          >
+            {saving ? 'Saving...' : 'Save'}
+          </button>
+        </footer>
       </div>
     </div>
   );
