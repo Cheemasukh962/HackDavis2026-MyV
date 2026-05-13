@@ -3,14 +3,32 @@ import { useEffect, useRef } from 'react';
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 const DEFAULT_CENTER = [-121.4944, 38.5816];
 
+function createMarker(mapboxgl, map, lng, lat) {
+  const el = document.createElement('div');
+  Object.assign(el.style, {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    background: '#1A73E8',
+    border: '3px solid white',
+    boxShadow: '0 1px 6px rgba(0,0,0,0.3)',
+    cursor: 'default',
+  });
+  return new mapboxgl.Marker({ element: el })
+    .setLngLat([lng, lat])
+    .addTo(map);
+}
+
 export default function MapboxMap({ latitude, longitude }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  // Always holds the latest coords so async init can read them on completion
+  const coordsRef = useRef({ latitude, longitude });
+  coordsRef.current = { latitude, longitude };
 
   useEffect(() => {
     if (!containerRef.current) return;
-    let map = null;
     let cancelled = false;
 
     async function init() {
@@ -19,9 +37,11 @@ export default function MapboxMap({ latitude, longitude }) {
 
       mapboxgl.accessToken = TOKEN;
 
-      const center = latitude && longitude ? [longitude, latitude] : DEFAULT_CENTER;
+      // Read latest coords at the time map finishes loading (not stale closure)
+      const { latitude: lat, longitude: lng } = coordsRef.current;
+      const center = lat && lng ? [lng, lat] : DEFAULT_CENTER;
 
-      map = new mapboxgl.Map({
+      const map = new mapboxgl.Map({
         container: containerRef.current,
         style: 'mapbox://styles/mapbox/light-v11',
         center,
@@ -30,19 +50,8 @@ export default function MapboxMap({ latitude, longitude }) {
         attributionControl: false,
       });
 
-      if (latitude && longitude) {
-        const el = document.createElement('div');
-        Object.assign(el.style, {
-          width: '14px',
-          height: '14px',
-          borderRadius: '50%',
-          background: 'oklch(0.4 0.08 45)',
-          border: '2px solid white',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.16)',
-        });
-        markerRef.current = new mapboxgl.Marker({ element: el })
-          .setLngLat([longitude, latitude])
-          .addTo(map);
+      if (lat && lng) {
+        markerRef.current = createMarker(mapboxgl, map, lng, lat);
       }
 
       mapRef.current = map;
@@ -52,8 +61,10 @@ export default function MapboxMap({ latitude, longitude }) {
 
     return () => {
       cancelled = true;
-      if (map) map.remove();
-      mapRef.current = null;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
       markerRef.current = null;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -66,21 +77,9 @@ export default function MapboxMap({ latitude, longitude }) {
     if (markerRef.current) {
       markerRef.current.setLngLat([longitude, latitude]);
     } else {
-      // location resolved after map init — create the marker now
       import('mapbox-gl').then(({ default: mapboxgl }) => {
         if (!mapRef.current) return;
-        const el = document.createElement('div');
-        Object.assign(el.style, {
-          width: '14px',
-          height: '14px',
-          borderRadius: '50%',
-          background: 'oklch(0.4 0.08 45)',
-          border: '2px solid white',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.16)',
-        });
-        markerRef.current = new mapboxgl.Marker({ element: el })
-          .setLngLat([longitude, latitude])
-          .addTo(mapRef.current);
+        markerRef.current = createMarker(mapboxgl, mapRef.current, longitude, latitude);
       });
     }
   }, [latitude, longitude]);
