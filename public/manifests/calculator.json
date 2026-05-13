@@ -4,7 +4,7 @@
   "short_name": "Calculator",
   "description": "A fast, reliable calculator for everyday math.",
   "start_url": "/app/calculator",
-  "scope": "/app/calculator",
+  "scope": "/",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],
   "background_color": "#1a1a2e",
