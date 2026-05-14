@@ -221,7 +221,7 @@ export default function AppShell({
   const handleInstall = triggerNativeInstall;
 
   const renderCover = () => {
-    if (themeKey === 'calculator') return <CalculatorCover />;
+    if (themeKey === 'calculator') return <CalculatorCover onEnterPrivateMode={handleEnterPrivateMode} />;
     if (themeKey === 'news') return <NewsCover />;
     if (themeKey === 'weather') return <WeatherCover />;
     return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />;
