@@ -1,4 +1,4 @@
-# Safe Harbor — HackDavis 2026
+# SafeHaven — HackDavis 2026
 
 A privacy-first web platform for survivors of domestic violence. The real app is disguised as one of three everyday utilities (Calculator, News, Weather) to protect survivors on shared or monitored devices.
 
@@ -8,7 +8,7 @@ A privacy-first web platform for survivors of domestic violence. The real app is
 
 ## Visual Design System (iPhone Sanctuary Edition)
 
-Safe Harbor features an ultra-modern, premium UI designed to feel like a native iOS "sanctuary."
+SafeHaven features an ultra-modern, premium UI designed to feel like a native iOS "sanctuary."
 
 - **Aesthetic:** Heavy glassmorphism (`backdrop-filter: blur`), squircle corners, and luminous atmosphere.
 - **Palette:** Warm Cream (`#f6f0e4`), Off-white Paper (`#fcfaf7`), Charcoal Ink (`#362e28`), and Clay Rust (`#c97d57`).
@@ -751,7 +751,7 @@ Route: `/app/weather`
 The weather cover renders a lightweight Weather Now screen. It provides a disguised weather landing page with an `Open forecast` link.
 
 #MAIN PAGE 
-# Safe Harbor — Technical Documentation
+# SafeHaven — Technical Documentation
 
 ## Pages Overview
 
@@ -760,7 +760,7 @@ The weather cover renders a lightweight Weather Now screen. It provides a disgui
 ## 1. HOME PAGE (`src/pages/index.jsx`)
 
 ### Purpose
-Marketing landing page that introduces Safe Harbor and its core features to new visitors.
+Marketing landing page that introduces SafeHaven and its core features to new visitors.
 
 ### Route
 - **URL**: `/`
@@ -1352,5 +1352,5 @@ CMD ["npm", "start"]
 
 **Last Updated**: May 10, 2026
 **Version**: 1.0.0
-**Maintainer**: Safe Harbor Team
+**Maintainer**: SafeHaven Team
 

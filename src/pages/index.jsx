@@ -58,7 +58,7 @@ export default function LandingPage() {
   return (
     <>
       <Head>
-        <title>Safe Harbor — Safety, Beautifully Disguised</title>
+        <title>SafeHaven — Safety, Beautifully Disguised</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="A quiet, zero-trace sanctuary for your private journey toward safety. Hidden in plain sight." />
         <link rel="icon" href="/resources/images/logos/safe_harbor_logo.png" />
@@ -68,7 +68,7 @@ export default function LandingPage() {
         <header className={styles.header}>
           <div className={styles.brand}>
             <img src="/resources/images/logos/safe_harbor_logo.png" alt="" className={styles.logo} />
-            Safe Harbor
+            SafeHaven
           </div>
           <nav className={styles.nav}>
             <Link href="/downloads" className={styles.navButton}>
@@ -188,7 +188,7 @@ export default function LandingPage() {
               <h2 className={styles.missionTitle}>Built with empathy</h2>
               <p className={styles.missionText}>
                 We believe everyone deserves a space where they can be heard without fear. 
-                Safe Harbor isn't just an app; it's a bridge to your independence. 
+                SafeHaven isn't just an app; it's a bridge to your independence. 
                 We keep your secrets so you can find your strength.
               </p>
             </div>
@@ -198,8 +198,8 @@ export default function LandingPage() {
         <footer className={styles.footer}>
           <div className={styles.footerContent}>
             <div className={`${styles.brand} ${styles.footerBrand}`}>
-              <img src="/resources/images/logos/safe_harbor_logo.png" alt="" className={styles.logo} />
-              Safe Harbor
+              <img src="/resources/images/logos/safe_haven_logo.png" alt="" className={styles.logo} />
+              SafeHaven
             </div>
             <p className={styles.footerDisclaimer}>
               <strong>Note:</strong> If you are in immediate danger, please use a safe device 

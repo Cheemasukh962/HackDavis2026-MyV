@@ -56,7 +56,7 @@ export default function Downloads() {
               <ShieldIcon className={styles.titleIcon} />
             </h1>
             <p className={styles.heroSubtitle}>
-              Select how Safe Harbor will appear on your device. Once installed, the app functions exactly like the utility you choose. Your safety tools are hidden until you unlock them.
+              Select how SafeHaven will appear on your device. Once installed, the app functions exactly like the utility you choose. Your safety tools are hidden until you unlock them.
             </p>
           </section>
 

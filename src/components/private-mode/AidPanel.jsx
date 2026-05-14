@@ -13,7 +13,7 @@ const FILTERS = [
 
 const PLACEHOLDER_RESOURCES = {
   shelter: [
-    { name: "Safe Harbor Women's Shelter", meta: '0.8 mi - Open 24 hours', latitude: 38.5694, longitude: -121.4854 },
+    { name: "SafeHaven Women's Shelter", meta: '0.8 mi - Open 24 hours', latitude: 38.5694, longitude: -121.4854 },
     { name: 'Hope House Emergency Refuge', meta: '1.4 mi - Open until 9 PM', latitude: 38.5952, longitude: -121.5024 },
   ],
   legal: [
