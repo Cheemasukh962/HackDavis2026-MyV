@@ -245,7 +245,7 @@ export default function AppShell({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </Head>
 
-      <main>
+      <main style={{ background: themeColor }}>
         {/* ── Installation Modal (Differentiated by Route) ── */}
         <InstallModal
           isOpen={showModal}
