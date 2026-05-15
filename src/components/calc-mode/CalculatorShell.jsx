@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import styles from '../styles/calc-mode/cover.module.css';
-import { useCalculator } from '../hooks/useCalculator';
-import CalculatorDisplay from './calc-mode/CalculatorDisplay';
-import HistoryPanel from './calc-mode/HistoryPanel';
-import SciPad from './calc-mode/SciPad';
-import StdKeypad from './calc-mode/StdKeypad';
-import { HistoryIcon, SciToggleIcon } from './calc-mode/Icons';
+import styles from '../../styles/calc-mode/calculatorshell.module.css';
+import { useCalculator } from '../../hooks/useCalculator';
+import CalculatorDisplay from './CalculatorDisplay';
+import HistoryPanel from './HistoryPanel';
+import SciPad from './SciPad';
+import StdKeypad from './StdKeypad';
+import { HistoryIcon, SciToggleIcon } from './Icons';
 
 export default function CalculatorCover() {
   const [showHistory, setShowHistory] = useState(false);

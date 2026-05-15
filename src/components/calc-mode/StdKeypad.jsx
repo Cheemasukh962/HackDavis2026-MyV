@@ -1,4 +1,4 @@
-import styles from '../../styles/calc-mode/keypad.module.css';
+import styles from '../../styles/calc-mode/stdkeypad.module.css';
 import { STD_BUTTONS } from './buttonData';
 import { BackspaceIcon } from './Icons';
 

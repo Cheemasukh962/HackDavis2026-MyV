@@ -11,13 +11,13 @@ function RedLockIcon({ className }) {
     </svg>
   );
 }
-import HomePanel from './private-mode/HomePanel';
-import SosPanel from './private-mode/SosPanel';
-import ChatPanel from './private-mode/ChatPanel';
-import AidPanel from './private-mode/AidPanel';
+import HomePanel from './HomePanel';
+import SosPanel from './SosPanel';
+import ChatPanel from './ChatPanel';
+import AidPanel from './AidPanel';
 import JournalPanel from './JournalPanel';
-import { triggerPanicExit } from '../hooks/usePrivacyMode';
-import styles from '../styles/private-mode/shell.module.css';
+import { triggerPanicExit } from '../../hooks/usePrivacyMode';
+import styles from '../../styles/private-mode/shell.module.css';
 
 const TABS = [
   { id: 'home', title: 'Home', label: 'Home', Icon: Home },

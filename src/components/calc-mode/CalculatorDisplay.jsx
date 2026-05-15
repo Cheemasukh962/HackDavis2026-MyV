@@ -1,4 +1,4 @@
-import styles from '../../styles/calc-mode/display.module.css';
+import styles from '../../styles/calc-mode/calculatordisplay.module.css';
 
 export default function CalculatorDisplay({ liveExpression, liveResultFormatted, fontSize, isScientific }) {
   return (

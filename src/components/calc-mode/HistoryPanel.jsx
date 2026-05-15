@@ -1,4 +1,4 @@
-import styles from '../../styles/calc-mode/history.module.css';
+import styles from '../../styles/calc-mode/historypanel.module.css';
 
 export default function HistoryPanel({ history, onClear, onClose }) {
   return (

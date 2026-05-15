@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import PanicExit from '../../components/PanicExit';
 import Button from '../../components/Button';
-import CalculatorCover from '../../components/CalculatorCover';
+import CalculatorShell from '../../components/calc-mode/CalculatorShell';
 import NewsCover from '../../components/NewsCover';
-import PrivateModeShell from '../../components/PrivateModeShell';
+import PrivateModeShell from '../../components/private-mode/PrivateModeShell';
 import WeatherCover from '../../components/WeatherCover';
 import { usePrivacyMode } from '../../hooks/usePrivacyMode';
 import { withOptionalAuth } from '../../lib/withOptionalAuth';
@@ -221,7 +221,7 @@ export default function AppShell({
   const handleInstall = triggerNativeInstall;
 
   const renderCover = () => {
-    if (themeKey === 'calculator') return <CalculatorCover onEnterPrivateMode={handleEnterPrivateMode} />;
+    if (themeKey === 'calculator') return <CalculatorShell />;
     if (themeKey === 'news') return <NewsCover />;
     if (themeKey === 'weather') return <WeatherCover />;
     return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />;
