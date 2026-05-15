@@ -1,0 +1,76 @@
+.feedHeader {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  padding: 8px 16px 6px;
+  background: rgba(229, 229, 235, 0.94);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.feedHeader::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: linear-gradient(to bottom, rgba(229,229,235,1) 0%, rgba(229,229,235,0.7) 40%, rgba(229,229,235,0.2) 75%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.feedHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedHeaderLogo {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  mix-blend-mode: multiply;
+  flex-shrink: 0;
+}
+
+.kiwiIcon {
+  font-style: normal;
+}
+
+.feedHeaderEyebrow {
+  margin: 0;
+  color: #000;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.0;
+}
+
+.feedHeaderTitle {
+  margin: -4px 0 0;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.0;
+  background: linear-gradient(to right, #FF3B30 0%, #6e6e73 75%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.feedHeaderTitleStandalone {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.0;
+  background: linear-gradient(to right, #FF3B30 0%, #6e6e73 55%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (max-width: 360px) {
+  .feedHeaderEyebrow { font-size: 24px; }
+  .feedHeaderTitle { font-size: 28px; }
+}

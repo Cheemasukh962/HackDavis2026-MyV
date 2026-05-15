@@ -1,0 +1,165 @@
+.page {
+  min-height: 100dvh;
+  overflow: hidden;
+  background: linear-gradient(160deg, #e0e0e6 0%, #e5e5eb 50%, #dcdce2 100%);
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+}
+
+.appShell {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #e5e5eb;
+  overscroll-behavior: none;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #e5e5eb;
+}
+
+.accentGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 260px;
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.6s ease;
+}
+
+.navBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 35;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top) + 8px) 16px 10px;
+  background: rgba(229, 229, 235, 0.94);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  transition: none;
+}
+
+.navBarScrolled {
+  border-bottom-color: rgba(0, 0, 0, 0.16);
+  background: rgba(249, 249, 249, 0.97);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.navButton {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: saturate(120%) blur(8px);
+  backdrop-filter: saturate(120%) blur(8px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2px 8px rgba(0, 0, 0, 0.10);
+  color: #1c1c1e;
+  cursor: pointer;
+  transition: opacity 0.14s ease;
+}
+
+.navButton:active { opacity: 0.5; }
+
+.navButton:focus-visible {
+  outline: 3px solid rgba(255, 59, 48, 0.4);
+  outline-offset: 2px;
+}
+
+.menuIcon {
+  width: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menuIcon span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.profileIcon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+}
+
+.profileIcon::before,
+.profileIcon::after {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+}
+
+.profileIcon::before { top: 3px; width: 8px; height: 8px; }
+.profileIcon::after  { bottom: 3px; width: 14px; height: 6px; }
+
+.navTitle {
+  min-width: 0;
+  color: transparent;
+  background: linear-gradient(to bottom, #8e8e93 0%, #000 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+.feed {
+  position: absolute;
+  inset: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: calc(env(safe-area-inset-top) + 50px);
+  overscroll-behavior: none;
+}
+
+.feed::-webkit-scrollbar { display: none; }
+
+.bottomBlurHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bottomBlur {
+  transition: opacity 0.3s ease;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(env(safe-area-inset-bottom) + 180px);
+  background: linear-gradient(to bottom, transparent 0%, rgba(229,229,235,0.25) 18%, rgba(229,229,235,0.6) 38%, rgba(229,229,235,0.85) 58%, rgba(229,229,235,0.97) 76%, #e5e5eb 100%);
+  pointer-events: none;
+  z-index: 30;
+}
+
+.content {
+  width: 100%;
+  background: #e5e5eb;
+  padding: 0 0 calc(env(safe-area-inset-bottom) + 92px);
+}

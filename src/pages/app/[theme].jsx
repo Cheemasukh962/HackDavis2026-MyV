@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import PanicExit from '../../components/PanicExit';
 import Button from '../../components/Button';
 import CalculatorShell from '../../components/calc-mode/CalculatorShell';
-import NewsCover from '../../components/NewsCover';
+import NewsShell from '../../components/news-mode/NewsShell';
 import PrivateModeShell from '../../components/private-mode/PrivateModeShell';
 import WeatherCover from '../../components/WeatherCover';
 import { usePrivacyMode } from '../../hooks/usePrivacyMode';
@@ -222,7 +222,7 @@ export default function AppShell({
 
   const renderCover = () => {
     if (themeKey === 'calculator') return <CalculatorShell />;
-    if (themeKey === 'news') return <NewsCover />;
+    if (themeKey === 'news') return <NewsShell />;
     if (themeKey === 'weather') return <WeatherCover />;
     return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />;
   };

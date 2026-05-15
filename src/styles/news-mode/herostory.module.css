@@ -1,0 +1,79 @@
+.hero {
+  position: relative;
+  width: calc(100% - 32px);
+  margin: 0 16px;
+  height: clamp(260px, 40dvh, 440px);
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: #e5e5ea;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.5) inset,
+    0 4px 12px rgba(0,0,0,0.12),
+    0 16px 40px rgba(0,0,0,0.09);
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  font: inherit;
+  text-align: left;
+}
+
+.heroImage {
+  position: absolute;
+  inset: -22px 0 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transform-origin: center top;
+  transition: transform 0.12s linear;
+}
+
+.heroTopFade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, #e5e5eb 0%, rgba(229,229,235,0.5) 55%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heroOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 72px 16px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+  z-index: 1;
+}
+
+.heroTag {
+  margin-bottom: 6px;
+  color: #FF3B30;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  max-width: 680px;
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: clamp(20px, 4.5vw, 36px);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.heroSource {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 360px) {
+  .heroTitle { font-size: 18px; }
+}

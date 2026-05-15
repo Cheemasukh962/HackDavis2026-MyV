@@ -1,5 +1,4 @@
 const config = require('../../../config/config');
-const { requireAuth } = require('../../../lib/requireAuth');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
 
 const TAB_TO_QUERY = {
@@ -87,9 +86,7 @@ async function handler(req, res) {
   }
 }
 
-const authenticatedHandler = requireAuth(handler);
-
 export default function headlines(req, res) {
   applySecurityHeaders(res);
-  return authenticatedHandler(req, res);
+  return handler(req, res);
 }
