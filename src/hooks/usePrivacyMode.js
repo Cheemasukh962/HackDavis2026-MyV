@@ -65,7 +65,15 @@ export function usePrivacyMode() {
 }
 
 export function triggerPanicExit() {
-  const safeUrl = process.env.NEXT_PUBLIC_SAFE_EXIT_URL || 'https://www.google.com';
+  // If we're inside a cover app (/app/calculator|news|weather), go back to that
+  // cover page — it looks like a normal app launch to anyone watching.
+  // Otherwise fall back to the configured safe-exit URL.
+  const coverMatch =
+    window.location.pathname.match(/^\/app\/(calculator|news|weather)/) ||
+    decodeURIComponent(window.location.search).match(/\/app\/(calculator|news|weather)/);
+  const safeUrl = coverMatch
+    ? `/app/${coverMatch[1]}`
+    : (process.env.NEXT_PUBLIC_SAFE_EXIT_URL || 'https://www.google.com');
 
   sessionStorage.clear();
   postToSW({ type: 'PANIC' });
