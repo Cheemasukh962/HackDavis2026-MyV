@@ -22,6 +22,11 @@ export function normalizeLiveArticles(tab, data, { heroStories, storySections, l
 
   if (stories.length === 0) return null;
 
+  // Build dynamic filter chips from categories across all live articles
+  const allCategories = [lead, ...stories].flatMap((a) => a.categories || []);
+  const uniqueCategories = [...new Set(allCategories)].slice(0, 6);
+  const filters = uniqueCategories.length > 0 ? ['All', ...uniqueCategories] : null;
+
   return {
     hero: {
       ...lead,
@@ -31,5 +36,6 @@ export function normalizeLiveArticles(tab, data, { heroStories, storySections, l
       image: lead.image || fallbackHero.image,
     },
     sections: [{ title: liveSectionTitles[tab] || 'Top Stories', stories }],
+    filters,
   };
 }

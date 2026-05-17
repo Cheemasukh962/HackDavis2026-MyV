@@ -13,6 +13,17 @@ const TAB_TO_TAG = {
   sports: 'Sports Highlight',
 };
 
+function extractCategoryLabel(cat) {
+  if (!cat) return null;
+  if (typeof cat === 'string') return cat;
+  if (cat?.label?.eng) return cat.label.eng;
+  if (cat?.uri) {
+    const parts = cat.uri.split('/');
+    return parts[parts.length - 1].replace(/([A-Z])/g, ' $1').trim();
+  }
+  return null;
+}
+
 function normalizeArticle(article) {
   const headline = typeof article?.title === 'string' ? article.title.trim() : '';
   if (!headline) return null;
@@ -22,6 +33,10 @@ function normalizeArticle(article) {
     ? `${body.slice(0, 220).trim()}${body.length > 220 ? '...' : ''}`
     : '';
 
+  const categories = Array.isArray(article?.categories)
+    ? article.categories.map(extractCategoryLabel).filter(Boolean)
+    : [];
+
   return {
     source: article?.source?.title || article?.source?.uri || 'Daily News',
     headline,
@@ -30,6 +45,8 @@ function normalizeArticle(article) {
     image: article?.image || '',
     url: article?.url || '',
     publishedAt: article?.dateTime || article?.dateTimePub || article?.date || '',
+    categories,
+    eventUri: article?.eventUri || '',
   };
 }
 

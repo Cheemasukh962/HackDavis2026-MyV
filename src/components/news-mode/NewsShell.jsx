@@ -29,6 +29,7 @@ export default function NewsShell() {
   const isLoading = loadingTabs[activeTab] !== false;
   const hero = liveContent[activeTab]?.hero || (!isLoading ? HERO_STORIES[activeTab] : null);
   const sections = liveContent[activeTab]?.sections || (!isLoading ? STORY_SECTIONS[activeTab] : []);
+  const filters = liveContent[activeTab]?.filters || FEED_FILTERS[activeTab] || ['All'];
 
   const navTitle = useMemo(() => {
     const active = TABS.find((t) => t.id === activeTab);
@@ -125,14 +126,20 @@ export default function NewsShell() {
             )}
 
             <FilterRow
-              filters={FEED_FILTERS[activeTab] || ['All']}
+              filters={filters}
               active={activeFilter}
               onSelect={setActiveFilter}
             />
 
             <div className={styles.content}>
               {sections
-                .filter((s) => activeFilter === 'All' || s.title === activeFilter)
+                .map((section) => ({
+                  ...section,
+                  stories: activeFilter === 'All'
+                    ? section.stories
+                    : section.stories.filter((s) => s.categories?.includes(activeFilter)),
+                }))
+                .filter((section) => section.stories.length > 0)
                 .map((section) => (
                   <StorySection
                     key={section.title}
