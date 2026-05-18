@@ -156,8 +156,7 @@ HackDavis 2026/
     │   └── colorExtract.js    ← Canvas-based dominant color extraction from images.
     ├── components/
     │   ├── PanicExit.jsx
-    │   ├── Button.jsx
-    │   ├── WeatherCover.jsx
+    │   ├── PrivateModeButton.jsx
     │   ├── calc-mode/
     │   │   ├── CalculatorShell.jsx  ← Root calc cover; owns mode/history state.
     │   │   ├── CalculatorDisplay.jsx
@@ -179,6 +178,8 @@ HackDavis 2026/
     │   │   ├── MenuOverlay.jsx
     │   │   ├── ProfileOverlay.jsx
     │   │   └── newsData.js          ← Static fallback stories + tab/filter definitions.
+    │   ├── weather-mode/
+    │   │   └── WeatherModeShell.jsx ← Weather cover page.
     │   └── private-mode/
     │       ├── PrivateModeShell.jsx
     │       ├── HomePanel.jsx
@@ -217,12 +218,9 @@ HackDavis 2026/
     └── styles/
         ├── globals.css
         ├── Marketing.module.css
-        ├── Landing.module.css
+        ├── CoverPages.module.css
         ├── Login.module.css
-        ├── ChatRoom.module.css
-        ├── JournalPanel.module.css
         ├── AppPreview.module.css
-        ├── WeatherCover.module.css
         ├── calc-mode/
         │   ├── calculatorshell.module.css
         │   ├── calculatordisplay.module.css
@@ -237,12 +235,15 @@ HackDavis 2026/
         │   ├── storysection.module.css
         │   ├── tabbar.module.css
         │   └── overlays.module.css
+        ├── weather-mode/
+        │   └── weathercover.module.css
         └── private-mode/
             ├── shell.module.css
             ├── home.module.css
             ├── chat.module.css
             ├── aid.module.css
-            └── sos.module.css
+            ├── sos.module.css
+            └── journalpanel.module.css
 ```
 
 ---
@@ -393,7 +394,7 @@ Apple News-style reader branded as **Kiwi News**. All three tabs (News+, World, 
 
 ### Weather (`/app/weather`)
 
-Lightweight cover page with weather display and an "Open forecast" link.
+Lightweight cover page with weather display and an "Open forecast" link. Component: `WeatherModeShell`.
 
 ---
 
@@ -583,6 +584,6 @@ Applied via `next.config.js`:
 
 ---
 
-**Last Updated:** May 17, 2026
-**Version:** 1.2.0
+**Last Updated:** May 18, 2026
+**Version:** 1.2.1
 **Maintainer:** SafeHaven Team

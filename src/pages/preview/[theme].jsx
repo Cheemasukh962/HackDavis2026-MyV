@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from '../../styles/AppPreview.module.css';
-import landingStyles from '../../styles/Landing.module.css';
+import landingStyles from '../../styles/CoverPages.module.css';
 
 const APPS = {
   calculator: {

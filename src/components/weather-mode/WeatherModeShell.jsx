@@ -1,8 +1,8 @@
-import styles from '../styles/WeatherCover.module.css';
+import styles from '../../styles/weather-mode/weathercover.module.css';
 
 const ACCUWEATHER_URL = 'https://www.accuweather.com/';
 
-export default function WeatherCover() {
+export default function WeatherModeShell() {
   return (
     <section className={styles.page} aria-label="Weather Now">
       <div className={styles.sky}>

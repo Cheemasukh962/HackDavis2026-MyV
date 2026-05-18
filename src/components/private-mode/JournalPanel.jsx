@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera, Download, FileText, Lock, Mic, Search, Shuffle, Square, Trash2, Type, Volume2, VolumeX, X } from 'lucide-react';
 import { useSpeechToText } from '../../hooks/useSpeechToText';
-import styles from '../../styles/JournalPanel.module.css';
+import styles from '../../styles/private-mode/journalpanel.module.css';
 
 export default function JournalPanel() {
   const [entries, setEntries] = useState([]);

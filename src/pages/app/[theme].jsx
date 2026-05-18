@@ -2,14 +2,14 @@ import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import PanicExit from '../../components/PanicExit';
-import Button from '../../components/Button';
+import PrivateModeButton from '../../components/PrivateModeButton';
 import CalculatorShell from '../../components/calc-mode/CalculatorShell';
 import NewsShell from '../../components/news-mode/NewsShell';
 import PrivateModeShell from '../../components/private-mode/PrivateModeShell';
-import WeatherCover from '../../components/WeatherCover';
+import WeatherModeShell from '../../components/weather-mode/WeatherModeShell';
 import { usePrivacyMode } from '../../hooks/usePrivacyMode';
 import { withOptionalAuth } from '../../lib/withOptionalAuth';
-import landingStyles from '../../styles/Landing.module.css';
+import landingStyles from '../../styles/CoverPages.module.css';
 
 const ShieldIcon = ({ className }) => (
   <svg
@@ -223,7 +223,7 @@ export default function AppShell({
   const renderCover = () => {
     if (themeKey === 'calculator') return <CalculatorShell />;
     if (themeKey === 'news') return <NewsShell />;
-    if (themeKey === 'weather') return <WeatherCover />;
+    if (themeKey === 'weather') return <WeatherModeShell />;
     return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />;
   };
 
@@ -277,7 +277,7 @@ export default function AppShell({
       </main>
 
       <PanicExit showButton={false} />
-      {!showPrivateMode && <Button onClick={handleEnterPrivateMode} />}
+      {!showPrivateMode && <PrivateModeButton onClick={handleEnterPrivateMode} />}
 
       {/* Persistent Install Trigger for non-PWA mode */}
       {installPrompt && !showModal && (

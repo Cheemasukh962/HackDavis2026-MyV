@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import styles from '../styles/Landing.module.css';
+import styles from '../styles/CoverPages.module.css';
 
 const ShieldIcon = ({ className }) => (
   <svg 
