@@ -165,6 +165,7 @@ export default function NewsShell() {
                 );
               })()}
             </div>
+            <a href="https://logo.dev" className={styles.logoAttribution}>Logos provided by Logo.dev</a>
           </div>
 
           <div className={`${styles.bottomBlur} ${atBottom ? styles.bottomBlurHidden : ''}`} aria-hidden="true" />

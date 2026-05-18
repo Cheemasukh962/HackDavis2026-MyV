@@ -359,6 +359,16 @@
   color: #8e8e93;
 }
 
+.menuAttribution {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #8e8e93;
+  text-decoration: none;
+}
+
+.menuAttribution:hover { text-decoration: underline; }
+
 .overlaySectionTitle {
   margin: 0 0 9px;
   color: #8e8e93;
