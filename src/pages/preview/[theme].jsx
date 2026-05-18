@@ -161,6 +161,7 @@ export default function AppPreview({ themeKey }) {
         <meta name="referrer" content="no-referrer" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="theme-color" content={app.themeColor} />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content={app.name} />
         <link rel="manifest" href={app.manifestUrl} />
