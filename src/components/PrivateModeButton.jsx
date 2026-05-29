@@ -1,9 +1,9 @@
 /**
- * Button - discrete in-app switch from a disguise screen to private tools.
+ * PrivateModeButton — discreet in-app switch from a cover screen to private safety tools.
  *
- * The control stays small, unlabeled, and low-contrast so the cover identity
- * remains the primary visible experience until the user intentionally opens
- * the private safety tools.
+ * Stays small, unlabeled, and low-contrast so the cover identity remains the primary
+ * visible experience. Positioned using env(safe-area-inset-*) so it clears the
+ * rounded corners and home indicator on modern iPhones.
  */
 
 export default function Button({ onClick }) {
@@ -15,8 +15,8 @@ export default function Button({ onClick }) {
       onClick={onClick}
       style={{
         position: 'fixed',
-        bottom: '12px',
-        left: '12px',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
+        left: 'calc(env(safe-area-inset-left, 0px) + 20px)',
         zIndex: 9998,
         width: '20px',
         height: '20px',

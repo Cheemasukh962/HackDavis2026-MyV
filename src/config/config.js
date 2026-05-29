@@ -45,6 +45,7 @@ const config = {
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
     NEWSAPI_AI_KEY: process.env.NEWSAPI_AI_KEY,
     ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY,
+    MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN,
     ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN,
   },
 };

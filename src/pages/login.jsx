@@ -76,6 +76,7 @@ export default function LoginPage() {
     <>
       <Head>
         <title>{mode === 'login' ? 'Sign in' : 'Create account'}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="referrer" content="no-referrer" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
@@ -86,7 +87,7 @@ export default function LoginPage() {
 
       <div className={styles.page}>
         <main className={styles.main}>
-          <form onSubmit={handleSubmit} className={styles.form} autoComplete="off">
+          <form onSubmit={handleSubmit} className={styles.form} autoComplete="off" data-form-type="other" data-lpignore="true">
             <h1 className={styles.heading}>
               {mode === 'login' ? 'Sign in' : 'Create account'}
             </h1>
@@ -107,6 +108,8 @@ export default function LoginPage() {
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
+                data-lpignore="true"
+                data-1p-ignore
                 required
               />
             </div>
@@ -117,11 +120,13 @@ export default function LoginPage() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type="text"
                   value={fields.password}
                   onChange={update}
-                  className={styles.input}
-                  autoComplete="new-password"
+                  className={`${styles.input} ${!showPassword ? styles.masked : ''}`}
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore
                   required
                 />
                 <button
@@ -149,11 +154,13 @@ export default function LoginPage() {
                   <input
                     id="duressPassword"
                     name="duressPassword"
-                    type={showDuress ? 'text' : 'password'}
+                    type="text"
                     value={fields.duressPassword}
                     onChange={update}
-                    className={styles.input}
-                    autoComplete="new-password"
+                    className={`${styles.input} ${!showDuress ? styles.masked : ''}`}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-1p-ignore
                   />
                   <button
                     type="button"

@@ -53,6 +53,7 @@ export default function AidPanel({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedResource, setSelectedResource] = useState(null);
+  const [overview, setOverview] = useState({ loading: false, text: null, id: null });
   const mapRef = useRef(null);
   const lastFetchedCoordsRef = useRef('');
   const latitude = location?.latitude;
@@ -88,6 +89,7 @@ export default function AidPanel({
   // Clear selection when switching filters
   useEffect(() => {
     setSelectedResource(null);
+    setOverview({ loading: false, text: null, id: null });
   }, [activeFilter]);
 
   useEffect(() => {
@@ -127,12 +129,36 @@ export default function AidPanel({
     );
   };
 
+  const fetchOverview = async (resource) => {
+    const id = resource.id || resource.name;
+    setOverview({ loading: true, text: null, id });
+    try {
+      const res = await fetch('/api/resources/overview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: resource.name,
+          category: resource.category,
+          address: resource.address,
+          meta: resource.meta,
+        }),
+      });
+      const data = await res.json();
+      setOverview({ loading: false, text: data.overview || null, id });
+    } catch {
+      setOverview({ loading: false, text: null, id });
+    }
+  };
+
   const handleCardClick = async (resource) => {
     // Toggle off if already selected
     if (selectedResource?.name === resource.name) {
       setSelectedResource(null);
+      setOverview({ loading: false, text: null, id: null });
       return;
     }
+
+    fetchOverview(resource);
 
     // Always geocode via Mapbox when address is present — AI coords are unreliable
     if (resource.address) {
@@ -235,7 +261,37 @@ export default function AidPanel({
               <div className={styles.resourceInfo}>
                 <h2>{resource.name}</h2>
                 <p className={styles.resourceMeta}>{resource.meta}</p>
+                {resource.rating && (
+                  <p className={styles.resourceRating}>
+                    <span
+                      className={styles.ratingDots}
+                      aria-label={`Rating: ${resource.rating} out of ${resource.rating > 5 ? 10 : 5}`}
+                    >
+                      {Array.from({ length: 5 }, (_, i) => {
+                        const normalized = resource.rating > 5 ? resource.rating / 2 : resource.rating;
+                        return (
+                          <span key={i} className={i < Math.round(normalized) ? styles.dotFilled : styles.dotEmpty}>
+                            {i < Math.round(normalized) ? '●' : '○'}
+                          </span>
+                        );
+                      })}
+                    </span>
+                    {resource.reviewCount ? (
+                      <span className={styles.reviewCount}>({resource.reviewCount})</span>
+                    ) : null}
+                  </p>
+                )}
                 {resource.address && <p className={styles.resourceAddress}>{resource.address}</p>}
+                {isSelected && (() => {
+                  const id = resource.id || resource.name;
+                  if (overview.loading && overview.id === id) {
+                    return <p className={styles.overviewLoading}>Getting overview…</p>;
+                  }
+                  if (!overview.loading && overview.text && overview.id === id) {
+                    return <p className={styles.overviewText}>{overview.text}</p>;
+                  }
+                  return null;
+                })()}
               </div>
               <div className={styles.resourceActions}>
                 <button

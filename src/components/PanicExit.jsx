@@ -6,7 +6,10 @@
  *  - Horizontal swipe gesture (left/right) on touch devices
  *  - Quick-exit button tap (when visible)
  *
- * Clears all session state and redirects to a safe cover page.
+ * The button is a 44×44 pt tap target (10px padding around a 24px icon) positioned
+ * using env(safe-area-inset-*) so it clears iPhone notch/rounded corners.
+ * touchAction: manipulation removes the 300ms tap delay on mobile.
+ * Redirect fires first in triggerPanicExit — see usePrivacyMode.js.
  */
 
 import { useEffect, useRef } from 'react';
@@ -108,8 +111,8 @@ export default function PanicExit({ showButton = true }) {
       title="Quick exit"
       style={{
         position: 'fixed',
-        bottom: '14px',
-        right: '14px',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)',
+        right: 'calc(env(safe-area-inset-right, 0px) + 8px)',
         zIndex: 9999,
         border: 'none',
         background: 'transparent',
@@ -120,7 +123,10 @@ export default function PanicExit({ showButton = true }) {
         justifyContent: 'center',
         userSelect: 'none',
         WebkitTapHighlightColor: 'transparent',
-        padding: 0,
+        touchAction: 'manipulation',
+        padding: '10px',
+        minWidth: '44px',
+        minHeight: '44px',
       }}
     >
       <RedLockIcon size={24} />

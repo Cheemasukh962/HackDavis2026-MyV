@@ -6,7 +6,12 @@ import { useEffect } from 'react';
  * Registers /sw.js in production (no-cache, panic-capable service worker) and
  * automatically unregisters any stale SW in development so hot-reload works cleanly.
  * Also locks browser history to prevent the back button from revealing private mode,
- * and wipes session storage + triggers logout whenever the tab is hidden.
+ * wipes session storage + purges SW caches whenever the tab is hidden, and handles
+ * bfcache restoration (pageshow with event.persisted) by triggering panic exit immediately
+ * so the private UI is never shown stale before auth re-runs.
+ *
+ * triggerPanicExit fires window.location.replace FIRST so the browser starts loading
+ * the cover page with zero perceptible delay; session wipe and logout run after.
  *
  * Mount this hook once at the top of [theme].jsx — it should run on every page load.
  */
@@ -68,8 +73,20 @@ export function usePrivacyMode({ onLogout } = {}) {
       }
     };
 
+    // If the browser restores this page from bfcache (back-forward cache),
+    // the DOM is shown before React re-checks auth — redirect immediately.
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        triggerPanicExit();
+      }
+    };
+
     document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('pageshow', handlePageShow);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
   }, []);
 }
 
@@ -80,9 +97,6 @@ export function usePrivacyMode({ onLogout } = {}) {
  * Otherwise falls back to NEXT_PUBLIC_SAFE_EXIT_URL (default: google.com).
  */
 export function triggerPanicExit() {
-  // If we're inside a cover app (/app/calculator|news|weather), go back to that
-  // cover page — it looks like a normal app launch to anyone watching.
-  // Otherwise fall back to the configured safe-exit URL.
   const coverMatch =
     window.location.pathname.match(/^\/app\/(calculator|news|weather)/) ||
     decodeURIComponent(window.location.search).match(/\/app\/(calculator|news|weather)/);
@@ -90,12 +104,13 @@ export function triggerPanicExit() {
     ? `/app/${coverMatch[1]}`
     : (process.env.NEXT_PUBLIC_SAFE_EXIT_URL || 'https://www.google.com');
 
+  // Navigate first — browser starts loading the safe page immediately.
+  // JS continues synchronously so cleanup still runs before unload.
+  window.location.replace(safeUrl);
+
   sessionStorage.clear();
   postToSW({ type: 'PANIC' });
-
   fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
-
-  window.location.replace(safeUrl);
 }
 
 function postToSW(message) {

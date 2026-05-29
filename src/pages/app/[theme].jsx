@@ -8,7 +8,6 @@ import NewsShell from '../../components/news-mode/NewsShell';
 import PrivateModeShell from '../../components/private-mode/PrivateModeShell';
 import WeatherModeShell from '../../components/weather-mode/WeatherModeShell';
 import { usePrivacyMode } from '../../hooks/usePrivacyMode';
-import { withOptionalAuth } from '../../lib/withOptionalAuth';
 import landingStyles from '../../styles/CoverPages.module.css';
 
 const ShieldIcon = ({ className }) => (
@@ -254,7 +253,7 @@ export default function AppShell({
         <style>{`html,body{background:${pageThemeColor}!important;height:100%;overflow:hidden}`}</style>
         <meta name="robots" content="noindex, nofollow" />
         <meta name="referrer" content="no-referrer" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
       </Head>
 
       <main style={{ background: pageThemeColor }}>
@@ -302,18 +301,43 @@ export default function AppShell({
   );
 }
 
-export const getServerSideProps = withOptionalAuth(async (context) => {
+export async function getServerSideProps(context) {
   const config = require('../../config/config');
-  const { params } = context;
+  const jwt = require('jsonwebtoken');
+  const { params, query, req, res } = context;
+
   const theme = THEMES[params.theme];
   if (!theme) return { notFound: true };
+
+  let session = null;
+  const token = req.cookies?.auth_token;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, config.env.JWT_SECRET);
+      if (query?.enter === '1') {
+        session = {
+          sub: decoded.sub,
+          displayName: decoded.displayName,
+          duressMode: decoded.duressMode || false,
+        };
+      } else {
+        // Any direct load or refresh — kill the cookie immediately.
+        res.setHeader('Set-Cookie', 'auth_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict; Secure');
+      }
+    } catch {
+      res.setHeader('Set-Cookie', 'auth_token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict; Secure');
+    }
+  }
+
   return {
     props: {
       ...theme,
+      session,
       sosEnabled: Boolean(config.features.enable_sos),
     },
   };
-});
+}
 
 // ── Inline styles (discreet banner) ──────────────────────────────────────────
 

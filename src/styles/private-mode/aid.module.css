@@ -197,10 +197,54 @@
   margin-bottom: 4px;
 }
 
+.resourceRating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.ratingDots {
+  display: inline-flex;
+  gap: 3px;
+  line-height: 1;
+}
+
+.dotFilled {
+  font-size: 11px;
+  color: #000;
+}
+
+.dotEmpty {
+  font-size: 11px;
+  color: #ccc;
+}
+
+.reviewCount {
+  font-size: 11px;
+  color: var(--pm-muted-foreground);
+}
+
 .resourceAddress {
   font-size: 13px;
   color: var(--pm-muted-foreground);
   line-height: 1.4;
+}
+
+.overviewText {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--pm-border);
+  font-size: 13px;
+  color: var(--pm-foreground);
+  line-height: 1.55;
+}
+
+.overviewLoading {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--pm-muted-foreground);
+  font-style: italic;
 }
 
 .resourceActions {

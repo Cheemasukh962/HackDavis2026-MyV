@@ -18,12 +18,25 @@ const nextConfig = {
     ];
 
     return [
-      // Auth routes: zero-trace — prevent every caching layer from storing responses.
+      // All API routes: no caching.
       {
-        source: '/api/auth/:path*',
+        source: '/api/:path*',
         headers: [...noCache, ...securityDefaults],
       },
-      // Apply security defaults site-wide.
+      // App pages and login: no-store prevents browser HTTP cache and bfcache.
+      {
+        source: '/login',
+        headers: noCache,
+      },
+      {
+        source: '/app/:path*',
+        headers: noCache,
+      },
+      {
+        source: '/preview/:path*',
+        headers: noCache,
+      },
+      // Security defaults site-wide.
       {
         source: '/:path*',
         headers: securityDefaults,

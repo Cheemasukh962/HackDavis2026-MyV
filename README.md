@@ -76,13 +76,14 @@ Open `.env` and fill in each required value. You need at minimum:
 | `NEXT_PUBLIC_SAFE_EXIT_URL` | Any safe redirect (default: Google.com) | `https://www.google.com` |
 | `OPENROUTER_API_KEY` | OpenRouter → API Keys (free tier available) | `sk-or-v1-...` |
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | Mapbox → Account → API tokens | `pk.eyJ1...` |
+| `MAPBOX_ACCESS_TOKEN` | Optional server-side Mapbox token for Search Box; falls back to `NEXT_PUBLIC_MAPBOX_TOKEN` | `pk.eyJ1...` |
 
 Optional but recommended:
 
 | Key | Purpose |
 |---|---|
 | `ELEVENLABS_API_KEY` | Text-to-speech and speech-to-text (for journal audio) |
-| `NEXT_PUBLIC_MAPBOX_TOKEN` | Resource/shelter discovery on maps |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Resource/shelter discovery on maps and client-side map rendering |
 
 ### 3. Run
 
@@ -251,7 +252,7 @@ HackDavis 2026/
     │       ├── trusted-contacts/ ← trusted contact management
     │       ├── geolocation/   ← GET / POST / DELETE latest location
     │       ├── news/          ← headlines proxy
-    │       ├── resources/     ← nearby shelter/resource lookup (GET /nearby)
+    │       ├── resources/     ← nearby shelter/resource lookup (POST /nearby, POST /overview)
     │       ├── ai-chat/       ← AI support conversation
     │       ├── sos/           ← emergency SOS broadcast
     │       ├── stt/           ← speech-to-text
@@ -367,10 +368,12 @@ Refer to existing services in `src/services/` for patterns.
 ### Zero-Trace Security Rules
 
 - **No browser history** — session cookies auto-delete on close
-- **No autocomplete** — all auth inputs have `autocomplete="off"`
+- **No autocomplete** — password fields use `type="text"` + `-webkit-text-security: disc` to visually mask input without triggering iOS/Chrome password-save prompts; `data-lpignore` and `data-1p-ignore` suppress third-party managers
 - **No referrer leaks** — `Referrer-Policy: no-referrer` site-wide
-- **No cached data** — `Cache-Control: no-store` on all auth routes
-- **Panic logout** — pressing **Escape**, swiping horizontally, tapping the corner button, or quadruple-tapping triggers immediate logout + redirect to Google
+- **No cached data** — `Cache-Control: no-store` on all API routes and all app/login pages; `viewport-fit=cover` set on private pages for safe area rendering
+- **No bfcache restore** — `pageshow` handler detects back-forward cache restoration and triggers panic exit immediately
+- **Session cleared on refresh** — `getServerSideProps` on `/app/[theme]` clears the auth cookie server-side on any direct load or refresh that doesn't include `?enter=1`; the beacon-based logout is kept as a belt-and-suspenders backup
+- **Panic logout** — pressing **Escape**, swiping horizontally, or tapping the corner button triggers immediate redirect *first* (browser starts loading the cover page before any network calls run), then session wipe and SW cache purge in parallel
 - **Duress mode** — login with duress password silently enables hidden mode; sensitive data can be configured to auto-hide
 
 ### Protecting Pages with Middleware
@@ -418,15 +421,15 @@ Unlike normal web apps, SafeHaven's service worker is extremely privacy-consciou
 | **History lock** | Browser back button is disabled; you can't accidentally navigate into browser history |
 | **Session wipe on hide** | All session data cleared the moment the app goes into background |
 
-### Panic Exit — Four Ways to Get Out Fast
+### Panic Exit — Three Ways to Get Out Fast
 
-**1. Escape Key** — Press Escape on desktop to immediately log out + redirect to Google
+**1. Escape Key** — Press Escape on desktop to immediately redirect to the cover app
 
 **2. Horizontal Swipe** — Large left-to-right or right-to-left swipe on mobile triggers instant exit
 
-**3. Corner Button** — Small orange button (bottom-left) for quick access; tap to exit
+**3. Corner Button** — Red lock icon (bottom-right, 44×44 pt tap target with safe area inset) — tap once to exit
 
-**4. Quadruple Tap** — Rapid four taps anywhere on the screen exits (useful if physically disabled or hands full)
+Redirect fires *first* so the browser starts loading the cover page with zero perceptible delay. Session wipe, SW cache purge, and server logout all happen in parallel after navigation starts. Safe area insets (`env(safe-area-inset-*)`) keep both the panic button and the private mode button clear of iPhone notch/rounded corners.
 
 ### No Search Engine Indexing
 
@@ -671,9 +674,22 @@ Survivors can opt-in to share their location with trusted contacts for emergency
 
 ## Aid / Resource Directory
 
-`GET /api/resources/nearby` — Returns nearby shelters, legal aid, and crisis resources using Mapbox.
+| Method | Route | Description |
+|---|---|---|
+| POST | `/api/resources/nearby` | Returns up to 3 real POIs per category sorted by distance |
+| POST | `/api/resources/overview` | AI-generated 2-sentence summary for a selected resource |
 
-**Env var required:** `NEXT_PUBLIC_MAPBOX_TOKEN`
+### How nearby search works
+
+Categories (shelter, legal, financial, counseling) run **sequentially** to stay within Mapbox rate limits. Within each category, queries fire in batches of 3 with a 150 ms gap. Each category expands through three radius tiers (20 → 40 → 75 mi) and stops as soon as it finds enough results. AI (`generateFallbackQueries`) is only called when Mapbox returns fewer than 3 results for a category across all tiers — it generates additional search phrases, never sorts or filters real results. Results are always sorted by distance (nearest first) via `dedupeAndLimit`.
+
+AI calls use a model fallback chain: `google/gemma-4-31b-it:free` → `google/gemma-4-26b-a4b-it:free` → `nvidia/llama-3.1-nemotron-70b-instruct:free` via OpenRouter's native `route: "fallback"`.
+
+**Env vars required:** `NEXT_PUBLIC_MAPBOX_TOKEN` (or `MAPBOX_ACCESS_TOKEN`) for Mapbox Search Box. `OPENROUTER_API_KEY` optional — enables fallback query generation and card overviews.
+
+### Resource overview
+
+`POST /api/resources/overview` — accepts `{ name, category, address, meta }` from a tapped resource card and returns a 2-sentence AI description of what the organization does and who it serves. Displayed inline in the expanded card. Fails silently if AI is unavailable.
 
 ---
 
@@ -720,7 +736,7 @@ Applied via `next.config.js`:
 - `X-Frame-Options: DENY`
 - `Referrer-Policy: no-referrer`
 - `X-XSS-Protection: 1; mode=block`
-- `Cache-Control: no-store, no-cache` (auth routes)
+- `Cache-Control: no-store, no-cache` — all `/api/*` routes, `/login`, `/app/*`, and `/preview/*` (not just auth endpoints)
 
 ---
 
@@ -741,7 +757,7 @@ Applied via `next.config.js`:
 ---
 
 **Last Updated:** May 29, 2026
-**Version:** 1.3.0
+**Version:** 1.4.0
 **Maintainer:** SafeHaven Team
 
 ---
