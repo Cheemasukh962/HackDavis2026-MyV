@@ -79,6 +79,8 @@ export default function LoginPage() {
         <meta name="robots" content="noindex, nofollow" />
         <meta name="referrer" content="no-referrer" />
         <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+        <meta name="theme-color" content="#f6f0e4" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="icon" href="/resources/images/logos/safe_harbor_logo.png" />
       </Head>
 

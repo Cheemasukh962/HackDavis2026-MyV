@@ -46,6 +46,8 @@ const THEMES = {
   },
 };
 
+const PRIVATE_MODE_THEME_COLOR = '#f6f0e4';
+
 /* ── Install Modal Component ────────────────────────────────────────────── */
 
 const InstallModal = ({ isOpen, onClose, onInstall, canInstall, platform, appName }) => {
@@ -225,6 +227,9 @@ export default function AppShell({
   };
 
   const handleInstall = triggerNativeInstall;
+  const privateModeActive = showPrivateMode && isLoggedIn;
+  const pageThemeColor = privateModeActive ? PRIVATE_MODE_THEME_COLOR : themeColor;
+  const statusBarStyle = privateModeActive ? 'default' : 'black-translucent';
 
   const renderCover = () => {
     if (themeKey === 'calculator') return <CalculatorShell />;
@@ -238,21 +243,21 @@ export default function AppShell({
       <Head>
         <title>{appName}</title>
         <meta name="application-name" content={appName} />
-        <meta name="theme-color" content={themeColor} />
+        <meta name="theme-color" content={pageThemeColor} />
         <link rel="manifest" href={manifestUrl} />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content={statusBarStyle} />
         <meta name="apple-mobile-web-app-title" content={appName} />
         <link rel="apple-touch-icon" href={appleTouchIcon} />
         <link rel="icon" href={appleTouchIcon} />
-        <style>{`html,body{background:${themeColor}!important;height:100%;overflow:hidden}`}</style>
+        <style>{`html,body{background:${pageThemeColor}!important;height:100%;overflow:hidden}`}</style>
         <meta name="robots" content="noindex, nofollow" />
         <meta name="referrer" content="no-referrer" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </Head>
 
-      <main style={{ background: themeColor }}>
+      <main style={{ background: pageThemeColor }}>
         {/* ── Installation Modal (Differentiated by Route) ── */}
         <InstallModal
           isOpen={showModal}
@@ -274,7 +279,7 @@ export default function AppShell({
         )}
 
         {/* ── Main Content ── */}
-        {showPrivateMode && isLoggedIn ? (
+        {privateModeActive ? (
           <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />
         ) : (
           <>
