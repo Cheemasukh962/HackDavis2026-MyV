@@ -12,7 +12,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bot, ChevronLeft, Circle, Lock, Mic, Send } from 'lucide-react';
 import { useSpeechToText } from '../../hooks/useSpeechToText';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/chat-thread-view.module.css';
 import MessageComposer from './MessageComposer';
 import Avatar from './ChatAvatar';
 

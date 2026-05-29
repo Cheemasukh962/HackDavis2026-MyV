@@ -9,7 +9,7 @@
  */
 
 import { Mic, Send } from 'lucide-react';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/message-composer.module.css';
 
 export default function MessageComposer({
   draft,

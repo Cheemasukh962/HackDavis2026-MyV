@@ -13,11 +13,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSpeechToText } from '../../hooks/useSpeechToText';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/chat-panel.module.css';
 import ChatThreadView from './ChatThreadView';
 import MessagesList from './MessagesList';
 import FriendsPanel from './FriendsPanel';
-import { isRealId, normalizeFriend, normalizeApiMessages } from './chatUtils';
+import { isRealId, normalizeFriend, normalizeApiMessages } from '../../utils/chatUtils';
 
 const BOT_CHAT = {
   id: 'bot',

@@ -1,0 +1,245 @@
+/**
+ * FriendRequestsSections.module.css — Friend requests and accepted friends UI
+ *
+ * Styles for incoming/outgoing requests and trusted friend display.
+ */
+
+.friendSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.friendRows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.peerSectionLabel {
+  margin: 4px 4px -4px;
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+}
+
+.friendRow {
+  padding: 12px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-lg);
+  background: var(--pm-card);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.acceptedFriendRow {
+  padding: 12px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-lg);
+  background: var(--pm-card);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.acceptedFriendRowTrusted {
+  border-color: var(--pm-accent);
+  box-shadow: 0 8px 20px rgba(124, 84, 45, 0.08);
+}
+
+.acceptedFriendMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.friendAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: oklch(0.92 0.04 80);
+  color: var(--pm-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.friendInfo {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.friendInfo > span {
+  overflow: hidden;
+  color: var(--pm-muted-foreground);
+  font-size: 11px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friendInfo strong {
+  overflow: hidden;
+  color: var(--pm-foreground);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friendNameLine {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: visible;
+  white-space: normal;
+}
+
+.friendNameLine strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trustedPill {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: oklch(0.78 0.14 75 / 0.3);
+  color: var(--pm-accent-strong);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.trustedPillIcon {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.friendActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.trustedSwitch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: oklch(0.82 0.04 75);
+  flex-shrink: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.16s ease;
+}
+
+.trustedSwitch:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.trustedSwitch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 4px rgba(71, 52, 40, 0.18);
+  transition: transform 0.16s ease;
+}
+
+.trustedSwitchOn {
+  background: var(--pm-accent);
+}
+
+.trustedSwitchOn span {
+  transform: translateX(18px);
+}
+
+.trustedFooter {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--pm-border);
+  color: var(--pm-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.trustedFooterIcon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.friendMutedText {
+  padding: 0 8px;
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.acceptButton {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pm-success);
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.acceptButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.friendIconButton {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--pm-border);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--pm-foreground);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.16s ease;
+}
+
+.friendIconButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.tinyIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}

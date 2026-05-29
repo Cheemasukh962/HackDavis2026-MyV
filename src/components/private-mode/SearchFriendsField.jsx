@@ -10,7 +10,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/search-friends-field.module.css';
 
 const MONGO_ID_RE = /^[a-f0-9]{24}$/i;
 const isRealId = (id) => MONGO_ID_RE.test(String(id));

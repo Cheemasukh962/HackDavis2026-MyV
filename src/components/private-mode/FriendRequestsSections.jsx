@@ -10,7 +10,7 @@
  */
 
 import { Check, MapPin, Shield, X } from 'lucide-react';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/friend-requests-sections.module.css';
 
 function FriendSection({ title, children }) {
   return (

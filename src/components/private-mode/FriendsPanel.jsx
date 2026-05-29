@@ -11,11 +11,11 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { Lock } from 'lucide-react';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/friends-panel.module.css';
 import FriendIdentityCard from './FriendIdentityCard';
 import SearchFriendsField from './SearchFriendsField';
 import FriendRequestsSections from './FriendRequestsSections';
-import { isRealId, normalizeFriend } from './chatUtils';
+import { isRealId, normalizeFriend } from '../../utils/chatUtils';
 
 export default function FriendsPanel({ myHandle, friends, setFriends }) {
   const incoming = friends.filter((f) => f.status === 'incoming');

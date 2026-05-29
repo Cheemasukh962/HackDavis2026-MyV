@@ -1,0 +1,84 @@
+/**
+ * FriendIdentityCard.module.css — User display name card
+ *
+ * Styles for showing the current user's anonymized display name.
+ */
+
+.friendIdentity {
+  padding: 16px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-lg);
+  background: var(--pm-card);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.friendIdentityAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--pm-accent);
+  color: var(--pm-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.friendInfo {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.friendInfo > span {
+  overflow: hidden;
+  color: var(--pm-muted-foreground);
+  font-size: 11px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friendInfo strong {
+  overflow: hidden;
+  color: var(--pm-foreground);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rerollButton {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--pm-border);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--pm-foreground);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: background-color 0.16s ease;
+}
+
+.rerollButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.smallIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}

@@ -7,7 +7,7 @@
  */
 
 import { Shuffle } from 'lucide-react';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/friend-identity-card.module.css';
 
 function initialsForName(displayName) {
   return String(displayName || 'Friend').replace(/[^a-z0-9]/gi, '').slice(0, 2).toUpperCase() || 'FR';

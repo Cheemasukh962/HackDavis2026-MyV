@@ -1,0 +1,144 @@
+/**
+ * SearchFriendsField.module.css — Friend discovery search
+ *
+ * Styles for search input, dropdown results, and request button.
+ */
+
+.addFriendWrap {
+  position: relative;
+}
+
+.addFriendLabel {
+  margin: 0 0 6px 4px;
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+}
+
+.addFriendField {
+  min-height: 48px;
+  padding: 6px 6px 6px 16px;
+  border: 1px solid var(--pm-border);
+  border-radius: 999px;
+  background: var(--pm-card);
+  color: var(--pm-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addFriendField input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.addFriendField input::placeholder {
+  color: var(--pm-muted-foreground);
+}
+
+.requestButton {
+  min-height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--pm-accent-strong);
+  color: oklch(0.95 0.04 80);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.requestButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.requestButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.searchField {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--pm-border);
+  border-radius: 999px;
+  background: var(--pm-card);
+  color: var(--pm-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchField input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.searchField input::placeholder {
+  color: var(--pm-muted-foreground);
+}
+
+.searchDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--pm-card);
+  border: 1px solid var(--pm-border);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.searchDropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s ease;
+  font-family: inherit;
+}
+
+.searchDropdownItem:hover {
+  background: var(--pm-muted);
+}
+
+.searchDropdownItem:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: -2px;
+}
+
+.searchDropdownEmpty {
+  padding: 12px 16px;
+  color: var(--pm-muted-foreground);
+  font-size: 13px;
+}
+
+.smallIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}

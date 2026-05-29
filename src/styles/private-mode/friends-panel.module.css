@@ -1,0 +1,75 @@
+/**
+ * FriendsPanel.module.css — Friend management UI
+ *
+ * Styles for the friends tab with trusted contact management.
+ */
+
+.friendsPanel {
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px 16px 112px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chatNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 16px;
+  background: rgba(234, 228, 216, 0.62);
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+
+.noticeIcon {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.trustedSummary {
+  padding: 12px;
+  border: 1px solid var(--pm-accent);
+  border-radius: 16px;
+  background: oklch(0.96 0.04 80);
+  color: var(--pm-accent-strong);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.trustedSummaryIcon {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.trustedSummary strong,
+.trustedSummary span {
+  display: block;
+  line-height: 1.35;
+}
+
+.trustedSummary strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.trustedSummary span {
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.82;
+}
+
+@media (max-width: 360px) {
+  .friendsPanel {
+    padding-inline: 12px;
+  }
+}

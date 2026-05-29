@@ -10,7 +10,7 @@
 
 import { useState } from 'react';
 import { Bot, Lock, Search, UserPlus } from 'lucide-react';
-import styles from '../../styles/private-mode/chat.module.css';
+import styles from '../../styles/private-mode/messages-list.module.css';
 
 const BOT_CHAT = {
   id: 'bot',

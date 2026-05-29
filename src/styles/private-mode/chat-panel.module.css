@@ -1,0 +1,63 @@
+/**
+ * ChatPanel.module.css — Main chat interface wrapper
+ *
+ * Styles for tab navigation and overall chat panel layout.
+ */
+
+.chatPanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.subTabsWrap {
+  padding: 12px 16px 0;
+  flex-shrink: 0;
+}
+
+.subTabs {
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--pm-muted);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  font-size: 13px;
+}
+
+.subTabButton {
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--pm-muted-foreground);
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+  font-family: inherit;
+}
+
+.subTabButtonActive {
+  background: var(--pm-background);
+  color: var(--pm-foreground);
+  box-shadow: 0 2px 8px rgba(71, 52, 40, 0.08);
+  font-weight: 600;
+}
+
+.chatPanel .chatNotice {
+  margin: 12px 16px 0;
+  flex-shrink: 0;
+}
+
+.subTabButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+@media (max-width: 360px) {
+  .chatListPanel,
+  .friendsPanel {
+    padding-inline: 12px;
+  }
+}

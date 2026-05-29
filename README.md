@@ -188,7 +188,8 @@ HackDavis 2026/
     │   ├── calcUtils.js       ← Pure calculator math helpers.
     │   ├── newsUtils.js       ← Article normalization, background-image helper.
     │   ├── sourceBrands.js    ← Publisher brand map (color + domain) used by story cards and article overlay.
-    │   └── colorExtract.js    ← Canvas-based dominant color extraction from images.
+    │   ├── colorExtract.js    ← Canvas-based dominant color extraction from images.
+    │   └── chatUtils.js       ← Chat utilities: initialsForName, normalizeFriend, normalizeApiMessages.
     ├── components/
     │   ├── PanicExit.jsx      ← Escape key, swipe, and corner button exit triggers.
     │   ├── PrivateModeButton.jsx ← Discreet orange corner button for app access.
@@ -219,7 +220,15 @@ HackDavis 2026/
     │       ├── PrivateModeShell.jsx ← Main sanctuary. Tab navigation between panels.
     │       ├── HomePanel.jsx    ← Quick links, location toggle, emergency resources.
     │       ├── JournalPanel.jsx ← Evidence journal entry creation with media.
-    │       ├── ChatPanel.jsx    ← Friend-to-friend real-time messaging.
+    │       ├── ChatPanel.jsx    ← Main chat orchestrator (friend + bot messaging). Delegates to sub-components:
+    │       │   ├── ChatThreadView.jsx ← Open thread display (messages + header)
+    │       │   ├── MessageComposer.jsx ← Text input + send/mic controls
+    │       │   ├── ChatAvatar.jsx ← Avatar with status indicator
+    │       │   ├── MessagesList.jsx ← Chat list view (bot + friends)
+    │       │   ├── SearchFriendsField.jsx ← Friend discovery search + dropdown
+    │       │   ├── FriendRequestsSections.jsx ← Request lifecycle UI (incoming/outgoing/accepted)
+    │       │   ├── FriendsPanel.jsx ← Friend management orchestrator
+    │       │   └── FriendIdentityCard.jsx ← User display name card
     │       ├── AidPanel.jsx     ← Resource directory (shelters, legal aid, hotlines).
     │       ├── SosPanel.jsx     ← Emergency SOS alert to trusted contacts + location.
     │       ├── MapboxMap.jsx    ← Map display for resource discovery.
@@ -271,12 +280,20 @@ HackDavis 2026/
         ├── weather-mode/
         │   └── weathercover.module.css
         └── private-mode/
-            ├── shell.module.css
-            ├── home.module.css
-            ├── chat.module.css
-            ├── aid.module.css
-            ├── sos.module.css
-            └── journalpanel.module.css
+            ├── shell.module.css          ← Private mode tab navigation
+            ├── home.module.css           ← Home panel (resources + location toggle)
+            ├── chat-panel.module.css     ← Chat panel wrapper (tab navigation)
+            ├── chat-thread-view.module.css ← Open thread display (messages + header)
+            ├── message-composer.module.css ← Text input + send/mic controls
+            ├── chat-avatar.module.css    ← Avatar with status indicator
+            ├── messages-list.module.css  ← Chat list view
+            ├── search-friends-field.module.css ← Friend discovery search
+            ├── friend-requests-sections.module.css ← Request lifecycle UI
+            ├── friends-panel.module.css  ← Friend management orchestrator
+            ├── friend-identity-card.module.css ← User display name card
+            ├── aid.module.css            ← Aid panel (resources)
+            ├── sos.module.css            ← SOS emergency button
+            └── journalpanel.module.css   ← Journal entry creation
 ```
 
 ---

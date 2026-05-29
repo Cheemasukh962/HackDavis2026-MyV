@@ -1,0 +1,243 @@
+/**
+ * MessagesList.module.css — Chat list and search
+ *
+ * Styles for the messages tab showing bot and friend chats.
+ */
+
+.chatListPanel {
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px 16px 112px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chatNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 16px;
+  background: rgba(234, 228, 216, 0.62);
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+
+.noticeIcon {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.searchField {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--pm-border);
+  border-radius: 999px;
+  background: var(--pm-card);
+  color: var(--pm-muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchField input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.searchField input::placeholder {
+  color: var(--pm-muted-foreground);
+}
+
+.peerSectionLabel {
+  margin: 4px 4px -4px;
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+}
+
+.peerRow {
+  width: 100%;
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-lg);
+  background: var(--pm-card);
+  color: var(--pm-foreground);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.16s ease;
+}
+
+.peerRow:hover {
+  background: rgba(234, 228, 216, 0.48);
+}
+
+.peerRow:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.peerCopy {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.peerNameLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.peerNameLine strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.peerNameLine > span:last-child {
+  margin-left: auto;
+  color: var(--pm-muted-foreground);
+  font-size: 11px;
+}
+
+.peerCopy > span:last-child {
+  overflow: hidden;
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.avatar > span:first-child {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: oklch(0.92 0.04 80);
+  color: var(--pm-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  font-family: inherit;
+}
+
+.avatar > span.botAvatar {
+  background: var(--pm-accent);
+}
+
+.avatarOnline,
+.avatarAway {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--pm-card);
+  border-radius: 50%;
+}
+
+.avatarOnline {
+  background: #10b981;
+}
+
+.avatarAway {
+  background: #f59e0b;
+}
+
+.botIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--pm-muted-foreground);
+}
+
+.emptyFriendState {
+  width: 100%;
+  padding: 20px;
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-lg);
+  background: var(--pm-card);
+  color: var(--pm-foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.16s ease;
+}
+
+button.emptyFriendState:hover {
+  background: rgba(234, 228, 216, 0.48);
+}
+
+button.emptyFriendState:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.emptyFriendState strong {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.emptyFriendState > span:last-child {
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.emptyIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pm-muted);
+  color: var(--pm-muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.smallIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}

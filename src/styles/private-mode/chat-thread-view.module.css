@@ -1,0 +1,144 @@
+/**
+ * ChatThreadView.module.css — Open message thread display
+ *
+ * Styles for thread header, message bubbles, and message history.
+ */
+
+.threadHeader {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--pm-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.backButton {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--pm-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.16s ease;
+}
+
+.backButton:hover {
+  background: var(--pm-muted);
+}
+
+.backButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.threadBackIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.threadTitle {
+  min-width: 0;
+  flex: 1;
+}
+
+.threadTitle div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.threadTitle strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.threadTitle > span {
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--pm-muted-foreground);
+  font-size: 11px;
+}
+
+.botIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--pm-muted-foreground);
+}
+
+.messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.messageMine {
+  align-items: flex-end;
+}
+
+.messageBubble {
+  max-width: 82%;
+  padding: 11px 13px;
+  border-radius: 17px;
+  font-size: 14px;
+  line-height: 1.42;
+  word-break: break-word;
+}
+
+.messageBubbleThem {
+  background: var(--pm-muted);
+  color: var(--pm-foreground);
+}
+
+.messageBubbleMine {
+  background: var(--pm-foreground);
+  color: var(--pm-background);
+}
+
+.messageTime {
+  margin-top: 4px;
+  padding: 0 4px;
+  color: var(--pm-muted-foreground);
+  font-size: 11px;
+}
+
+.typingIndicator {
+  display: inline-flex;
+  gap: 3px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  animation: typingPulse 1.5s infinite;
+  opacity: 0.6;
+}
+
+@keyframes typingPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.composerWrap {
+  padding: 0 16px 96px;
+  flex-shrink: 0;
+}

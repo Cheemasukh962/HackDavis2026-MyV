@@ -1,0 +1,94 @@
+/**
+ * MessageComposer.module.css — Text input and send/mic controls
+ *
+ * Styles for the input field, send button, and speech-to-text button.
+ */
+
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 16px;
+  border: 1px solid var(--pm-border);
+  border-radius: 999px;
+  background: var(--pm-card);
+  box-shadow: 0 8px 22px rgba(71, 52, 40, 0.08);
+}
+
+.messageInput {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--pm-foreground);
+  font: inherit;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.messageInput::placeholder {
+  color: var(--pm-muted-foreground);
+}
+
+.sendButton {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pm-foreground);
+  color: var(--pm-background);
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.16s ease;
+}
+
+.sendButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sendButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.sendIcon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.micButton {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pm-muted);
+  color: var(--pm-foreground);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.micButton:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+.micButtonActive {
+  background: var(--pm-accent-strong);
+  color: #fff;
+  animation: typingPulse 1.5s infinite;
+}
+
+@keyframes typingPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
