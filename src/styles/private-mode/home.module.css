@@ -1,3 +1,10 @@
+/**
+ * home.module.css — Private Mode Home Panel
+ *
+ * Styles for the main home/dashboard view in private mode showing personalized
+ * content, quick navigation, and daily moments.
+ */
+
 .homePanel {
   height: 100%;
   overflow-y: auto;

@@ -1,3 +1,13 @@
+/**
+ * MomentForYou — Daily affirmation and inspiration.
+ *
+ * Delivers:
+ *  - Rotating daily affirmations and quotes
+ *  - Personalized encouragement
+ *  - Heart/like interaction
+ *  - Positive reinforcement for sanctuary experience
+ */
+
 import { useMemo, useState } from 'react';
 import { Heart } from 'lucide-react';
 import styles from '../../styles/private-mode/home.module.css';
@@ -32,6 +42,11 @@ const BREATHING_STEPS = [
   { count: '4s', label: 'Hold' },
 ];
 
+/**
+ * getDailySlides - Generates daily rotation of affirmations and breathing exercise.
+ * Uses date-based deterministic seed so same quotes appear all day for consistency.
+ * @returns {Array} Array with 2 daily quotes and 1 breathing exercise slide
+ */
 function getDailySlides() {
   const today = new Date();
   const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();

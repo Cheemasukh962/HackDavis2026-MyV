@@ -1,3 +1,13 @@
+/**
+ * HeroStory — Featured article card.
+ *
+ * Prominent display of top story with:
+ *  - Large hero image
+ *  - Story headline and category tag
+ *  - News source attribution
+ *  - Tap to expand full article
+ */
+
 import styles from '../../styles/news-mode/herostory.module.css';
 import { toBackgroundImage } from '../../utils/newsUtils';
 

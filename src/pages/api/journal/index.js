@@ -3,7 +3,7 @@ const { connectDB } = require('../../../lib/db');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
 const appConfig = require('../../../config/config');
 const JournalEntry = require('../../../models/JournalEntry');
-const { JournalPrivacyFeature } = require('../../../features/journal_privacy_feature');
+const { JournalPrivacyService } = require('../../../services/journalPrivacyService');
 
 export const config = {
   api: {
@@ -31,7 +31,7 @@ export default requireAuth(async (req, res) => {
     const skip  = (page - 1) * limit;
 
     const privacyFilter = appConfig.features.enable_journal_privacy
-      ? JournalPrivacyFeature.getPrivacyFilter(session) 
+      ? JournalPrivacyService.getPrivacyFilter(session) 
       : {};
 
     const query = { userId, ...privacyFilter };

@@ -1,3 +1,11 @@
+/**
+ * globals.css — Global Design System & Tokens
+ *
+ * Defines the core color palette, spacing units, typography stacks, and shared
+ * shadows used across all pages and modes. These CSS custom properties provide
+ * a single source of truth for visual consistency.
+ */
+
 :root {
   /* OKLch colors from PRD */
   --color-bg: #f6f0e4; /* Warm cream */

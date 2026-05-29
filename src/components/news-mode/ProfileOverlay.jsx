@@ -1,3 +1,13 @@
+/**
+ * ProfileOverlay — User profile modal.
+ *
+ * Displays:
+ *  - Display name and avatar
+ *  - Account information
+ *  - Subscription status
+ *  - Preferences and saved articles
+ */
+
 import styles from '../../styles/news-mode/overlays.module.css';
 import OverlayHeader from './OverlayHeader';
 

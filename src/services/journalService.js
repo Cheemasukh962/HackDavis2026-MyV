@@ -1,5 +1,5 @@
 /**
- * JournalFeature — private evidence journal.
+ * JournalService — private evidence journal.
  *
  * Allows survivors to document experiences and attach media proof
  * (images, video, audio, PDFs). All data is stored in MongoDB:
@@ -14,11 +14,11 @@
  * would add a stronger guarantee for this sensitive data.
  */
 
-class JournalFeature {
+class JournalService {
   static init() {
-    console.log('[JournalFeature] Private evidence journal initialized.');
-    console.log('[JournalFeature] Attachment storage: MongoDB GridFS (journal_attachments).');
+    console.log('[JournalService] Private evidence journal initialized.');
+    console.log('[JournalService] Attachment storage: MongoDB GridFS (journal_attachments).');
   }
 }
 
-module.exports = { JournalFeature };
+module.exports = { JournalService };

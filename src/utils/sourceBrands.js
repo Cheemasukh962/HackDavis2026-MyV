@@ -1,3 +1,14 @@
+/**
+ * sourceBrands.js — publisher brand map for the Kiwi News cover.
+ *
+ * SOURCE_BRANDS maps publisher names to their brand color and logo.dev domain.
+ * getSourceBrand(source) does a case-insensitive lookup and returns the match
+ * or an empty object if the publisher isn't in the map.
+ *
+ * Used by StorySection.jsx (story cards) and ArticleOverlay.jsx (article header)
+ * to render color-coded source names and favicon icons consistently.
+ */
+
 export const SOURCE_BRANDS = {
   'Reuters':                 { color: '#FF6600', domain: 'reuters.com' },
   'BBC News':                { color: '#BB1919', domain: 'bbc.co.uk' },
@@ -39,6 +50,14 @@ export const SOURCE_BRANDS = {
   'NBC Sports':              { color: '#0B4EA2', domain: 'nbcsports.com' },
 };
 
+/**
+ * Looks up a publisher's brand by name using case-insensitive partial matching.
+ * Returns the matching { color, domain } entry, or {} if not found.
+ * Callers should treat missing color/domain as optional — not all sources are in the map.
+ *
+ * @param {string} source - Publisher name from the article data.
+ * @returns {{ color?: string, domain?: string }}
+ */
 export function getSourceBrand(source) {
   if (!source) return {};
   const key = Object.keys(SOURCE_BRANDS).find(

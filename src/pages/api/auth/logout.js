@@ -1,5 +1,5 @@
 const config = require('../../../config/config');
-const { AuthFeature } = require('../../../features/auth_feature');
+const { AuthService } = require('../../../services/authService');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
 
 export default function handler(req, res) {
@@ -9,5 +9,5 @@ export default function handler(req, res) {
     return res.status(404).json({ error: 'Not found.' });
   }
 
-  return AuthFeature.logout(req, res);
+  return AuthService.logout(req, res);
 }

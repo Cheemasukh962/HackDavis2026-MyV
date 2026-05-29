@@ -1,4 +1,11 @@
-/* Disguise Setup Page - iPhone Sanctuary Edition */
+/**
+ * CoverPages.module.css — Cover/Setup Pages Styling
+ *
+ * Styles for the disguise setup page and other cover/onboarding screens.
+ * Uses the full-screen layout with header, content, and footer sections.
+ * Includes radial gradients for visual depth and brand-consistent styling.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .page {

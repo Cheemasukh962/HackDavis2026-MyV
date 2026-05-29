@@ -1,3 +1,14 @@
+/**
+ * SosPanel — Emergency SOS and trusted contacts.
+ *
+ * Enables:
+ *  - Emergency alert trigger with location
+ *  - Trusted contact management
+ *  - Location sharing options
+ *  - Emergency response status tracking
+ *  - Real-time map display
+ */
+
 import { useEffect, useState } from 'react';
 import { AlertTriangle, Check, Clock, Cloud, MapPin, Shield, Users } from 'lucide-react';
 import MapboxMap from './MapboxMap';
@@ -23,6 +34,11 @@ export default function SosPanel({ enabled }) {
       .catch(() => {});
   }, []);
 
+  /**
+   * requestCurrentLocation - Gets current user location via Geolocation API.
+   * @returns {Promise} Resolves with position object containing coords and timestamp
+   * @throws Error if geolocation is unavailable
+   */
   const requestCurrentLocation = () => new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
       reject(new Error('Location is not available in this browser.'));
@@ -66,6 +82,11 @@ export default function SosPanel({ enabled }) {
     return () => navigator.geolocation.clearWatch(watcherId);
   }, [enabled]);
 
+  /**
+   * handleSend - Sends SOS alert to all trusted contacts.
+   * Optionally includes current location if shareLocation is enabled.
+   * Manages location requesting, UI state transitions, and error handling.
+   */
   const handleSend = async () => {
     if (!enabled || status === 'requesting' || status === 'sending') return;
 

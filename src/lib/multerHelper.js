@@ -1,3 +1,14 @@
+/**
+ * multerHelper.js — file upload middleware for Next.js API routes.
+ *
+ * Configures multer with memory storage, a 50 MB size limit, and an allowlist
+ * of MIME types covering images, video, audio, and PDFs (evidence file types).
+ * Files are held in memory as a Buffer — the caller is responsible for streaming
+ * them to GridFS immediately after parseUpload() resolves.
+ *
+ * Usage: await parseUpload(req, res) — after this, req.file holds the uploaded buffer.
+ */
+
 const multer = require('multer');
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB

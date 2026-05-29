@@ -1,3 +1,10 @@
+/**
+ * scipad.module.css — Scientific Calculator Pad
+ *
+ * Styles for the extended button grid in scientific mode, featuring additional
+ * math functions, constants, and trigonometric operations.
+ */
+
 .sciPad {
   flex: 1;
   min-height: 0;

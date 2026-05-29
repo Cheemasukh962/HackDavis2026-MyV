@@ -1,5 +1,5 @@
 /**
- * AuthFeature — Zero-Trace Authentication
+ * AuthService — Zero-Trace Authentication
  *
  * Design contract:
  *  - Credentials stored as bcrypt hashes only (User model handles this).
@@ -24,22 +24,22 @@ const DB_ERROR_NAMES = new Set([
 ]);
 const isDbError = (err) => DB_ERROR_NAMES.has(err.name) || err.name?.startsWith('Mongo');
 
-class AuthFeature {
+class AuthService {
   static init() {
     if (!config.env.JWT_SECRET) {
-      throw new Error('[AuthFeature] JWT_SECRET is missing from environment variables.');
+      throw new Error('[AuthService] JWT_SECRET is missing from environment variables.');
     }
     if (!config.env.MONGODB_URI) {
-      throw new Error('[AuthFeature] MONGODB_URI is missing from environment variables.');
+      throw new Error('[AuthService] MONGODB_URI is missing from environment variables.');
     }
 
     // Kick off the connection so it is warm before the first request arrives.
     // Mongoose buffers commands, so API routes are safe to call before this resolves.
     connectDB()
-      .then(() => console.log('[AuthFeature] MongoDB connected.'))
-      .catch((err) => console.error('[AuthFeature] MongoDB connection error:', err.message));
+      .then(() => console.log('[AuthService] MongoDB connected.'))
+      .catch((err) => console.error('[AuthService] MongoDB connection error:', err.message));
 
-    console.log('[AuthFeature] Zero-trace auth system initialized.');
+    console.log('[AuthService] Zero-trace auth system initialized.');
   }
 
   // ---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ class AuthFeature {
         displayName: user.anonymousDisplayName,
       });
     } catch (err) {
-      console.error('[AuthFeature] register error:', err.name, err.message);
+      console.error('[AuthService] register error:', err.name, err.message);
       if (isDbError(err)) {
         return res.status(503).json({ error: 'Database unavailable. Try again shortly.' });
       }
@@ -173,20 +173,20 @@ class AuthFeature {
         return res.status(401).json({ error: 'Invalid credentials.' });
       }
 
-      const token = AuthFeature._signToken({
+      const token = AuthService._signToken({
         sub: user._id.toString(),
         displayName: user.anonymousDisplayName,
         ...(duressMatch ? { duressMode: true } : {}),
       });
 
-      res.setHeader('Set-Cookie', AuthFeature._makeAuthCookie(token));
+      res.setHeader('Set-Cookie', AuthService._makeAuthCookie(token));
 
       return res.status(200).json({
         displayName: user.anonymousDisplayName,
         duressMode: duressMatch,
       });
     } catch (err) {
-      console.error('[AuthFeature] login error:', err.name, err.message);
+      console.error('[AuthService] login error:', err.name, err.message);
       if (isDbError(err)) {
         return res.status(503).json({ error: 'Database unavailable. Try again shortly.' });
       }
@@ -203,9 +203,9 @@ class AuthFeature {
       return res.status(405).json({ error: 'Method not allowed.' });
     }
 
-    res.setHeader('Set-Cookie', AuthFeature._clearAuthCookie());
+    res.setHeader('Set-Cookie', AuthService._clearAuthCookie());
     return res.status(200).json({ message: 'Logged out.' });
   }
 }
 
-module.exports = { AuthFeature };
+module.exports = { AuthService };

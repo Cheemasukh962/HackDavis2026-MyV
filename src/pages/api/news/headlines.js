@@ -25,6 +25,12 @@ const TAB_TO_SOURCES = {
   ],
 };
 
+/**
+ * extractCategoryLabel - Extracts readable category label from EventRegistry format.
+ * Handles string labels, language-specific labels (eng), and URI-based categories.
+ * @param {string|Object} cat - Category object or string
+ * @returns {string|null} Human-readable category label or null
+ */
 function extractCategoryLabel(cat) {
   if (!cat) return null;
   if (typeof cat === 'string') return cat;
@@ -36,6 +42,13 @@ function extractCategoryLabel(cat) {
   return null;
 }
 
+/**
+ * normalizeArticle - Transforms EventRegistry article into news feed format.
+ * Cleans body text, extracts metadata, sanitizes content, formats for display.
+ * Returns null for articles missing required fields (headline).
+ * @param {Object} article - Raw EventRegistry article object
+ * @returns {Object|null} Normalized article ready for UI rendering
+ */
 function normalizeArticle(article) {
   const headline = typeof article?.title === 'string' ? article.title.trim() : '';
   if (!headline) return null;

@@ -1,3 +1,11 @@
+/**
+ * shell.module.css — Private Mode App Shell
+ *
+ * Styles for the private mode container with custom color palette, layout, and
+ * interactions. Implements a personal sanctuary design with soothing colors and
+ * soft transitions.
+ */
+
 .page {
   --pm-background: oklch(0.97 0.018 80);
   --pm-foreground: oklch(0.3 0.05 40);

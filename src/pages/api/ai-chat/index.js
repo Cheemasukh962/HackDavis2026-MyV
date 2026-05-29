@@ -1,5 +1,5 @@
 const { requireAuth } = require('../../../lib/requireAuth');
-const { getAnthropicClient } = require('../../../lib/anthropic');
+const { createChatCompletion } = require('../../../lib/openrouter');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
 const config = require('../../../config/config');
 
@@ -54,18 +54,16 @@ export default requireAuth(async (req, res) => {
   }
 
   try {
-    const client = getAnthropicClient();
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+    const response = await createChatCompletion({
+      model: 'google/gemma-4-31b-it:free',
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: sanitized,
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...sanitized],
     });
 
-    const text = response.content?.[0]?.text ?? '';
+    const text = response.choices?.[0]?.message?.content ?? '';
     return res.status(200).json({ message: text, role: 'assistant' });
   } catch (err) {
-    console.error('[AiChat] Claude API error:', err.message);
+    console.error('[AiChat] OpenRouter error:', err.message);
     return res.status(502).json({ error: 'AI service unavailable. Please try again.' });
   }
 });

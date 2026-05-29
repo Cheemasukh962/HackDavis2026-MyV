@@ -1,3 +1,14 @@
+/**
+ * NewsShell — Main news feed application container.
+ *
+ * Manages the complete news experience including:
+ *  - Multiple feed tabs (Today, World, Sports)
+ *  - Featured hero story and article sections
+ *  - Live article fetching and categorization
+ *  - Modal overlays for articles, search, menu, and profile
+ *  - Bottom tab navigation between feed views
+ */
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from '../../styles/news-mode/newsshell.module.css';
 import { TABS, HERO_STORIES, STORY_SECTIONS, LIVE_SECTION_TITLES, THUMBNAIL_FALLBACKS, FEED_FILTERS, FILTER_KEYWORDS } from './newsData';
@@ -76,7 +87,11 @@ export default function NewsShell() {
     return () => controller.abort();
   }, []);
 
-
+  /**
+   * handleScroll - Updates scroll position state for feed.
+   * Tracks scroll offset, whether user has scrolled past header, and if near bottom.
+   * @param {Event} e - Scroll event from feed container
+   */
   const handleScroll = (e) => {
     const el = e.currentTarget;
     const next = el.scrollTop;
@@ -86,6 +101,11 @@ export default function NewsShell() {
     previousScrollTop.current = next;
   };
 
+  /**
+   * switchTab - Changes active news feed tab.
+   * Updates active tab state for Today, World, or Sports feeds.
+   * @param {string} id - Tab ID to switch to
+   */
   const switchTab = (id) => {
     setActiveTab(id);
     setActiveFilter('All');

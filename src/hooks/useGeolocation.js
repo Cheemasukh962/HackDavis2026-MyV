@@ -1,3 +1,13 @@
+/**
+ * useGeolocation.js — opt-in device location tracking for the private mode SOS feature.
+ *
+ * Wraps the browser Geolocation API and persists the latest position to
+ * /api/geolocation (MongoDB). Only one location record is kept per user —
+ * this is not a movement history, just a "last known position."
+ *
+ * status values: 'idle' | 'requesting' | 'saving' | 'live' | 'saved' | 'loading' | 'clearing' | 'error'
+ */
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const GEOLOCATION_OPTIONS = {
@@ -14,6 +24,18 @@ async function parseError(response) {
   }
 }
 
+/**
+ * @returns {{
+ *   location: Object|null,
+ *   status: string,
+ *   error: string,
+ *   isWatching: boolean,
+ *   startLiveLocation: function,
+ *   stopLiveLocation: function,
+ *   loadStoredLocation: function,
+ *   clearStoredLocation: function,
+ * }}
+ */
 export function useGeolocation() {
   const [location, setLocation] = useState(null);
   const [status, setStatus] = useState('idle');
@@ -47,6 +69,7 @@ export function useGeolocation() {
     return body.location;
   }, []);
 
+  /** Starts a watchPosition listener and POSTs each new position to /api/geolocation. */
   const startLiveLocation = useCallback(() => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
       setStatus('error');
@@ -88,6 +111,7 @@ export function useGeolocation() {
     return true;
   }, [storePosition]);
 
+  /** Clears the watchPosition listener and sets status back to 'saved' if was 'live'. */
   const stopLiveLocation = useCallback(() => {
     if (watcherIdRef.current !== null && typeof navigator !== 'undefined') {
       navigator.geolocation.clearWatch(watcherIdRef.current);
@@ -98,6 +122,7 @@ export function useGeolocation() {
     setStatus((currentStatus) => (currentStatus === 'live' ? 'saved' : currentStatus));
   }, []);
 
+  /** Fetches the user's last saved location from /api/geolocation. Returns the location object or null. */
   const loadStoredLocation = useCallback(async () => {
     setStatus('loading');
     setError('');
@@ -119,6 +144,7 @@ export function useGeolocation() {
     }
   }, []);
 
+  /** Stops live tracking and deletes the stored location from the database. Returns true on success. */
   const clearStoredLocation = useCallback(async () => {
     stopLiveLocation();
     setStatus('clearing');

@@ -1,5 +1,5 @@
 /**
- * PwaFeature — Progressive Web App shell.
+ * PwaService — Progressive Web App shell.
  *
  * Server-side responsibility: validate that required environment
  * variables exist and log PWA readiness. All actual PWA behavior
@@ -17,7 +17,7 @@ const fs = require('fs');
 const MANIFEST_DIR = path.join(process.cwd(), 'public', 'manifests');
 const REQUIRED_MANIFESTS = ['calculator.json', 'news.json', 'weather.json'];
 
-class PwaFeature {
+class PwaService {
   static init() {
     // Fail fast if any manifest file is missing — the app shell would
     // silently break without a valid manifest link in the HTML head.
@@ -27,15 +27,15 @@ class PwaFeature {
 
     if (missing.length > 0) {
       throw new Error(
-        `[PwaFeature] Missing manifest files: ${missing.join(', ')}. ` +
+        `[PwaService] Missing manifest files: ${missing.join(', ')}. ` +
           `Expected at public/manifests/.`
       );
     }
 
     const safeExitUrl = process.env.NEXT_PUBLIC_SAFE_EXIT_URL || 'https://www.google.com';
-    console.log(`[PwaFeature] PWA ready. Safe-exit URL: ${safeExitUrl}`);
-    console.log(`[PwaFeature] Cover identities: ${REQUIRED_MANIFESTS.join(', ')}`);
+    console.log(`[PwaService] PWA ready. Safe-exit URL: ${safeExitUrl}`);
+    console.log(`[PwaService] Cover identities: ${REQUIRED_MANIFESTS.join(', ')}`);
   }
 }
 
-module.exports = { PwaFeature };
+module.exports = { PwaService };

@@ -1,3 +1,12 @@
+/**
+ * HistoryPanel — Calculation history modal.
+ *
+ * Displays recent calculations with:
+ *  - Expression and result for each calculation
+ *  - Clear history action
+ *  - Dismissible overlay interface
+ */
+
 import styles from '../../styles/calc-mode/historypanel.module.css';
 
 export default function HistoryPanel({ history, onClear, onClose }) {

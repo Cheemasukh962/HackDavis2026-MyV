@@ -1,3 +1,13 @@
+/**
+ * CalculatorShell — Main calculator application container.
+ *
+ * Features both standard and scientific calculation modes with:
+ *  - Real-time display of expressions and results
+ *  - Calculation history panel
+ *  - Toggle between standard and scientific button layouts
+ *  - Adaptive font sizing for large numbers
+ */
+
 import { useState } from 'react';
 import styles from '../../styles/calc-mode/calculatorshell.module.css';
 import { useCalculator } from '../../hooks/useCalculator';

@@ -1,3 +1,14 @@
+/**
+ * OthersJournals — Shared journal entries feed.
+ *
+ * Shows:
+ *  - Community journal entries from other users
+ *  - Supportive comments and reactions
+ *  - Anonymized author information
+ *  - Inspirational and supportive content
+ *  - Search and filtering by topic
+ */
+
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Heart, Quote, UserPlus } from 'lucide-react';
 import styles from '../../styles/private-mode/home.module.css';
@@ -62,10 +73,21 @@ const FALLBACK_JOURNALS = [
 const REAL_ID_RE = /^[0-9a-fA-F]{24}$/;
 const LIKED_KEY = 'sh_liked_journals';
 
+/**
+ * readLikedCache - Retrieves user's liked journals from localStorage.
+ * Safely parses JSON; returns empty object on error (for private browsing).
+ * @returns {Object} Mapping of journal ID to like status
+ */
 function readLikedCache() {
   try { return JSON.parse(localStorage.getItem(LIKED_KEY) || '{}'); } catch { return {}; }
 }
 
+/**
+ * writeLikedCache - Persists journal like status to localStorage.
+ * Silently fails on error (e.g., private browsing mode).
+ * @param {string} id - Journal entry ID
+ * @param {boolean} liked - True to mark as liked, false to remove
+ */
 function writeLikedCache(id, liked) {
   try {
     const curr = readLikedCache();
@@ -74,6 +96,12 @@ function writeLikedCache(id, liked) {
   } catch { /* private browsing may block */ }
 }
 
+/**
+ * applyLikedCache - Merges user's liked status into journal objects.
+ * Uses cached like status to override server state for offline consistency.
+ * @param {Array} journals - Array of journal entry objects
+ * @returns {Array} Journals with likedByMe field updated from cache
+ */
 function applyLikedCache(journals) {
   const cache = readLikedCache();
   return journals.map((j) => ({ ...j, likedByMe: cache[j.id] ?? j.likedByMe }));

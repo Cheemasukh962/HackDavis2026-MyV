@@ -1,3 +1,13 @@
+/**
+ * SciPad — Scientific calculator button grid.
+ *
+ * 6-column button layout featuring:
+ *  - Trigonometric and logarithmic functions
+ *  - Constants (pi, e)
+ *  - Secondary function toggle (2nd)
+ *  - Active state indicators
+ */
+
 import styles from '../../styles/calc-mode/scipad.module.css';
 import { SCI_BUTTONS } from './buttonData';
 

@@ -1,4 +1,11 @@
-/* SafeHaven - Comprehensive Marketing Redesign (iPhone Sanctuary Edition) */
+/**
+ * Marketing.module.css — Homepage & Marketing Pages
+ *
+ * Comprehensive redesign for the public-facing marketing pages and homepage.
+ * Features the SafeHaven brand identity with gradients, typography hierarchy,
+ * and responsive iPhone Sanctuary Edition layout.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .page {

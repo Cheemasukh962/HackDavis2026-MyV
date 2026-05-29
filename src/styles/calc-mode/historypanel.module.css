@@ -1,3 +1,10 @@
+/**
+ * historypanel.module.css — Calculation History Sidebar
+ *
+ * Styles for the scrollable history panel showing previous calculations.
+ * Features a clean list layout with tap interactions and visual hierarchy.
+ */
+
 .historyBackdrop {
   position: fixed;
   inset: 0;

@@ -1,6 +1,15 @@
+/**
+ * calcUtils.js — pure math and formatting helpers for the calculator cover.
+ *
+ * All functions are stateless and side-effect free. The calculator state and
+ * input handling live in src/hooks/useCalculator.js — this file is just the
+ * math primitives that hook calls into.
+ */
+
 export const OPS = ['/', 'x', '-', '+', 'pow', 'yroot'];
 export const OP_SYMBOLS = { '/': '÷', x: '×', '-': '−', '+': '+', pow: '^', yroot: 'ʸ√' };
 
+/** Inserts thousand-separator commas into a numeric string. Handles negatives and decimals. */
 export const addCommas = (str) => {
   if (!str || str === 'Error') return str || '0';
   const neg = str.startsWith('-');
@@ -11,13 +20,22 @@ export const addCommas = (str) => {
   return neg ? `-${result}` : result;
 };
 
+/** Converts a float to a clean display string, stripping trailing zeros. Returns 'Error' for non-finite values. */
 export const fmt = (v) => {
   if (!Number.isFinite(v)) return 'Error';
   return String(Number.parseFloat(v.toFixed(10)));
 };
 
+/** Formats a number for display in the calculator expression row — clean string with commas. */
 export const fmtExpr = (num) => addCommas(fmt(num));
 
+/**
+ * Applies a binary operator to two operands.
+ * @param {number} a - Left operand.
+ * @param {number} b - Right operand.
+ * @param {string} o - Operator string (one of OPS).
+ * @returns {number} Result, or NaN on division by zero.
+ */
 export const compute = (a, b, o) => {
   switch (o) {
     case '+':     return a + b;
@@ -30,6 +48,12 @@ export const compute = (a, b, o) => {
   }
 };
 
+/**
+ * Computes n! for non-negative integers up to 170 (JavaScript's float limit).
+ * Returns Infinity for n > 170, NaN for negatives or non-integers.
+ * @param {number} n
+ * @returns {number}
+ */
 export const factorial = (n) => {
   if (n < 0 || !Number.isInteger(n) || n > 170) return n > 170 ? Infinity : NaN;
   let r = 1;

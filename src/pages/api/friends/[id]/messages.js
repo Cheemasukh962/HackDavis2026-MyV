@@ -1,13 +1,23 @@
 const mongoose = require('mongoose');
-const { requireAuth } = require('../../../lib/requireAuth');
-const { connectDB } = require('../../../lib/db');
-const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
-const ChatMessage = require('../../../models/ChatMessage');
-const Friend = require('../../../models/Friend');
+const { requireAuth } = require('../../../../lib/requireAuth');
+const { connectDB } = require('../../../../lib/db');
+const { applySecurityHeaders } = require('../../../../middleware/securityHeaders');
+const ChatMessage = require('../../../../models/ChatMessage');
+const Friend = require('../../../../models/Friend');
 
 function formatTime(date) {
   if (!date) return 'now';
-  return new Date(date).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const msg = new Date(date);
+  const today = new Date();
+  const isToday = msg.toDateString() === today.toDateString();
+  
+  if (isToday) {
+    return msg.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+  
+  // Show date and time for past messages
+  return msg.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' +
+         msg.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
 async function verifyFriendship(friendId, userId) {
@@ -21,7 +31,7 @@ async function verifyFriendship(friendId, userId) {
 export default requireAuth(async (req, res) => {
   applySecurityHeaders(res);
 
-  const { friendId } = req.query;
+  const { id: friendId } = req.query;
   if (!mongoose.isValidObjectId(friendId)) {
     return res.status(400).json({ error: 'Invalid friend ID.' });
   }

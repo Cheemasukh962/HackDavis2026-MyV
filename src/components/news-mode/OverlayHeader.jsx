@@ -1,3 +1,12 @@
+/**
+ * OverlayHeader — Modal header component.
+ *
+ * Reusable header for all overlays with:
+ *  - Title text
+ *  - Close button
+ *  - Consistent styling and spacing
+ */
+
 import styles from '../../styles/news-mode/overlays.module.css';
 
 export default function OverlayHeader({ title, onClose }) {

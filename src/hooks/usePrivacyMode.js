@@ -1,10 +1,20 @@
 import { useEffect } from 'react';
 
 /**
- * usePrivacyMode
+ * usePrivacyMode.js — service worker lifecycle and privacy hardening for the cover app shell.
  *
- * Production keeps the privacy service worker enabled. Development removes it
- * so localhost never gets stuck serving stale/blank Next.js chunks.
+ * Registers /sw.js in production (no-cache, panic-capable service worker) and
+ * automatically unregisters any stale SW in development so hot-reload works cleanly.
+ * Also locks browser history to prevent the back button from revealing private mode,
+ * and wipes session storage + triggers logout whenever the tab is hidden.
+ *
+ * Mount this hook once at the top of [theme].jsx — it should run on every page load.
+ */
+
+/**
+ * Registers the privacy service worker, locks history navigation, and installs
+ * a visibility listener that purges session state when the tab loses focus.
+ * No-op in development — SW is removed to prevent stale chunk issues.
  */
 export function usePrivacyMode() {
   useEffect(() => {
@@ -64,6 +74,12 @@ export function usePrivacyMode() {
   }, []);
 }
 
+/**
+ * Immediately redirects the user away from the app, wipes session storage,
+ * logs out server-side, and instructs the service worker to purge all caches.
+ * If called from a cover app page, redirects back to that cover to look natural.
+ * Otherwise falls back to NEXT_PUBLIC_SAFE_EXIT_URL (default: google.com).
+ */
 export function triggerPanicExit() {
   // If we're inside a cover app (/app/calculator|news|weather), go back to that
   // cover page — it looks like a normal app launch to anyone watching.

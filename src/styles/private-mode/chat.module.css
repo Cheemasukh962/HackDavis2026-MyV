@@ -1,3 +1,10 @@
+/**
+ * chat.module.css — AI Chat Panel
+ *
+ * Styles for the message history, input interface, and chat interactions in
+ * private mode with message bubbles and timestamp indicators.
+ */
+
 .chatPanel {
   height: 100%;
   display: flex;

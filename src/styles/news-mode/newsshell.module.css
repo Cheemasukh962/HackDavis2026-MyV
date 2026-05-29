@@ -1,3 +1,10 @@
+/**
+ * newsshell.module.css — News App Shell & Layout
+ *
+ * Styles for the news feed application container with gradient background
+ * and responsive layout supporting feeds, articles, and overlays.
+ */
+
 .page {
   min-height: 100dvh;
   overflow: hidden;

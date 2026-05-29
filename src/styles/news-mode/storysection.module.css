@@ -1,3 +1,10 @@
+/**
+ * storysection.module.css — Article List Section
+ *
+ * Styles for grouped sections of articles displayed in the feed, featuring
+ * list layouts with preview cards and tap interactions.
+ */
+
 .storySection {
   margin: 0 16px;
 }

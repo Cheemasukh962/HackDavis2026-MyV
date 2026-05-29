@@ -1,3 +1,14 @@
+/**
+ * TabBar — Bottom feed navigation tabs.
+ *
+ * Allows switching between:
+ *  - Today: current day headlines
+ *  - World: international news
+ *  - Sports: sports coverage
+ *
+ * Shows tab highlights and scroll indicators.
+ */
+
 import styles from '../../styles/news-mode/tabbar.module.css';
 import { TABS } from './newsData';
 

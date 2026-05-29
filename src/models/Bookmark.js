@@ -1,3 +1,13 @@
+/**
+ * Bookmark.js — saved AI suggestions, resources, and notes.
+ *
+ * Survivors can bookmark content from the AI chat (resources, safety planning
+ * guidance, hotline numbers) for later reference. An optional image attachment
+ * is stored in MongoDB GridFS (bookmark_attachments bucket) and referenced by fileId.
+ *
+ * Collection: bookmarks
+ */
+
 const mongoose = require('mongoose');
 
 const { ObjectId } = mongoose.Schema.Types;

@@ -1,3 +1,16 @@
+/**
+ * Friend.js — friend request and relationship record.
+ *
+ * Represents a directional connection request between two users. The pairKey
+ * field (sorted concatenation of both user IDs) enforces uniqueness so a pair
+ * can only have one relationship record regardless of who initiated it.
+ * Pending requests expire after 30 days unless noExpiry is set.
+ *
+ * Statuses: pending → accepted | rejected
+ *
+ * Collection: friends
+ */
+
 const mongoose = require('mongoose');
 
 const { ObjectId } = mongoose.Schema.Types;

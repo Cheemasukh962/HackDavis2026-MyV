@@ -1,3 +1,12 @@
+/**
+ * StdKeypad — Standard and scientific calculator button grid.
+ *
+ * Adaptive layout that shows:
+ *  - Standard mode: circular buttons (numbers, operations, functions)
+ *  - Scientific mode: rectangular buttons with expanded function set
+ *  - Backspace with visual feedback on press/release
+ */
+
 import styles from '../../styles/calc-mode/stdkeypad.module.css';
 import { STD_BUTTONS } from './buttonData';
 import { BackspaceIcon } from './Icons';

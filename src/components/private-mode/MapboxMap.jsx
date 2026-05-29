@@ -1,8 +1,25 @@
+/**
+ * MapboxMap — Interactive location map.
+ *
+ * Displays:
+ *  - Current user location marker
+ *  - Mapbox-powered interactive map
+ *  - Support for live location updates
+ *  - Centered on Sacramento, CA by default
+ *  - Used in SOS and AidPanel for location context
+ */
+
 import { useEffect, useRef } from 'react';
 
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 const DEFAULT_CENTER = [-121.4944, 38.5816];
 
+/**
+ * makeMarkerEl - Creates styled DOM element for map marker.
+ * Returns circular colored element with white border for visual prominence.
+ * @param {string} color - CSS color for marker background
+ * @returns {HTMLElement} Styled marker element ready for map placement
+ */
 function makeMarkerEl(color) {
   const el = document.createElement('div');
   Object.assign(el.style, {

@@ -1,3 +1,10 @@
+/**
+ * calculatordisplay.module.css — Calculator Display Panel
+ *
+ * Styles for the calculator output display showing numbers, operations, and
+ * calculation results with monospace typography and high contrast.
+ */
+
 .displayArea {
   display: flex;
   flex-direction: column;

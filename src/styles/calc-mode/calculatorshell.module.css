@@ -1,3 +1,11 @@
+/**
+ * calculatorshell.module.css — Calculator App Shell
+ *
+ * Styles for the calculator application container, supporting both standard
+ * and scientific calculator layouts. Fixed positioning with custom fonts for
+ * a native calculator feel.
+ */
+
 .page {
   position: fixed;
   inset: 0;

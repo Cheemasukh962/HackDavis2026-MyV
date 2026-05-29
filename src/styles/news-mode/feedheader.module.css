@@ -1,3 +1,10 @@
+/**
+ * feedheader.module.css — News Feed Header
+ *
+ * Styles for the top header of the news feed, displaying title and navigation
+ * controls with translucent backdrop effects.
+ */
+
 .feedHeader {
   position: sticky;
   top: 0;

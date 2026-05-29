@@ -1,7 +1,9 @@
-/*
- * Login / Register page styles — placeholder.
- * Replace with Figma handoff. Scoped class names map to the design tokens
- * in globals.css so only this file needs updating at handoff.
+/**
+ * Login.module.css — Authentication Pages
+ *
+ * Styles for the login and registration pages. Scoped class names map to
+ * design tokens in globals.css so styling can be updated via Figma handoff
+ * with minimal code changes.
  */
 
 .page {

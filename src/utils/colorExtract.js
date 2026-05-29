@@ -1,3 +1,22 @@
+/**
+ * colorExtract.js — canvas-based dominant color extraction.
+ *
+ * extractAccentColor(imageUrl) samples a downscaled version of an image using
+ * the HTML Canvas API and returns the most saturated non-white, non-black pixel
+ * as a hex color string. Used by HeroStory to tint the news feed background to
+ * match the lead article's cover image.
+ *
+ * Browser-only — do not call from API routes or server-side code.
+ */
+
+/**
+ * Samples a downscaled version of an image and returns the average color as an
+ * "r,g,b" string (no #, no rgb() wrapper) for use in CSS rgba() values.
+ * Resolves null on error, missing URL, or cross-origin failure.
+ *
+ * @param {string} imageUrl - Fully qualified image URL.
+ * @returns {Promise<string|null>} e.g. "120,80,200" or null.
+ */
 export function extractAccentColor(imageUrl) {
   return new Promise((resolve) => {
     if (!imageUrl) return resolve(null);

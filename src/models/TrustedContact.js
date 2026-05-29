@@ -1,3 +1,14 @@
+/**
+ * TrustedContact.js — trusted friend allowlist for SOS alerts.
+ *
+ * A trusted contact is an accepted Friend that the user has explicitly
+ * designated to receive SOS alerts and location sharing. Trust is one-directional:
+ * each user manages their own list independently of their friends' lists.
+ * The unique index on { userId, friendId } prevents duplicates.
+ *
+ * Collection: trustedcontacts
+ */
+
 const mongoose = require('mongoose');
 
 const { ObjectId } = mongoose.Schema.Types;

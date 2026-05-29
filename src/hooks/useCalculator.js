@@ -1,9 +1,36 @@
+/**
+ * useCalculator.js — full state machine for the calculator cover app.
+ *
+ * Manages all calculator state: display value, pending operator, parentheses
+ * stack, scientific functions, memory, and history. Pure math operations are
+ * delegated to calcUtils.js. The component layer (CalculatorShell) only calls
+ * the handlers returned here — it holds no logic of its own.
+ */
+
 import { useRef, useState } from 'react';
 import {
   OPS, OP_SYMBOLS, compute, factorial, fmt, fmtExpr, addCommas,
   PREFIX_FN_NAMES, IS_PREFIX_FN,
 } from '../utils/calcUtils';
 
+/**
+ * @returns {{
+ *   op: string|null,
+ *   isScientific: boolean,
+ *   is2nd: boolean,
+ *   history: Array<{expr: string, result: string}>,
+ *   clearHistory: function,
+ *   liveExpression: string,
+ *   liveResultFormatted: string,
+ *   fontSize: string,
+ *   handleStdClick: function,
+ *   handleSciClick: function,
+ *   handleBackDown: function,
+ *   handleBackUp: function,
+ *   handleBackLeave: function,
+ *   toggleScientific: function,
+ * }}
+ */
 export function useCalculator() {
   const [display, setDisplay] = useState('0');
   const [prev, setPrev] = useState(null);
@@ -27,6 +54,13 @@ export function useCalculator() {
   const longPressRef = useRef(false);
   const longTimerRef = useRef(null);
 
+  /**
+   * applyFn - Applies scientific function to a single operand.
+   * Handles trigonometric, logarithmic, and root functions with radian/degree conversion.
+   * @param {string} fnId - Function identifier (sin, cos, tan, etc.)
+   * @param {number} x - Input value
+   * @returns {number} Result of function application
+   */
   const applyFn = (fnId, x) => {
     const toRad = (v) => isRad ? v : v * Math.PI / 180;
     const fromRad = (v) => isRad ? v : v * 180 / Math.PI;
@@ -54,9 +88,19 @@ export function useCalculator() {
     }
   };
 
+  /**
+   * pushHistory - Records calculation to history with expression and result.
+   * Maintains most recent 20 calculations; newest appears first.
+   * @param {string} expr - The full expression entered (e.g., "2 + 3 * 4")
+   * @param {string} result - The computed result (e.g., "14")
+   */
   const pushHistory = (expr, result) =>
     setHistory((h) => [{ expr, result }, ...h].slice(0, 20));
 
+  /**
+   * clear - Resets entire calculator state to initial empty state.
+   * Clears display, operators, pending functions, and parenthesis stack.
+   */
   const clear = () => {
     setDisplay('0'); setPrev(null); setOp(null);
     setWaiting(false); setExpression('');
@@ -66,6 +110,10 @@ export function useCalculator() {
     setOpStack([]); setParenStack([]); setResultReady(false);
   };
 
+  /**
+   * backspace - Removes last character or undoes last operation.
+   * Handles: display digit removal, error recovery, post-calculation cleanup, operator undo.
+   */
   const backspace = () => {
     if (display === 'Error') { setDisplay('0'); return; }
     if (justCompleted) { clear(); return; }

@@ -1,3 +1,13 @@
+/**
+ * FeedHeader — News feed top navigation bar.
+ *
+ * Sticky header featuring:
+ *  - App branding and kiwi icon
+ *  - Subscriber badge (if applicable)
+ *  - Menu and profile action buttons
+ *  - Backdrop blur effect
+ */
+
 import styles from '../../styles/news-mode/feedheader.module.css';
 
 function KiwiIcon() {

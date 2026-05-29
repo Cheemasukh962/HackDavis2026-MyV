@@ -1,4 +1,11 @@
 /* ── Basic mode — circles ── */
+/**
+ * stdkeypad.module.css — Standard Calculator Keypad
+ *
+ * Styles for the primary calculator button grid with number keys, operations,
+ * and control buttons. Uses a color-coded system for visual navigation.
+ */
+
 .keypad {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -1,3 +1,15 @@
+/**
+ * User.js — survivor account with zero-trace authentication.
+ *
+ * Usernames are stored lowercase and never surfaced in the UI — the only
+ * visible identity is anonymousDisplayName, generated randomly at signup.
+ * Passwords are hashed via bcrypt in a pre-save hook; plain text never persists.
+ * An optional duressPassword allows login under coercion — the resulting JWT
+ * carries { duressMode: true } so the client can silently activate a safe view.
+ *
+ * Collection: users
+ */
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 

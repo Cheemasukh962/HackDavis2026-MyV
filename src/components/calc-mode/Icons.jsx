@@ -1,3 +1,12 @@
+/**
+ * Icons — SVG icon exports for calculator UI.
+ *
+ * Provides:
+ *  - BackspaceIcon: Delete/backspace button icon
+ *  - HistoryIcon: History panel toggle icon
+ *  - SciToggleIcon: Scientific mode toggle icon
+ */
+
 export const BackspaceIcon = () => (
   <svg viewBox="0 0 24 24" width="36" height="36" fill="none"
        stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"

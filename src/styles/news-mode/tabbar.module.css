@@ -1,3 +1,10 @@
+/**
+ * tabbar.module.css — Bottom Navigation Tabs
+ *
+ * Styles for the tab bar allowing navigation between different news feed views
+ * with active state indicators and icon labels.
+ */
+
 .tabBar {
   position: absolute;
   left: 16px;

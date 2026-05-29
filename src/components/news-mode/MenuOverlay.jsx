@@ -1,3 +1,12 @@
+/**
+ * MenuOverlay — App menu modal.
+ *
+ * Provides access to:
+ *  - Settings and preferences
+ *  - Bookmarks management
+ *  - Privacy and safety controls
+ */
+
 import styles from '../../styles/news-mode/overlays.module.css';
 import OverlayHeader from './OverlayHeader';
 

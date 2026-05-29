@@ -1,3 +1,14 @@
+/**
+ * HomePanel — Private mode home dashboard.
+ *
+ * Displays personalized sanctuary features:
+ *  - Time-based greeting
+ *  - Quick action buttons (Chat, SOS, Journal, Aid, Bookmarks)
+ *  - Daily moment/affirmation
+ *  - Friend count and journal entries
+ *  - Live location tracking toggle
+ */
+
 import { useEffect, useState } from 'react';
 import {
   BookLock,
@@ -11,30 +22,22 @@ import OthersJournals from './OthersJournals';
 import MomentForYou from './MomentForYou';
 import styles from '../../styles/private-mode/home.module.css';
 
-export default function HomePanel({ onNavigate, active, onBackToApp, appName }) {
+export default function HomePanel({ onNavigate, active, onBackToApp, appName, isWatching, startLiveLocation, stopLiveLocation }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const [friendCount, setFriendCount] = useState(null);
-  const [locationOn, setLocationOn] = useState(false);
   const [journalCount, setJournalCount] = useState(null);
 
-  useEffect(() => {
-    if (!navigator.permissions) return;
-    let permStatus;
-    navigator.permissions.query({ name: 'geolocation' }).then((status) => {
-      permStatus = status;
-      setLocationOn(status.state === 'granted');
-      status.onchange = () => setLocationOn(status.state === 'granted');
-    }).catch(() => {});
-    return () => { if (permStatus) permStatus.onchange = null; };
-  }, []);
-
+  /**
+   * handleLocationToggle - Toggles live location tracking on/off.
+   * Calls parent component's startLiveLocation or stopLiveLocation callbacks.
+   */
   const handleLocationToggle = () => {
-    if (locationOn) return;
-    navigator.geolocation?.getCurrentPosition(
-      () => setLocationOn(true),
-      () => setLocationOn(false),
-    );
+    if (isWatching) {
+      stopLiveLocation();
+    } else {
+      startLiveLocation();
+    }
   };
 
   useEffect(() => {
@@ -83,7 +86,7 @@ export default function HomePanel({ onNavigate, active, onBackToApp, appName }) 
         </div>
         <div className={styles.miniGrid}>
           <Mini label="Contacts" value={friendCount === null ? '—' : String(friendCount)} />
-          <LocationMini on={locationOn} onToggle={handleLocationToggle} />
+          <LocationMini on={isWatching} onToggle={handleLocationToggle} />
           <Mini label="Backup" value={journalCount === null ? '—' : String(journalCount)} />
         </div>
       </div>

@@ -1,3 +1,8 @@
+/**
+ * weathercover.module.css — Weather Mode Cover/Display
+ *
+ * Styles for the weather mode interface featuring gradient backgrounds,\n * weather-specific theming, and immersive full-screen layout.\n */
+
 .page {
   min-height: 100dvh;
   position: relative;

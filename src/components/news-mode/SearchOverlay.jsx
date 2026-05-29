@@ -1,3 +1,13 @@
+/**
+ * SearchOverlay — Article search modal.
+ *
+ * Enables searching with:
+ *  - Real-time search input
+ *  - Trending search suggestions
+ *  - Recent searches history
+ *  - Keyword-based article filtering
+ */
+
 import { useState } from 'react';
 import styles from '../../styles/news-mode/overlays.module.css';
 import { TRENDING_SEARCHES } from './newsData';

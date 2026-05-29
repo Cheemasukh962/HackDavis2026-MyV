@@ -1,3 +1,14 @@
+/**
+ * PanicExit — Always-on emergency exit system.
+ *
+ * Provides rapid emergency exits via:
+ *  - Escape key press
+ *  - Horizontal swipe gesture (left/right) on touch devices
+ *  - Quick-exit button tap (when visible)
+ *
+ * Clears all session state and redirects to a safe cover page.
+ */
+
 import { useEffect, useRef } from 'react';
 import { triggerPanicExit } from '../hooks/usePrivacyMode';
 
@@ -28,6 +39,7 @@ const config = require('../config/config.json');
 export default function PanicExit({ showButton = true }) {
   const touchStart = useRef({ x: 0, y: 0, time: 0 });
 
+  // Listen for Escape key press to trigger panic exit
   useEffect(() => {
     const onKeyDown = (event) => {
       if (event.key === 'Escape') triggerPanicExit();
@@ -52,6 +64,7 @@ export default function PanicExit({ showButton = true }) {
       if (e.changedTouches.length !== 1) return;
 
       // Disable swipe if keyboard is likely up (input/textarea is focused)
+      // Also validates swipe velocity and direction for accurate detection
       const activeEl = document.activeElement;
       const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
       if (isInput) return;

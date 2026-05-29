@@ -1,5 +1,5 @@
 /**
- * FriendingFeature — anonymous friend graph.
+ * FriendService — anonymous friend graph.
  *
  * Users connect through anonymous display names only. Real usernames stay out
  * of friend APIs and UI payloads. Friend records are stored as request pairs
@@ -7,10 +7,10 @@
  * an accepted relationship before exposing sensitive data.
  */
 
-class FriendingFeature {
+class FriendService {
   static init() {
-    console.log('[FriendingFeature] Anonymous friending enabled.');
+    console.log('[FriendService] Anonymous friending enabled.');
   }
 }
 
-module.exports = { FriendingFeature };
+module.exports = { FriendService };

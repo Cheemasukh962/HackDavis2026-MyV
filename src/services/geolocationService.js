@@ -1,5 +1,5 @@
 /**
- * GeolocationFeature — opt-in latest-location storage.
+ * GeolocationService — opt-in latest-location storage.
  *
  * Exact coordinates are collected only when a signed-in user explicitly asks
  * the browser for location access. The API stores one latest location per user
@@ -9,10 +9,10 @@
  * relationship and consent checks.
  */
 
-class GeolocationFeature {
+class GeolocationService {
   static init() {
-    console.log('[GeolocationFeature] Opt-in latest-location storage enabled.');
+    console.log('[GeolocationService] Opt-in latest-location storage enabled.');
   }
 }
 
-module.exports = { GeolocationFeature };
+module.exports = { GeolocationService };

@@ -1,9 +1,37 @@
+/**
+ * newsUtils.js — article normalization and CSS helpers for the Kiwi News cover.
+ *
+ * toBackgroundImage()     — converts a URL or gradient string into a CSS background-image value.
+ * normalizeLiveArticles() — maps raw NewsAPI.ai response data into the shape
+ *                           NewsShell expects (hero + sections), falling back to
+ *                           static data from newsData.js when the API returns nothing.
+ */
+
+/**
+ * Converts an image value to a CSS background-image string.
+ * Pass-through for gradient strings; wraps URLs in url("...").
+ * @param {string} image - A URL or CSS gradient string.
+ * @returns {string} CSS background-image value, or '' if falsy.
+ */
 export function toBackgroundImage(image) {
   if (!image) return '';
   if (/^https?:\/\//i.test(image)) return `url("${image.replace(/"/g, '\\"')}")`;
   return image;
 }
 
+/**
+ * Maps a raw NewsAPI.ai response into the shape NewsShell expects.
+ * Returns null if the data is empty or unusable, so the caller can fall back to static data.
+ *
+ * @param {string} tab - Active tab id ('today' | 'world' | 'sports').
+ * @param {Object} data - Raw API response with an `articles` array.
+ * @param {Object} fallbacks
+ * @param {Object} fallbacks.heroStories - Static hero fallbacks keyed by tab.
+ * @param {Object} fallbacks.storySections - Static section fallbacks keyed by tab.
+ * @param {Object} fallbacks.liveSectionTitles - Default section title per tab.
+ * @param {string[]} fallbacks.thumbnailFallbacks - Gradient fallbacks for missing images.
+ * @returns {{ hero: Object, sections: Object[], filters: string[]|null }|null}
+ */
 export function normalizeLiveArticles(tab, data, { heroStories, storySections, liveSectionTitles, thumbnailFallbacks }) {
   if (!Array.isArray(data?.articles) || data.articles.length === 0) return null;
 

@@ -1,3 +1,16 @@
+/**
+ * JournalEntry.js — private evidence journal entry.
+ *
+ * Stores a survivor's written account of an incident, an optional incident date
+ * (which may differ from the creation date), and media attachments stored as
+ * base64 data URLs. Private entries (isPrivate: true) are hidden when the user
+ * is in duress mode — see JournalPrivacyService for the filter logic.
+ * Hearts/likedBy support the community journal feature where non-private entries
+ * can be shared anonymously with other survivors.
+ *
+ * Collection: journalentries
+ */
+
 const mongoose = require('mongoose');
 
 const journalEntrySchema = new mongoose.Schema({

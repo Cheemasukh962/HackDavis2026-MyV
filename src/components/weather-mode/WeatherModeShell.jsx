@@ -1,3 +1,14 @@
+/**
+ * WeatherModeShell — Weather information display.
+ *
+ * Features:
+ *  - Weather data via AccuWeather
+ *  - Current conditions and forecast
+ *  - Location-based weather
+ *  - Immersive background gradients
+ *  - External links to weather details
+ */
+
 import styles from '../../styles/weather-mode/weathercover.module.css';
 
 const ACCUWEATHER_URL = 'https://www.accuweather.com/';

@@ -1,6 +1,16 @@
+/**
+ * AidPanel — Crisis resources and support information.
+ *
+ * Provides access to:
+ *  - National crisis hotlines
+ *  - Mental health resources
+ *  - Emergency services
+ *  - Support group information
+ *  - Tap-to-call functionality
+ */
+
 import { useState, useEffect, useRef } from 'react';
 import { Lock, Phone, Map } from 'lucide-react';
-import { useGeolocation } from '../../hooks/useGeolocation';
 import MapboxMap from './MapboxMap';
 import styles from '../../styles/private-mode/aid.module.css';
 
@@ -27,35 +37,42 @@ const PLACEHOLDER_RESOURCES = {
   ],
 };
 
-export default function AidPanel() {
+export default function AidPanel({ location, isWatching }) {
   const [activeFilter, setActiveFilter] = useState('shelter');
   const [resources, setResources] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedResource, setSelectedResource] = useState(null);
   const mapRef = useRef(null);
-
-  const { location, startLiveLocation } = useGeolocation();
-
-  useEffect(() => {
-    startLiveLocation();
-  }, [startLiveLocation]);
+  const hasFetchedRef = useRef(false);
+  const locationRef = useRef(location);
+  locationRef.current = location;
 
   // Clear selection when switching filters
   useEffect(() => {
     setSelectedResource(null);
   }, [activeFilter]);
 
+  // Poll every 5 seconds while location sharing is on. Uses a ref for location
+  // to avoid stale closure — the interval always reads the latest coords.
   useEffect(() => {
-    async function fetchNearbyAid() {
-      if (!location) return;
+    hasFetchedRef.current = false;
+    setResources(null);
+    setError('');
+
+    if (!isWatching) return;
+
+    async function tryFetch() {
+      const loc = locationRef.current;
+      if (!loc || hasFetchedRef.current) return;
+      hasFetchedRef.current = true;
       setLoading(true);
       setError('');
       try {
-        const res = await fetch('/api/aid/nearby', {
+        const res = await fetch('/api/resources/nearby', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ latitude: location.latitude, longitude: location.longitude }),
+          body: JSON.stringify({ latitude: loc.latitude, longitude: loc.longitude }),
         });
         if (!res.ok) throw new Error('Failed to fetch nearby resources.');
         setResources(await res.json());
@@ -68,16 +85,26 @@ export default function AidPanel() {
       }
     }
 
-    if (location && !resources && !loading) {
-      fetchNearbyAid();
-    }
-  }, [location, resources, loading]);
+    tryFetch();
+    const interval = setInterval(tryFetch, 5000);
+    return () => clearInterval(interval);
+  }, [isWatching]);
 
+  /**
+   * handleCall - Initiates phone call to resource phone number.
+   * Opens native dialer with cleaned phone number.
+   * @param {string} phone - Phone number to call
+   */
   const handleCall = (phone) => {
     if (!phone) return;
     window.location.href = `tel:${phone.replace(/[^0-9+]/g, '')}`;
   };
 
+  /**
+   * handleDirections - Opens Google Maps directions to resource.
+   * Prepares origin/destination for navigation.
+   * @param {string} address - Resource address to navigate to
+   */
   const handleDirections = (address) => {
     if (!address) return;
     window.open(
@@ -137,7 +164,7 @@ export default function AidPanel() {
           selectedResource={selectedResource}
         />
         <div className={styles.mapCaption}>
-          {selectedResource ? selectedResource.name : location ? 'Showing resources near you' : 'Finding nearby help...'}
+          {selectedResource ? selectedResource.name : isWatching && location ? 'Showing resources near you' : isWatching ? 'Finding your location...' : 'Enable location sharing to find nearby help'}
         </div>
       </div>
 

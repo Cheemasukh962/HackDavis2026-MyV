@@ -1,3 +1,15 @@
+/**
+ * UserLocation.js — latest known device location for a user.
+ *
+ * Stores one record per user (unique on userId) — this is not a movement history,
+ * just the most recent position. Updated in place on every location ping.
+ * Coordinates follow GeoJSON Point format [longitude, latitude] with a 2dsphere
+ * index to support future geospatial queries (e.g. nearby shelter lookup).
+ * All fields beyond coordinates are optional — browser accuracy varies.
+ *
+ * Collection: userlocations
+ */
+
 const mongoose = require('mongoose');
 
 const userLocationSchema = new mongoose.Schema({

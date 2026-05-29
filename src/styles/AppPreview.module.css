@@ -1,3 +1,11 @@
+/**
+ * AppPreview.module.css — App Preview/Demo Page
+ *
+ * Styles for the app preview and demo screens shown before login.
+ * Displays a clean, responsive layout with backdrop blur effects and
+ * smooth transitions.
+ */
+
 .page {
   min-height: 100dvh;
   display: flex;

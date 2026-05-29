@@ -1,3 +1,10 @@
+/**
+ * herostory.module.css — Featured Article Card
+ *
+ * Styles for the prominent featured article display at the top of the news
+ * feed with image, headline, and metadata.
+ */
+
 .hero {
   position: relative;
   width: calc(100% - 32px);

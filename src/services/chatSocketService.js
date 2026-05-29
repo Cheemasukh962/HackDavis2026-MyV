@@ -1,5 +1,5 @@
 /**
- * ChatFeature — friend-gated real-time messaging via Socket.io.
+ * ChatSocketService — friend-gated real-time messaging via Socket.io.
  *
  * Activated in src/app.js when config.features.enable_anonymous_chat === true.
  *
@@ -58,12 +58,12 @@ function serializeMessage(message) {
   };
 }
 
-class ChatFeature {
+class ChatSocketService {
   /**
    * @param {import('socket.io').Server} io
    */
   static init(io) {
-    console.log('[ChatFeature] Friend-gated persistent chat enabled.');
+    console.log('[ChatSocketService] Friend-gated persistent chat enabled.');
 
     io.on('connection', (socket) => {
       const session = authenticateSocket(socket);
@@ -77,7 +77,7 @@ class ChatFeature {
       socket.data.session = session;
       socket.data.allowedRooms = new Set();
 
-      console.log(`[ChatFeature] Client connected: ${socket.id}`);
+      console.log(`[ChatSocketService] Client connected: ${socket.id}`);
 
       /**
        * Client emits: { roomId: friendRelationshipId }
@@ -126,7 +126,7 @@ class ChatFeature {
 
           socket.to(socketRoom).emit('user_joined', { roomId });
         } catch (err) {
-          console.error('[ChatFeature] join_room error:', err.name, err.message);
+          console.error('[ChatSocketService] join_room error:', err.name, err.message);
           socket.emit('chat_error', { error: 'Unable to join chat.' });
         }
       });
@@ -175,16 +175,16 @@ class ChatFeature {
 
           io.to(socketRoom).emit('receive_message', serializeMessage(savedMessage));
         } catch (err) {
-          console.error('[ChatFeature] send_message error:', err.name, err.message);
+          console.error('[ChatSocketService] send_message error:', err.name, err.message);
           socket.emit('chat_error', { error: 'Unable to send message.' });
         }
       });
 
       socket.on('disconnect', () => {
-        console.log(`[ChatFeature] Client disconnected: ${socket.id}`);
+        console.log(`[ChatSocketService] Client disconnected: ${socket.id}`);
       });
     });
   }
 }
 
-module.exports = { ChatFeature };
+module.exports = { ChatSocketService };

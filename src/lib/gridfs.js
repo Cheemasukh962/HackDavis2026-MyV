@@ -1,3 +1,15 @@
+/**
+ * gridfs.js — lazy GridFSBucket accessors for binary file storage.
+ *
+ * GridFS splits large files (images, audio, video, PDFs) into chunks and stores
+ * them in MongoDB instead of the filesystem. Two buckets are used:
+ *   - journal_attachments  → evidence files attached to journal entries
+ *   - bookmark_attachments → files attached to AI chat bookmarks
+ *
+ * Both buckets are created lazily on first access because GridFSBucket requires
+ * an active database connection, which isn't available at module load time.
+ */
+
 const mongoose = require('mongoose');
 
 // WHY lazy: GridFSBucket requires an active DB connection. The connection
@@ -7,6 +19,7 @@ const mongoose = require('mongoose');
 let _journalBucket = null;
 let _bookmarkBucket = null;
 
+/** Returns the GridFSBucket for journal evidence attachments. Throws if DB is not connected. */
 function getAttachmentBucket() {
   if (!mongoose.connection.db) throw new Error('[GridFS] No database connection.');
   if (!_journalBucket) {
@@ -17,6 +30,7 @@ function getAttachmentBucket() {
   return _journalBucket;
 }
 
+/** Returns the GridFSBucket for bookmark attachments. Throws if DB is not connected. */
 function getBookmarkBucket() {
   if (!mongoose.connection.db) throw new Error('[GridFS] No database connection.');
   if (!_bookmarkBucket) {

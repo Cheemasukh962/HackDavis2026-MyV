@@ -1,3 +1,14 @@
+/**
+ * StorySection — Article list section.
+ *
+ * Displays articles grouped by:
+ *  - Category (local, opinion, tech, etc.)
+ *  - Time period (latest, trending)
+ *  - Custom collection theme
+ *
+ * Shows preview cards with images, titles, and sources.
+ */
+
 import { useState } from 'react';
 import styles from '../../styles/news-mode/storysection.module.css';
 import { toBackgroundImage } from '../../utils/newsUtils';

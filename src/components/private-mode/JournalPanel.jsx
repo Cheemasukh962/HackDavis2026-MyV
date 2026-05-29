@@ -1,3 +1,15 @@
+/**
+ * JournalPanel — Private journaling interface.
+ *
+ * Provides:
+ *  - Create and edit journal entries
+ *  - Voice-to-text entry creation
+ *  - Browse entries with search
+ *  - Privacy-first storage
+ *  - Export and sharing controls
+ *  - Daily reflection prompts
+ */
+
 import { useEffect, useRef, useState } from 'react';
 import { Camera, Download, FileText, Lock, Mic, Search, Shuffle, Square, Trash2, Type, Volume2, VolumeX, X } from 'lucide-react';
 import { useSpeechToText } from '../../hooks/useSpeechToText';
@@ -46,6 +58,12 @@ export default function JournalPanel() {
     };
   }, [showTextInput]);
 
+  /**
+   * fileToBase64 - Converts file to base64-encoded data URL.
+   * Used for image uploads and media attachment preview.
+   * @param {File} file - File to encode
+   * @returns {Promise<string>} Base64-encoded data URL
+   */
   const fileToBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -53,6 +71,10 @@ export default function JournalPanel() {
     reader.onerror = (err) => reject(err);
   });
 
+  /**
+   * fetchEntries - Fetches all journal entries from the server.
+   * Updates entries state and manages loading/error states.
+   */
   const fetchEntries = async () => {
     setLoading(true);
     setError(null);
@@ -77,6 +99,11 @@ export default function JournalPanel() {
     fetchEntries();
   }, []);
 
+  /**
+   * handleMediaUpload - Processes uploaded media files (images, audio, video).
+   * Calls uploadFile for each selected file.
+   * @param {Event} e - File input change event
+   */
   const handleMediaUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     for (const file of files) {
@@ -84,6 +111,11 @@ export default function JournalPanel() {
     }
   };
 
+  /**
+   * startRecording - Initiates audio recording for voice entry.
+   * Requests microphone permission and manages MediaRecorder lifecycle.
+   * Converts audio to appropriate format and uploads as file.
+   */
   const startRecording = async () => {
     setError(null);
     try {
@@ -120,6 +152,10 @@ export default function JournalPanel() {
     }
   };
 
+  /**
+   * stopRecording - Stops active audio recording.
+   * Triggers mediaRecorder stop event which uploads the recorded audio.
+   */
   const stopRecording = () => {
     if (mediaRecorder.current && isRecording) {
       mediaRecorder.current.stop();
@@ -127,6 +163,11 @@ export default function JournalPanel() {
     }
   };
 
+  /**
+   * handleTextSubmit - Creates new text journal entry.
+   * Sends content and title to server, updates local entries list.
+   * Clears form and closes text input after successful submission.
+   */
   const handleTextSubmit = async () => {
     if (!textNote.trim()) return;
     setError(null);
@@ -154,6 +195,11 @@ export default function JournalPanel() {
     }
   };
 
+  /**
+   * getEntryType - Determines entry type based on media MIME type.
+   * @param {Object} entry - Journal entry object
+   * @returns {string} Entry type: 'text', 'image', 'video', 'audio', or 'file'
+   */
   const getEntryType = (entry) => {
     if (!entry.mediaType) return 'text';
     const mime = entry.mediaType;

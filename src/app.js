@@ -6,68 +6,68 @@
  *   2. Read its toggle from config.
  *   3. Call FeatureClass.init() inside the guard — nothing else runs if disabled.
  *
- * Keep this file lean. Business logic lives in src/features/, not here.
+ * Keep this file lean. Business logic lives in src/services/, not here.
  */
 
 const config = require('./config/config');
-const { ChatFeature } = require('./features/chat_feature');
-const { AuthFeature } = require('./features/auth_feature');
-const { PwaFeature } = require('./features/pwa_feature');
-const { JournalFeature } = require('./features/journal_feature');
-const { AiChatFeature } = require('./features/ai_chat_feature');
-const { BookmarkFeature } = require('./features/bookmark_feature');
-const { ButtonFeature } = require('./features/button_feature');
-const { GeolocationFeature } = require('./features/geolocation_feature');
-const { FriendingFeature } = require('./features/friending_feature');
-const { TrustedContactFeature } = require('./features/trusted_contact_feature');
-const { SOSFeature } = require('./features/sos_feature');
+const { ChatSocketService } = require('./services/chatSocketService');
+const { AuthService } = require('./services/authService');
+const { PwaService } = require('./services/pwaService');
+const { JournalService } = require('./services/journalService');
+const { AiChatService } = require('./services/aiChatService');
+const { BookmarkService } = require('./services/bookmarkService');
+const { ButtonService } = require('./services/buttonService');
+const { GeolocationService } = require('./services/geolocationService');
+const { FriendService } = require('./services/friendService');
+const { TrustedContactService } = require('./services/trustedContactService');
+const { SosService } = require('./services/sosService');
 
 /**
  * @param {import('socket.io').Server} io  - Socket.io server instance from server.js
  */
 function initFeatures(io) {
   if (config.features.enable_pwa) {
-    PwaFeature.init();
+    PwaService.init();
   }
 
   if (config.features.enable_auth_system) {
-    AuthFeature.init();
+    AuthService.init();
   }
 
   if (config.features.enable_anonymous_chat) {
-    ChatFeature.init(io);
+    ChatSocketService.init(io);
   }
 
   if (config.features.enable_journal) {
-    JournalFeature.init();
+    JournalService.init();
   }
 
   if (config.features.enable_ai_chat) {
-    AiChatFeature.init();
+    AiChatService.init();
   }
 
   if (config.features.enable_bookmarks) {
-    BookmarkFeature.init();
+    BookmarkService.init();
   }
 
   if (config.features.enable_button) {
-    ButtonFeature.init();
+    ButtonService.init();
   }
 
   if (config.features.enable_geolocation) {
-    GeolocationFeature.init();
+    GeolocationService.init();
   }
 
   if (config.features.enable_friending) {
-    FriendingFeature.init();
+    FriendService.init();
   }
 
   if (config.features.enable_trusted_contacts) {
-    TrustedContactFeature.init();
+    TrustedContactService.init();
   }
 
   if (config.features.enable_sos) {
-    SOSFeature.init(io);
+    SosService.init(io);
   }
 
   // Template for adding the next feature:

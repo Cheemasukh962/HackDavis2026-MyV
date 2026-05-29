@@ -1,3 +1,10 @@
+/**
+ * aid.module.css — Digital Crisis Aid Panel
+ *
+ * Styles for the support resources and crisis hotline information display,
+ * featuring resource cards with clear call-to-action buttons.
+ */
+
 .aidPanel {
   height: 100%;
   overflow-y: auto;

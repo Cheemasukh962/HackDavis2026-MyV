@@ -1,11 +1,21 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 /**
- * useSpeechToText — Reliable transcription using ElevenLabs STT.
+ * useSpeechToText — MediaRecorder-based audio capture with ElevenLabs transcription.
  *
- * This refactored version uses the MediaRecorder API to capture audio
- * and sends it to our server-side /api/stt endpoint for processing.
- * This works across all modern browsers (Chrome, Safari, Mobile).
+ * Records audio via the browser MediaRecorder API, POSTs the blob to /api/stt,
+ * and returns the transcript string. Works across Chrome, Safari, and mobile browsers.
+ * Falls back gracefully — check `supported` before rendering the mic button.
+ *
+ * @returns {{
+ *   transcript: string,
+ *   listening: boolean,
+ *   supported: boolean,
+ *   loading: boolean,
+ *   startListening: function,
+ *   stopListening: function,
+ *   clearTranscript: function,
+ * }}
  */
 export function useSpeechToText() {
   const [transcript, setTranscript] = useState('');
@@ -21,6 +31,7 @@ export function useSpeechToText() {
     setSupported(!!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
   }, []);
 
+  /** Requests mic access, starts recording, and clears the previous transcript. */
   const startListening = useCallback(async () => {
     if (!supported) return;
 
@@ -54,6 +65,7 @@ export function useSpeechToText() {
     }
   }, [supported]);
 
+  /** Stops the MediaRecorder, which triggers the onstop handler to send audio for transcription. */
   const stopListening = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
@@ -61,6 +73,7 @@ export function useSpeechToText() {
     setListening(false);
   }, []);
 
+  /** POSTs the recorded audio blob to /api/stt and sets the transcript on success. */
   const transcribeAudio = async (blob) => {
     setLoading(true);
     try {
@@ -85,6 +98,7 @@ export function useSpeechToText() {
     }
   };
 
+  /** Resets the transcript to an empty string without stopping recording. */
   const clearTranscript = useCallback(() => {
     setTranscript('');
   }, []);

@@ -1,3 +1,15 @@
+/**
+ * ChatPanel — Anonymous chat with friends and AI.
+ *
+ * Supports:
+ *  - Message threads with accepted friends
+ *  - SafeBot AI companion (always available)
+ *  - Message history loading
+ *  - Speech-to-text input
+ *  - Friend request/acceptance workflow
+ *  - No message storage on device
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Bot,
@@ -34,10 +46,22 @@ const BOT_THREAD = [
 const MONGO_ID_RE = /^[a-f0-9]{24}$/i;
 const isRealId = (id) => MONGO_ID_RE.test(String(id));
 
+/**
+ * initialsForName — Generates 2-letter initials from display name.
+ * @param {string} displayName - User's display name
+ * @returns {string} Uppercase 2-letter initials or 'FR' as fallback
+ */
 function initialsForName(displayName) {
   return String(displayName || 'Friend').replace(/[^a-z0-9]/gi, '').slice(0, 2).toUpperCase() || 'FR';
 }
 
+/**
+ * normalizeFriend — Transforms API friend object into component format.
+ * Determines relationship status and trusted status.
+ * @param {Object} apiFriend - Raw friend object from API
+ * @param {Set} trustedFriendIds - Set of trusted contact IDs
+ * @returns {Object} Normalized friend with id, displayName, emoji, status, isTrusted
+ */
 function normalizeFriend(apiFriend, trustedFriendIds = new Set()) {
   const isPending = apiFriend.status === 'pending';
   return {
@@ -50,6 +74,12 @@ function normalizeFriend(apiFriend, trustedFriendIds = new Set()) {
   };
 }
 
+/**
+ * normalizeApiMessages — Transforms API message objects into component format.
+ * Standardizes message structure with normalized fields.
+ * @param {Array} apiMessages - Message array from API
+ * @returns {Array} Normalized messages with id, from, text, time
+ */
 function normalizeApiMessages(apiMessages) {
   return apiMessages.map((m) => ({
     id: m.id,
@@ -111,7 +141,7 @@ export default function ChatPanel({ displayName }) {
 
         const settled = await Promise.allSettled(
           toFetch.map((f) =>
-            fetch(`/api/messages/${f.id}`)
+            fetch(`/api/friends/${f.id}/messages`)
               .then((r) => (r.ok ? r.json() : null))
               .then((data) => ({ id: f.id, messages: data?.messages || [] }))
           )
@@ -143,7 +173,7 @@ export default function ChatPanel({ displayName }) {
     loadedRef.current.add(openId);
     setLoadingThread(true);
 
-    fetch(`/api/messages/${openId}`)
+    fetch(`/api/friends/${openId}/messages`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
@@ -178,6 +208,10 @@ export default function ChatPanel({ displayName }) {
   const openPeer = openId ? chats.find((c) => c.id === openId) || null : null;
   const messages = openId ? threads[openId] || [] : [];
 
+  /**
+   * send - Sends message to current peer (bot or real friend).
+   * Adds message optimistically to UI, sends to API, handles AI responses.
+   */
   const send = async () => {
     if (!openId || !draft.trim() || isTyping) return;
 
@@ -212,7 +246,7 @@ export default function ChatPanel({ displayName }) {
       }
     } else if (isRealId(openId)) {
       // Persist to DB — fire and forget (optimistic message already shown)
-      fetch(`/api/messages/${openId}`, {
+      fetch(`/api/friends/${openId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),

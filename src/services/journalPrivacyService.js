@@ -1,12 +1,12 @@
 /**
- * JournalPrivacyFeature
+ * JournalPrivacyService
  *
  * Provides logic for handling private journal entries.
  * Private entries are only visible when not in duress mode
  * and when the journal privacy feature is enabled.
  */
 
-class JournalPrivacyFeature {
+class JournalPrivacyService {
   /**
    * Checks if an entry should be visible based on the current session.
    * @param {Object} entry - The journal entry object.
@@ -43,4 +43,4 @@ class JournalPrivacyFeature {
   }
 }
 
-module.exports = { JournalPrivacyFeature };
+module.exports = { JournalPrivacyService };

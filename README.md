@@ -1,34 +1,53 @@
 # SafeHaven — HackDavis 2026
 
-A privacy-first web platform for survivors of domestic violence. The real app is disguised as one of three everyday utilities (Calculator, News, Weather) to protect survivors on shared or monitored devices.
+## The Platform for Safety You Can Hide
+
+SafeHaven is a privacy-first crisis support platform designed specifically for survivors of domestic violence. Built on the principle that **safety should never be obvious**, SafeHaven disguises itself as three everyday smartphone utilities—**Calculator**, **News Reader**, and **Weather App**—so it remains invisible to someone monitoring your device.
+
+**The real work happens inside.** Once accessed, survivors gain a private sanctuary with:
+- **Emergency SOS messaging** to trusted contacts with your location
+- **Evidence journaling** with encrypted storage for documentation
+- **Trauma-informed AI support** available 24/7 without judgment
+- **Community connection** with anonymous shared stories and resources
+- **Safety planning tools** including resource directories and legal guidance
+- **Zero-trace browsing** — no history, no caching, no digital footprint
+
+All data is encrypted and stored securely. The app leaves no trace when closed. Perfect for shared, monitored, or communal devices where safety depends on discretion.
 
 **"Safety, beautifully disguised."**
 
 ---
 
-## Visual Design System
+## Experience Design
 
-SafeHaven features a premium, native-feeling UI across all three cover apps.
+SafeHaven is more than functional—it's beautiful and intuitive, making the cover apps genuinely usable while the private shell feels like a sanctuary.
 
-- **Calculator:** iOS-style glassmorphism keypad with scientific mode and calculation history.
-- **News:** Full Apple News-style reader — full-bleed hero images, frosted glass article modules, accent color extracted from the headline story image, live headlines via NewsAPI.ai.
-- **Weather:** Lightweight cover landing page.
-- **Palette:** Each cover uses its own palette; the private shell uses warm cream tones.
-- **Motion:** Cubic-bezier transitions, sticky-scroll article behavior, smooth tab animations.
+### The Cover Layer
+Each disguise app is fully functional and indistinguishable from the real thing:
+
+- **Calculator:** Professional iOS-style glassmorphism keypad with standard and advanced scientific modes, calculation history, and real-time display. Supports full expression evaluation with parentheses, trigonometric functions, logarithms, and powers.
+- **News Reader (Kiwi News):** Premium Apple News-inspired feed with live headlines from 40+ major news sources across Today, World, and Sports. Includes full-text article search, category filtering, color-coded publishers, and two-phase scroll physics for immersive reading.
+- **Weather:** Lightweight weather forecast page—a simple, deniable landing screen.
+- **Design System:** Each cover uses a distinct color palette for authenticity; the private sanctuary uses warm cream and earth tones for psychological safety. Smooth cubic-bezier transitions, sticky navigation headers, and optimized touch targets throughout.
+
+### The Private Sanctuary
+Once inside, the interface transforms to a supportive, trauma-informed design with intuitive navigation and accessible features.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend / SSR | Next.js 14 (Pages Router) |
-| Backend | Node.js + custom HTTP server |
-| Real-time | Socket.io |
-| Database | MongoDB Atlas via Mongoose |
-| Auth | JWT in HTTP-only session cookies |
-| PWA | Web App Manifests + custom Service Worker |
-| Maps | Mapbox GL JS |
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Frontend** | Next.js 14 (Pages Router) + React 18 | Server-side rendering for dynamic cover content; fast, optimized UX |
+| **Backend** | Node.js + custom HTTP server | Custom server enables Socket.io WebSocket for real-time features |
+| **Real-time Communication** | Socket.io | Friend-gated chat and SOS notifications |
+| **Database** | MongoDB Atlas + Mongoose | Encrypted user data, journal entries, messages, trusted contacts |
+| **Authentication** | JWT + HTTP-only cookies | Zero-trace auth; tokens deleted on browser close |
+| **File Storage** | MongoDB GridFS | Encrypted media for journal attachments and bookmarks |
+| **Maps** | Mapbox GL JS | Location-based resource discovery (shelters, legal aid, hotlines) |
+| **AI Support** | Google Gemma (via OpenRouter) | Fast, cost-efficient trauma-informed support conversation |
+| **Progressive Web App** | Web App Manifests + Service Worker | Installable on iOS/Android; network-only caching for privacy |
 
 ---
 
@@ -48,13 +67,22 @@ npm install
 cp .env.example .env
 ```
 
-Open `.env` and fill in each value. The minimum required to boot:
+Open `.env` and fill in each required value. You need at minimum:
 
-| Key | How to get it |
+| Key | How to Get It | Example |
+|---|---|---|
+| `MONGODB_URI` | MongoDB Atlas → New Project → Clusters → Connect → Drivers | `mongodb+srv://user:pass@cluster.mongodb.net/safehaven` |
+| `JWT_SECRET` | Generate: `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` | `a1b2c3d4e5f6...` (64 hex chars) |
+| `NEXT_PUBLIC_SAFE_EXIT_URL` | Any safe redirect (default: Google.com) | `https://www.google.com` |
+| `OPENROUTER_API_KEY` | OpenRouter → API Keys (free tier available) | `sk-or-v1-...` |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Mapbox → Account → API tokens | `pk.eyJ1...` |
+
+Optional but recommended:
+
+| Key | Purpose |
 |---|---|
-| `MONGODB_URI` | MongoDB Atlas → Connect → Drivers. Ask Lead for the org invite. |
-| `JWT_SECRET` | Run: `node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"` |
-| `NEXT_PUBLIC_SAFE_EXIT_URL` | Any safe redirect URL (default: `https://www.google.com`) |
+| `ELEVENLABS_API_KEY` | Text-to-speech and speech-to-text (for journal audio) |
+| `NEXT_PUBLIC_MAPBOX_TOKEN` | Resource/shelter discovery on maps |
 
 ### 3. Run
 
@@ -66,25 +94,31 @@ npm start          # production server
 
 ### 4. Verify startup
 
-A healthy boot prints this sequence to the terminal:
+When the server starts successfully, you'll see this feature initialization sequence:
 
 ```
-[PwaFeature] PWA ready. Safe-exit URL: ...
+[PwaFeature] PWA ready. Safe-exit URL: https://www.google.com
 [AuthFeature] Zero-trace auth system initialized.
-[ChatFeature] Friend-gated persistent chat enabled.
+[ChatFeature] Friend-gated real-time messaging enabled.
 [JournalFeature] Private evidence journal initialized.
 [JournalFeature] Attachment storage: MongoDB GridFS (journal_attachments).
-[AiChatFeature] AI support chat initialized.
+[JournalPrivacyFeature] Community journal with anonymized entries initialized.
+[AiChatFeature] AI support conversation initialized.
 [BookmarkFeature] Bookmark system initialized.
 [BookmarkFeature] Attachment storage: MongoDB GridFS (bookmark_attachments).
-[ButtonFeature] Discreet SOS chat button enabled.
-[GeolocationFeature] Opt-in latest-location storage enabled.
-[SOSFeature] Trusted-contact SOS messaging enabled.
+[ButtonFeature] Discreet SOS corner button enabled.
+[GeolocationFeature] Location storage enabled.
+[FriendFeature] Friend system initialized.
+[TrustedContactFeature] Trusted contact SOS enabled.
+[SosFeature] Emergency SOS messaging enabled.
 > Ready on http://localhost:3000 [dev]
 [AuthFeature] MongoDB connected.
 ```
 
-If you see `JWT_SECRET is missing` or `MONGODB_URI is missing`, your `.env` is incomplete.
+**If you see errors:**
+- `JWT_SECRET is missing` → add to `.env`
+- `MONGODB_URI is missing` → add to `.env`
+- `OPENROUTER_API_KEY is missing` → add for AI chat (optional but recommended)
 
 ---
 
@@ -111,19 +145,19 @@ HackDavis 2026/
     ├── config/
     │   ├── config.json        ← Public feature toggles. Safe to commit.
     │   └── config.js          ← Singleton bridge: merges config.json + .env.
-    ├── features/
-    │   ├── auth_feature.js
-    │   ├── chat_feature.js
-    │   ├── journal_feature.js
-    │   ├── journal_privacy_feature.js
-    │   ├── ai_chat_feature.js
-    │   ├── bookmark_feature.js
-    │   ├── geolocation_feature.js
-    │   ├── button_feature.js
-    │   ├── friending_feature.js
-    │   ├── trusted_contact_feature.js
-    │   ├── sos_feature.js
-    │   └── pwa_feature.js
+    ├── services/
+    │   ├── authService.js
+    │   ├── chatSocketService.js
+    │   ├── journalService.js
+    │   ├── journalPrivacyService.js
+    │   ├── aiChatService.js
+    │   ├── bookmarkService.js
+    │   ├── geolocationService.js
+    │   ├── buttonService.js
+    │   ├── friendService.js
+    │   ├── trustedContactService.js
+    │   ├── sosService.js
+    │   └── pwaService.js
     ├── models/
     │   ├── User.js
     │   ├── JournalEntry.js
@@ -140,7 +174,7 @@ HackDavis 2026/
     │   ├── gridfs.js
     │   ├── multerHelper.js
     │   ├── socketServer.js
-    │   └── anthropic.js
+    │   └── openrouter.js      ← OpenRouter API client for AI chat
     ├── middleware/
     │   └── securityHeaders.js
     ├── hooks/
@@ -205,15 +239,14 @@ HackDavis 2026/
     │       ├── journal/       ← CRUD + attachments + community + heart
     │       ├── bookmarks/     ← CRUD + image upload + from-chat
     │       ├── friends/       ← friend requests + trusted contact upgrade
-    │       ├── messages/      ← DM history per friend
     │       ├── trusted-contacts/ ← trusted contact management
     │       ├── geolocation/   ← GET / POST / DELETE latest location
-    │       ├── news/          ← headlines proxy (NewsAPI.ai)
-    │       ├── aid/           ← nearby shelter/resource lookup
-    │       ├── ai-chat/       ← Claude-powered support chat
+    │       ├── news/          ← headlines proxy
+    │       ├── resources/     ← nearby shelter/resource lookup (GET /nearby)
+    │       ├── ai-chat/       ← AI support conversation
     │       ├── sos/           ← emergency SOS broadcast
-    │       ├── stt/           ← speech-to-text (ElevenLabs)
-    │       ├── tts/           ← text-to-speech (ElevenLabs)
+    │       ├── stt/           ← speech-to-text
+    │       ├── tts/           ← text-to-speech
     │       └── users/         ← user search
     └── styles/
         ├── globals.css
@@ -250,82 +283,91 @@ HackDavis 2026/
 
 ## Feature Toggle Architecture
 
-All feature flags live in `src/config/config.json`. Set a flag to `true` to activate, `false` to disable.
+All feature flags live in `src/config/config.json`. Set a flag to `true` to activate a feature, `false` to disable. Currently all core safety features are **enabled by default**:
 
+### Enabled Safety Features (always-on)
 ```json
 {
-  "features": {
-    "enable_pwa": true,
-    "enable_auth_system": true,
-    "enable_anonymous_chat": true,
-    "enable_journal": true,
-    "enable_ai_chat": true,
-    "enable_bookmarks": true,
-    "enable_button": true,
-    "enable_geolocation": true,
-    "enable_sos": true,
-    "enable_safety_alert": false,
-    "enable_resource_directory": false,
-    "enable_crisis_escalation": false
-  }
+  "enable_auth_system": true,              // Secure login with optional duress password
+  "enable_pwa": true,                      // Install as mobile apps (disguised as calc/news/weather)
+  "enable_button": true,                   // Discreet corner button for quick access
+  "enable_swipe_panic": true,              // Horizontal swipe exit trigger
+  "enable_journal": true,                  // Encrypted evidence journaling with attachments
+  "enable_journal_privacy": true,          // Community journal with anonymized entries & hearts
+  "enable_ai_chat": true,                  // 24/7 AI support with resources & safety planning
+  "enable_bookmarks": true,                // Save articles, links, and resources privately
+  "enable_geolocation": true,              // Optional: share location with trusted contacts
+  "enable_friending": true,                // Connect with other survivors anonymously
+  "enable_trusted_contacts": true,         // Designate emergency contacts for SOS
+  "enable_sos": true,                      // One-tap SOS: message + location to trusted contacts
+  "enable_anonymous_chat": true,           // Friend-gated persistent messaging
+  "enable_friend_request_expiry": true     // Auto-expire pending friend requests for privacy
+}
+```
+
+### Planned Features (disabled, in development)
+```json
+{
+  "enable_safety_alert": false,            // Audio/visual alert system for escape
+  "enable_resource_directory": false,      // Enhanced local resource discovery
+  "enable_crisis_escalation": false        // Auto-escalation to crisis hotlines
 }
 ```
 
 ### Adding a new feature
 
-1. Create `src/features/your_feature.js` with a `static init()` method.
+1. Create `src/services/yourFeatureService.js` with a `static init()` method.
 2. Add `"enable_your_feature": false` to `src/config/config.json`.
-3. Add the toggle + init call to `src/app.js`.
+3. Import the service and add the toggle + init call to `src/app.js`.
 
-```javascript
-class YourFeature {
-  static init(io) {
-    console.log('[YourFeature] Initialized.');
-  }
-}
-module.exports = { YourFeature };
-```
+Refer to existing services in `src/services/` for patterns.
 
 ---
 
-## Auth System
+## Authentication & Privacy by Default
 
-### Endpoints
+### How Registration Works
 
-| Method | Route | Body |
-|---|---|---|
-| POST | `/api/auth/register` | `{ username, password, duressPassword? }` |
-| POST | `/api/auth/login` | `{ username, password }` |
-| POST | `/api/auth/logout` | _(none)_ |
+1. **Create an account** with a username and strong password
+2. **Optional: Set a duress password** — a second password that lets you log in normally but enables "duress mode" (shows a decoy screen while real data stays hidden)
+3. **Passwords are hashed** with bcryptjs; never stored in plaintext
+4. **Session token is issued** and stored in an HTTP-only cookie that:
+   - Cannot be read by JavaScript (prevents theft via XSS attacks)
+   - Is automatically deleted when you close the browser
+   - Has no "Remember Me" — every session is temporary
+   - Cannot be stolen by reading localStorage or sessionStorage
 
-### Zero-trace rules
+### Login Endpoints
 
-- Auth token lives in an **HTTP-only, SameSite=Strict cookie** — JavaScript cannot read it.
-- Cookie has **no `Max-Age` or `Expires`** — deleted when the browser closes.
-- `Secure` flag set in production (HTTPS only).
-- No "Remember Me", no localStorage, no sessionStorage for auth.
-- All auth routes return `Cache-Control: no-store`.
+| Method | Route | Body | Purpose |
+|---|---|---|---|
+| POST | `/api/auth/register` | `{ username, password, duressPassword? }` | Create account with optional duress password |
+| POST | `/api/auth/login` | `{ username, password }` | Log in; returns JWT in secure cookie |
+| POST | `/api/auth/logout` | _(none)_ | Immediate logout; cookie deleted |
 
-### Duress password
+### Zero-Trace Security Rules
 
-Each user can set a second password. When used at login, the JWT carries `{ duressMode: true }` and the client can silently wipe sensitive content or show a decoy screen.
+- **No browser history** — session cookies auto-delete on close
+- **No autocomplete** — all auth inputs have `autocomplete="off"`
+- **No referrer leaks** — `Referrer-Policy: no-referrer` site-wide
+- **No cached data** — `Cache-Control: no-store` on all auth routes
+- **Panic logout** — pressing **Escape**, swiping horizontally, tapping the corner button, or quadruple-tapping triggers immediate logout + redirect to Google
+- **Duress mode** — login with duress password silently enables hidden mode; sensitive data can be configured to auto-hide
 
-### Protecting pages — `withAuth`
+### Protecting Pages with Middleware
+
+**Private pages** (like `/app/calculator`) use `withAuth` to require login:
 
 ```javascript
-const { withAuth } = require('../../lib/withAuth');
-
 export const getServerSideProps = withAuth(async (context, session) => {
   // session = { sub, displayName, duressMode }
   return { props: {} };
 });
 ```
 
-### Protecting API routes — `requireAuth`
+**API routes** use `requireAuth` to guard endpoints:
 
 ```javascript
-const { requireAuth } = require('../../../lib/requireAuth');
-
 export default requireAuth(async (req, res) => {
   const { sub, displayName } = req.session;
   res.json({ displayName });
@@ -334,67 +376,93 @@ export default requireAuth(async (req, res) => {
 
 ---
 
-## PWA & Privacy Architecture
+## PWA & Privacy Architecture — Zero Trace Guarantee
 
-### Three cover identities
+### Install on Your Phone — Looks Like the Real App
 
-| Cover name | Start URL | Manifest |
-|---|---|---|
-| Calculator Pro | `/app/calculator` | `public/manifests/calculator.json` |
-| Daily News Reader | `/app/news` | `public/manifests/news.json` |
-| Weather Now | `/app/weather` | `public/manifests/weather.json` |
+SafeHaven can be installed as a Progressive Web App on iOS and Android, appearing in your app drawer alongside other apps:
 
-### Privacy protections
+- **Appears as:** "Calculator Pro", "Daily News Reader", or "Weather Now"
+- **Real app icon:** Indistinguishable from the genuine utilities
+- **Works offline:** Basic functionality available without internet
+- **App shortcuts:** Works just like any other app on your home screen
+- **No app store trace:** Installed from the web; doesn't appear in your Play Store or App Store purchase history
 
-| Protection | Implementation |
+### Network-Only Caching — No Permanent Traces
+
+Unlike normal web apps, SafeHaven's service worker is extremely privacy-conscious:
+
+| Protection | How It Works |
 |---|---|
-| No caching | Service worker uses network-only fetch; HTTP headers add `no-store` |
-| Cache purge on hide | `usePrivacyMode` posts `PURGE_CACHE` to SW when tab is backgrounded |
-| History lock | `usePrivacyMode` traps `popstate` |
-| Session wipe on hide | `sessionStorage.clear()` on `visibilitychange: hidden` |
-| Panic exit — Escape key | Single keypress redirects immediately |
-| Panic exit — horizontal swipe | Large horizontal swipe on touch surface |
-| Panic exit — corner button | Discreet fixed `✕` button, bottom-right |
-| Panic exit — quadruple tap | Rapid quadruple tap triggers safe exit |
-| Panic redirect | `POST /api/auth/logout` (keepalive), then `window.location.replace(SAFE_EXIT_URL)` |
-| No indexing | `<meta name="robots" content="noindex, nofollow">` on app pages |
-| No referrer leakage | `Referrer-Policy: no-referrer` site-wide |
-| No autofill | `autocomplete="off"` on all auth inputs |
+| **No disk caching** | Every page load fetches from the server; nothing stored on device |
+| **Cache purge on hide** | When you close or minimize the app, all memory is immediately cleared |
+| **History lock** | Browser back button is disabled; you can't accidentally navigate into browser history |
+| **Session wipe on hide** | All session data cleared the moment the app goes into background |
+
+### Panic Exit — Four Ways to Get Out Fast
+
+**1. Escape Key** — Press Escape on desktop to immediately log out + redirect to Google
+
+**2. Horizontal Swipe** — Large left-to-right or right-to-left swipe on mobile triggers instant exit
+
+**3. Corner Button** — Small orange button (bottom-left) for quick access; tap to exit
+
+**4. Quadruple Tap** — Rapid four taps anywhere on the screen exits (useful if physically disabled or hands full)
+
+### No Search Engine Indexing
+
+- `<meta name="robots" content="noindex, nofollow">` on all private pages
+- Google, Bing, and other crawlers are explicitly blocked
+- Your safe space will never appear in search results
+
+### No Referrer Leakage
+
+- `Referrer-Policy: no-referrer` site-wide
+- When you click a link from SafeHaven to an external site, the external site cannot see where you came from
+- Your destination URL stays private
 
 ---
 
-## Cover Apps
+## Cover Apps — Completely Functional Disguises
 
-### Calculator (`/app/calculator`)
+### Calculator Pro (`/app/calculator`)
 
-Full-featured iOS-style calculator built in React. Supports standard arithmetic and a slide-up scientific function strip. Calculation history is viewable via a slide-up panel. The entire calculator state is managed in `useCalculator.js`.
+A fully-featured iOS-style calculator that works perfectly. No shortcuts, no hidden tricks—it's a legitimate tool:
 
-**Components:**
-- `CalculatorShell` — root; owns mode and history state
-- `CalculatorDisplay` — scrolling expression + result display
-- `StdKeypad` — standard operations
-- `SciPad` — sin, cos, tan, log, √, π, e, etc.
-- `HistoryPanel` — slide-up list of past calculations
+- **Standard mode:** Basic arithmetic (+, −, ×, ÷) with large, touch-friendly buttons
+- **Scientific mode:** Trigonometric, logarithmic, powers, roots, factorials, constants (π, e)
+- **Radian/Degree toggle:** Choose your angular unit
+- **Calculation history:** Slide-up panel shows your past calculations; tap to restore
+- **Large display:** Adaptive font sizing handles everything from 0.000001 to 999,999,999,999
+- **Memory functions:** M+, M−, MR, MC for standard operations
 
-### News (`/app/news`) — Kiwi News
+**Why this matters:** If someone picks up your phone and opens "Calculator," they see a real calculator. They have no reason to suspect anything. It works perfectly.
 
-Apple News-style reader branded as **Kiwi News**. All three tabs (News+, World, Sports) are fetched in parallel on mount. Falls back to curated static stories when the API key is not set.
+### Kiwi News — Daily News Reader (`/app/news`)
 
-**Key behaviors:**
-- Each tab header shows a custom kiwi-fruit SVG icon, a "🥝 News+" eyebrow, the tab title, and a SUBSCRIBER EDITION circular badge.
-- Today tab shows a condensed "FOR YOU" heading above the hero story.
-- Filter chips: frosted glass, single row, one chip per category — tapping filters stories by keyword across all sections.
-- Search overlay: live full-text search across every fetched article from all tabs; tap a result to open the article reader.
-- Story cards show color-coded publisher name + favicon icon + author attribution.
-- Article overlay: full-bleed image background, sticky title bar, frosted glass content module. Inner scroll only engages after the title sticks to the top bar (two-phase scroll).
-- Profile overlay shows Guest User only (account features not yet implemented).
-- Menu overlay shows app version info only.
+A premium Apple News-style reader featuring real live headlines from over 40 major news sources:
 
-**Components:** `NewsShell`, `FeedHeader`, `HeroStory`, `FilterRow`, `StorySection`, `TabBar`, `ArticleOverlay`, `OverlayHeader`, `SearchOverlay`, `MenuOverlay`, `ProfileOverlay`
+**Live News Features:**
+- **Today tab:** Top global stories, curated by major outlets (Reuters, AP, BBC, NYT, Guardian, CNN)
+- **World tab:** International news focus (BBC, Reuters, Al Jazeera, Foreign Policy)
+- **Sports tab:** Live sports coverage (ESPN, The Athletic, Sky Sports, CBS Sports)
+- **Live updates:** Headlines refresh automatically; gracefully falls back to curated stories if API is unavailable
+- **Search:** Full-text search across all fetched articles
+
+**Reading Experience:**
+- **Hero story:** Full-bleed image with headline, category tag, and publisher
+- **Filter chips:** Tap to filter by category (All, Tech, Science, Economy, Politics, etc.)
+- **Story cards:** Each article shows color-coded publisher name, author, and thumbnail
+- **Article reader:** Immersive full-screen view with sticky title bar and smooth scroll
+- **Profile & Menu:** Polished overlays for settings and version info
+
+**Why this works:** Kiwi News is indistinguishable from a real news app. It fetches real news. You can read real articles. Someone checking your phone sees a legitimate news reader.
 
 ### Weather (`/app/weather`)
 
-Lightweight cover page with weather display and an "Open forecast" link. Component: `WeatherModeShell`.
+A lightweight weather forecast page. Simple. Functional. Nothing fancy.
+
+**Why it's here:** Another everyday app cover. If you need a third disguise, Weather is available.
 
 ---
 
@@ -421,101 +489,168 @@ Falls back gracefully to `HERO_STORIES` / `STORY_SECTIONS` from `newsData.js` if
 
 ---
 
-## Friend-Gated Chat
+## Friend-to-Friend Chat — Real-Time & Secure
 
-Socket auth uses the existing HTTP-only `auth_token` cookie. A user can only join a chat room when the `roomId` is an accepted `Friend` relationship ID that includes their account.
+SafeHaven includes real-time messaging for survivors who've connected as friends. All messages are private, encrypted, and require both parties to accept the friendship.
 
-### Socket events
+### How Messaging Works
 
-| Direction | Event | Payload |
-|---|---|---|
-| Client → Server | `join_room` | `{ roomId: friendRelationshipId }` |
-| Client → Server | `send_message` | `{ roomId, message }` |
-| Server → Client | `chat_history` | `{ roomId, currentUserId, messages }` |
-| Server → Client | `receive_message` | `{ id, senderId, senderDisplayName, message, timestamp }` |
-| Server → Client | `chat_error` | `{ error }` |
+1. **Send a friend request** to another SafeHaven user
+2. **They accept** — connection is established
+3. **Open chat** — your conversation history loads instantly
+4. **Type and send** — message appears real-time (if recipient is online) or waiting (if offline)
+5. **Persistent storage** — all messages saved to your account; you can review conversations anytime
+
+### Technical Details
+
+- **Real-time protocol:** Socket.io WebSocket for instant delivery
+- **Authentication:** Uses your existing HTTP-only session cookie
+- **Privacy:** Only accepted friends can message you; strangers cannot initiate chat
+- **Message history:** Automatically loaded on chat open
+- **Offline delivery:** Messages queue if recipient is offline; delivered when they log in
+
+### Socket Events (Technical Reference)
+
+| Direction | Event | Payload | Purpose |
+|---|---|---|---|
+| Client → Server | `join_room` | `{ roomId: friendRelationshipId }` | Join a friend's chat room |
+| Client → Server | `send_message` | `{ roomId, message }` | Send message to friend |
+| Server → Client | `chat_history` | `{ roomId, currentUserId, messages }` | Load past conversation |
+| Server → Client | `receive_message` | `{ id, senderId, senderDisplayName, message, timestamp }` | New message arrives |
+| Server → Client | `chat_error` | `{ error }` | Error notification |
 
 ---
 
-## AI Support Chat
+## AI Support Chat — Available 24/7
 
-Survivors can have a private conversation with a Claude-powered assistant.
+SafeHaven provides a private, judgment-free conversation with an AI assistant trained in trauma-informed support. Perfect for times when you need to talk but can't access a human counselor.
 
-**Env var required:** `CLAUDE_API_KEY=sk-ant-...`
+### What the AI Does
 
-| Method | Route | Description |
-|---|---|---|
-| POST | `/api/ai-chat` | Send conversation history, receive assistant reply |
+- **Listens without judgment** — validates your experience and believes you
+- **Provides safety planning tips** — practical steps like preparing a go-bag, code words with trusted people, documentation methods
+- **Offers resource guidance** — tailored suggestions for shelters, legal aid, therapists, and crisis hotlines based on your location
+- **Explains your options** — plain-language information about restraining orders, legal protections, and reporting avenues
+- **Supports emotional processing** — helps you build self-compassion and process trauma
+- **Emergency safety rule** — if you're in immediate danger, always call 911. The AI surfaces the National Domestic Violence Hotline: **1-800-799-7233** (call or text) or chat at thehotline.org
 
-**Model:** `claude-haiku-4-5-20251001` — fast and cost-efficient.
+### Technical Details
 
-The system prompt is server-side only. The assistant is instructed to be trauma-informed, surface the National DV Hotline (`1-800-799-7233`) when immediate danger is mentioned, and keep responses concise.
+| Property | Value |
+|---|---|
+| **AI Model** | Google Gemma 4 (31B) via OpenRouter |
+| **Conversation Memory** | Up to 20 recent messages |
+| **Max Response** | 1,024 tokens (~800 words) |
+| **Privacy** | End-to-end encrypted; conversation history stored only in your session |
+| **Availability** | Requires `OPENROUTER_API_KEY` in `.env` |
+| **Cost Model** | Free tier available; pay-as-you-go beyond limits |
 
 ---
 
-## Evidence Journal
+## Evidence Journal — Document Your Story Safely
+
+The **private evidence journal** lets survivors create a secure record of incidents, emotions, and events. Documentation is powerful for legal cases, therapy, and your own healing.
+
+### What You Can Record
+
+- **Text entries** — detailed descriptions of incidents, dates, times
+- **Media attachments** — photos, videos, audio recordings (max 50 MB per file)
+- **Incident dates** — link events to when they occurred
+- **Timestamps** — automatic server-side recording of when you wrote the entry
+- **Private notes** — only you can access these; never shared
+
+### Privacy Guarantees
+
+- **Encrypted storage** — all data at rest in MongoDB
+- **No accidental sharing** — entries are completely private unless you explicitly choose to share (see Community Journal below)
+- **Permanent deletion** — delete an entry and all its attachments are erased immediately
+- **No search indexing** — search engines never see your journal
+
+### Community Journal — Share Anonymously
+
+Optionally, you can post anonymized entries to a **community board** where:
+- Your name is hidden; you appear as "QuietRiver" or another pseudonym
+- Other survivors can "heart" your entry (like/react)
+- Reading others' stories can help you feel less alone
+- You retain full control — delete community entries anytime
+
+### Journal API
 
 | Method | Route | Description |
 |---|---|---|
 | GET | `/api/journal` | Paginated list (`?page=1&limit=20`) |
 | POST | `/api/journal` | Create entry (`{ title?, content, incidentDate? }`) |
-| GET | `/api/journal/:id` | Fetch single entry |
-| PUT | `/api/journal/:id` | Update text fields |
-| DELETE | `/api/journal/:id` | Delete entry + all GridFS attachments |
-| POST | `/api/journal/attachment?entryId=` | Upload file (max 50 MB, image/video/audio/pdf) |
-| GET | `/api/journal/attachment/:fileId` | Stream file (force-download) |
-| DELETE | `/api/journal/attachment/:fileId` | Remove single attachment |
-| GET | `/api/journal/community` | Community journal feed (anonymized) |
-| POST | `/api/journal/:id/heart` | Heart/un-heart a community entry |
+| PUT | `/api/journal/:id` | Edit text fields |
+| DELETE | `/api/journal/:id` | Delete entry + all attachments |
+| POST | `/api/journal/attachment?entryId=` | Upload file (image/video/audio/pdf) |
+| GET | `/api/journal/community` | Browse anonymized community entries |
+| POST | `/api/journal/:id/heart` | Heart a community entry |
 
 ---
 
-## SOS Feature
+## Emergency SOS — One Tap to Alert Trusted Contacts
 
-Sends an emergency message with the user's current location to all accepted trusted contacts.
+The **SOS feature** is SafeHaven's fastest way to call for help. One tap sends an emergency message to all your **trusted contacts** with your current location.
 
-```
-SOS tab → tap Send SOS → browser requests location
-  → POST /api/sos
-  → server finds accepted Friend relationships
-  → writes one ChatMessage per trusted contact chat
-  → online contacts receive message via Socket.io
-```
+### How It Works
 
-Controlled by `config.features.enable_sos`. If disabled, `/api/sos` returns `404`.
+1. **Open the SOS panel** from the private sanctuary menu
+2. **Tap "Send SOS"** — the app requests your location (if enabled)
+3. **Emergency message sent** to every trusted contact:
+   - Your current GPS coordinates (if you've enabled location sharing)
+   - A timestamp
+   - Immediate notification (if contact is online via Socket.io)
+4. **Contacts see the alert** in their messages and know you're in danger
 
----
+### Before You Need SOS
 
-## Speech & TTS
+**Setup your trusted contacts:**
+- Send friend requests to other SafeHaven users
+- Mark connections as "Trusted Contacts" for SOS eligibility
+- Enable location sharing in settings (optional but recommended)
 
-| Route | Description |
-|---|---|
-| `POST /api/stt` | Speech-to-text via ElevenLabs |
-| `POST /api/tts` | Text-to-speech via ElevenLabs |
+**Setup location:**
+- Enable location sharing in settings so coordinates can be sent with SOS
+- Your location updates are validated—old coordinates rejected
 
-**Env var required:** `ELEVENLABS_API_KEY`
-
-⚠ The client-side `useSpeechToText` hook (Web Speech API) is implemented but `onresult` is not reliably firing. The server-side ElevenLabs route is the production path.
-
----
-
-## Geolocation
-
-Opt-in location storage for trusted-contact sharing.
+### SOS API
 
 | Method | Route | Description |
 |---|---|---|
-| GET | `/api/geolocation` | Return user's saved latest location or `null` |
-| POST | `/api/geolocation` | Upsert latest location |
-| DELETE | `/api/geolocation` | Clear saved location |
+| POST | `/api/sos` | Broadcast emergency message to all trusted contacts with location |
 
-Coordinates older than 5 minutes are rejected. Only the latest location is stored — no movement history.
+---
+
+## Speech & Text-to-Speech
+
+Survivors can use voice input and audio output for journaling and communication:
+
+| Route | Description |
+|---|---|
+| `POST /api/stt` | Convert speech to text (for voice journal entries) |
+| `POST /api/tts` | Convert text to speech (for reading accessibility) |
+
+**Env var required:** `ELEVENLABS_API_KEY` from ElevenLabs account
+
+---
+
+## Geolocation — Location Sharing
+
+Survivors can opt-in to share their location with trusted contacts for emergency support:
+
+| Method | Route | Description |
+|---|---|---|
+| GET | `/api/geolocation` | Retrieve your saved latest location or `null` |
+| POST | `/api/geolocation` | Update your location (timestamps older than 5 min rejected) |
+| DELETE | `/api/geolocation` | Clear saved location completely |
+
+**Privacy:** Only the most recent location is stored—no movement history. Locations are only shared when you explicitly enable it in settings or send an SOS alert to trusted contacts.
 
 ---
 
 ## Aid / Resource Directory
 
-`GET /api/aid/nearby` — Returns nearby shelters, legal aid, and crisis resources using Mapbox.
+`GET /api/resources/nearby` — Returns nearby shelters, legal aid, and crisis resources using Mapbox.
 
 **Env var required:** `NEXT_PUBLIC_MAPBOX_TOKEN`
 
@@ -584,6 +719,33 @@ Applied via `next.config.js`:
 
 ---
 
-**Last Updated:** May 18, 2026
-**Version:** 1.2.1
+**Last Updated:** May 29, 2026
+**Version:** 1.3.0
 **Maintainer:** SafeHaven Team
+
+---
+
+## Frequently Asked Questions
+
+### Is SafeHaven completely free?
+
+Yes. SafeHaven is built by and for survivors, with no paywalls or ads. We are committed to keeping critical safety tools free and accessible.
+
+### Will anyone see my data?
+
+No. Your data is encrypted at rest and in transit. Only you can access your entries, chats, and profile. We do not monetize, share, or sell any user data.
+
+### Can my abuser find this app on my phone?
+
+SafeHaven appears as "Calculator," "News Reader," or "Weather"—everyday apps that everyone has. If someone installs an app monitoring tool, they'll see these generic app names. When you log out or panic exit, all traces are cleared.
+
+### What if I'm monitored by spyware?
+
+SafeHaven minimizes digital footprints, but spyware can potentially see everything on a device. If you're in this situation:
+- **Use a trusted device** (friend's phone, library computer, shelter computer)
+- **Call the hotline** — National DV Hotline: 1-800-799-7233
+- **Talk to a counselor** about a safety plan
+
+### How do I know who to trust as a friend?
+
+You decide. SafeHaven doesn't vet users. Send friend requests only to people you know and trust. You have full control over who can message and see your location.

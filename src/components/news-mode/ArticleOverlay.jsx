@@ -1,3 +1,14 @@
+/**
+ * ArticleOverlay — Full article detail modal.
+ *
+ * Displays complete article content including:
+ *  - Hero image or color gradient
+ *  - Article headline, summary, and full body
+ *  - Publication source with logo
+ *  - Author and publish date
+ *  - External link button
+ */
+
 import { useState } from 'react';
 import styles from '../../styles/news-mode/overlays.module.css';
 import { toBackgroundImage } from '../../utils/newsUtils';
@@ -5,6 +16,17 @@ import { getSourceBrand } from '../../utils/sourceBrands';
 
 const LOGO_DEV_TOKEN = process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN;
 
+/**
+ * SourceLogo - Displays publication source logo or text fallback.
+ * Attempts to fetch logo from logo.dev API, falls back to text if unavailable.
+ * @param {Object} props - Component props
+ * @param {string} props.source - Publication name
+ * @param {Object} props.brand - Brand info with domain
+ * @param {string} props.className - CSS class for logo img
+ * @param {string} props.fallbackClassName - CSS class for fallback text
+ * @param {Object} props.fallbackStyle - Inline styles for fallback
+ * @returns {JSX.Element} Logo image or text span
+ */
 function SourceLogo({ source, brand, className, fallbackClassName, fallbackStyle }) {
   const [logoFailed, setLogoFailed] = useState(false);
 

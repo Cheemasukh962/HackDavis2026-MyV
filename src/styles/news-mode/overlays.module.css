@@ -1,3 +1,10 @@
+/**
+ * overlays.module.css — News Modal & Overlay Screens
+ *
+ * Styles for modal overlays including article details, menu, profile, search,
+ * and filter modals with semi-transparent backdrops and smooth animations.
+ */
+
 .overlay {
   position: absolute;
   inset: 0;

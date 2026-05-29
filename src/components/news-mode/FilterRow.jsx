@@ -1,3 +1,12 @@
+/**
+ * FilterRow — Search and filter controls.
+ *
+ * Provides:
+ *  - Search input for articles
+ *  - Filter buttons by category/topic
+ *  - Interactive filtering UI
+ */
+
 import styles from '../../styles/news-mode/filterrow.module.css';
 
 const FILTER_ICONS = {

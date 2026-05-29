@@ -1,5 +1,5 @@
 const { requireAuth } = require('../../../lib/requireAuth');
-const { getAnthropicClient } = require('../../../lib/anthropic');
+const { createChatCompletion } = require('../../../lib/openrouter');
 const { applySecurityHeaders } = require('../../../middleware/securityHeaders');
 
 const SYSTEM_PROMPT = `You are a resource discovery assistant for survivors of domestic violence.
@@ -37,12 +37,11 @@ export default requireAuth(async (req, res) => {
   }
 
   try {
-    const client = getAnthropicClient();
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+    const response = await createChatCompletion({
+      model: 'google/gemma-4-31b-it:free',
       max_tokens: 2048,
-      system: SYSTEM_PROMPT,
       messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
         {
           role: 'user',
           content: `Find domestic violence and support resources near latitude ${latitude}, longitude ${longitude}.`,
@@ -50,7 +49,7 @@ export default requireAuth(async (req, res) => {
       ],
     });
 
-    const text = response.content?.[0]?.text ?? '{}';
+    const text = response.choices?.[0]?.message?.content ?? '{}';
     
     // Attempt to parse JSON from the response
     try {
@@ -64,7 +63,7 @@ export default requireAuth(async (req, res) => {
       return res.status(500).json({ error: 'Failed to parse AI response.' });
     }
   } catch (err) {
-    console.error('[AidAPI] Claude API error:', err.message);
+    console.error('[AidAPI] OpenRouter error:', err.message);
     return res.status(502).json({ error: 'AI service unavailable.' });
   }
 });

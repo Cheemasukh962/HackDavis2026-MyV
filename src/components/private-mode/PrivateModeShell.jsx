@@ -1,3 +1,15 @@
+/**
+ * PrivateModeShell — Main private safety mode container.
+ *
+ * Orchestrates the personal sanctuary experience:
+ *  - Home dashboard with daily greetings and quick actions
+ *  - Emergency SOS with trusted contact notifications
+ *  - Anonymous chat with friends and SafeBot AI
+ *  - Crisis resources and support information
+ *  - Private journal for reflections and entries
+ *  - Always-on panic exit for rapid safety
+ */
+
 import { useMemo, useState } from 'react';
 import { BookLock, Home, LifeBuoy, MessageCircle, Siren } from 'lucide-react';
 
@@ -17,6 +29,7 @@ import ChatPanel from './ChatPanel';
 import AidPanel from './AidPanel';
 import JournalPanel from './JournalPanel';
 import { triggerPanicExit } from '../../hooks/usePrivacyMode';
+import { useGeolocation } from '../../hooks/useGeolocation';
 import styles from '../../styles/private-mode/shell.module.css';
 
 const TABS = [
@@ -29,6 +42,7 @@ const TABS = [
 
 export default function PrivateModeShell({ displayName, sosEnabled = false, onBackToApp, appName }) {
   const [activeTab, setActiveTab] = useState('home');
+  const { location, isWatching, startLiveLocation, stopLiveLocation } = useGeolocation();
 
   const activeTitle = useMemo(
     () => TABS.find((tab) => tab.id === activeTab)?.title || 'Home',
@@ -54,7 +68,7 @@ export default function PrivateModeShell({ displayName, sosEnabled = false, onBa
 
         <main className={styles.content}>
           <Panel active={activeTab === 'home'}>
-            <HomePanel onNavigate={setActiveTab} active={activeTab === 'home'} onBackToApp={onBackToApp} appName={appName} />
+            <HomePanel onNavigate={setActiveTab} active={activeTab === 'home'} onBackToApp={onBackToApp} appName={appName} isWatching={isWatching} startLiveLocation={startLiveLocation} stopLiveLocation={stopLiveLocation} />
           </Panel>
           <Panel active={activeTab === 'sos'}>
             <SosPanel enabled={sosEnabled} />
@@ -66,7 +80,7 @@ export default function PrivateModeShell({ displayName, sosEnabled = false, onBa
             <JournalPanel />
           </Panel>
           <Panel active={activeTab === 'aid'}>
-            <AidPanel />
+            <AidPanel location={location} isWatching={isWatching} />
           </Panel>
         </main>
 

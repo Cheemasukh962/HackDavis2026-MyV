@@ -1,3 +1,12 @@
+/**
+ * CalculatorDisplay — Expression and result output panel.
+ *
+ * Shows:
+ *  - Current calculation expression (muted, multi-line)
+ *  - Result with dynamic font sizing for large numbers
+ *  - Adapts layout for scientific vs standard modes
+ */
+
 import styles from '../../styles/calc-mode/calculatordisplay.module.css';
 
 export default function CalculatorDisplay({ liveExpression, liveResultFormatted, fontSize, isScientific }) {

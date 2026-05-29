@@ -1,3 +1,10 @@
+/**
+ * filterrow.module.css — News Feed Filters
+ *
+ * Styles for horizontal filter controls that allow users to search and sort
+ * news articles by category, date, and relevance.
+ */
+
 .filterRow {
   margin: 6px 0 2px;
   padding: 4px 16px 8px;
