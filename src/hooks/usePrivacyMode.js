@@ -96,7 +96,12 @@ export function usePrivacyMode({ onLogout } = {}) {
  * If called from a cover app page, redirects back to that cover to look natural.
  * Otherwise falls back to NEXT_PUBLIC_SAFE_EXIT_URL (default: google.com).
  */
+let _panicFired = false;
+
 export function triggerPanicExit() {
+  if (_panicFired) return;
+  _panicFired = true;
+
   const coverMatch =
     window.location.pathname.match(/^\/app\/(calculator|news|weather)/) ||
     decodeURIComponent(window.location.search).match(/\/app\/(calculator|news|weather)/);
