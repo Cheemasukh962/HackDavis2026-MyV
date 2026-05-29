@@ -10,9 +10,16 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const GEOLOCATION_OPTIONS = {
+const INITIAL_GEOLOCATION_OPTIONS = {
+  enableHighAccuracy: false,
+  maximumAge: 60 * 1000,
+  timeout: 12 * 1000,
+};
+
+const WATCH_GEOLOCATION_OPTIONS = {
   enableHighAccuracy: true,
-  maximumAge: 0,
+  maximumAge: 30 * 1000,
+  timeout: 20 * 1000,
 };
 
 async function parseError(response) {
@@ -22,6 +29,35 @@ async function parseError(response) {
   } catch {
     return 'Unable to save location.';
   }
+}
+
+async function saveLocationSharingPreference(enabled) {
+  try {
+    await fetch('/api/users/preferences', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locationSharingEnabled: enabled }),
+    });
+  } catch {
+    // Location sharing should still toggle locally if preference persistence fails.
+  }
+}
+
+function serializeBrowserPosition(position) {
+  const { coords, timestamp } = position;
+  const capturedAt = new Date(timestamp).toISOString();
+
+  return {
+    latitude: coords.latitude,
+    longitude: coords.longitude,
+    accuracy: coords.accuracy,
+    altitude: coords.altitude,
+    altitudeAccuracy: coords.altitudeAccuracy,
+    heading: coords.heading,
+    speed: coords.speed,
+    capturedAt,
+    updatedAt: capturedAt,
+  };
 }
 
 /**
@@ -42,31 +78,37 @@ export function useGeolocation() {
   const [error, setError] = useState('');
   const [isWatching, setIsWatching] = useState(false);
   const watcherIdRef = useRef(null);
+  const hasLivePositionRef = useRef(false);
+  const startLiveLocationRef = useRef(null);
 
   const storePosition = useCallback(async (position) => {
-    const { coords, timestamp } = position;
-      const response = await fetch('/api/geolocation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          accuracy: coords.accuracy,
-          altitude: coords.altitude,
-          altitudeAccuracy: coords.altitudeAccuracy,
-          heading: coords.heading,
-          speed: coords.speed,
-          capturedAt: new Date(timestamp).toISOString(),
-        }),
-      });
+    const localLocation = serializeBrowserPosition(position);
+    setLocation(localLocation);
 
-      if (!response.ok) {
-        throw new Error(await parseError(response));
-      }
+    const response = await fetch('/api/geolocation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        latitude: localLocation.latitude,
+        longitude: localLocation.longitude,
+        accuracy: localLocation.accuracy,
+        altitude: localLocation.altitude,
+        altitudeAccuracy: localLocation.altitudeAccuracy,
+        heading: localLocation.heading,
+        speed: localLocation.speed,
+        capturedAt: localLocation.capturedAt,
+      }),
+    });
 
-      const body = await response.json();
-      setLocation(body.location);
-    return body.location;
+    if (!response.ok) {
+      setError(await parseError(response));
+      return localLocation;
+    }
+
+    const body = await response.json();
+    const savedLocation = body.location || localLocation;
+    setLocation(savedLocation);
+    return savedLocation;
   }, []);
 
   /** Starts a watchPosition listener and POSTs each new position to /api/geolocation. */
@@ -84,41 +126,82 @@ export function useGeolocation() {
     setStatus('requesting');
     setError('');
     setIsWatching(true);
+    saveLocationSharingPreference(true);
+
+    const handlePosition = async (position) => {
+      try {
+        hasLivePositionRef.current = true;
+        setStatus('saving');
+        await storePosition(position);
+        setStatus('live');
+      } catch (err) {
+        setStatus('error');
+        setError(err.message || 'Unable to save live location.');
+      }
+    };
+
+    const stopAfterPositionError = (err) => {
+      setStatus('error');
+      setError(err.message || 'Unable to access live location.');
+      setIsWatching(false);
+      if (watcherIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watcherIdRef.current);
+      }
+      watcherIdRef.current = null;
+    };
+
+    const handleInitialPositionError = (err) => {
+      if (watcherIdRef.current !== null) {
+        setError(err.message || 'Still waiting for live location.');
+        return;
+      }
+
+      stopAfterPositionError(err);
+    };
+
+    const handleWatchPositionError = (err) => {
+      if (err.code === err.TIMEOUT && hasLivePositionRef.current) {
+        setError(err.message || 'Live location update timed out.');
+        setStatus('live');
+        return;
+      }
+
+      stopAfterPositionError(err);
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      handlePosition,
+      handleInitialPositionError,
+      INITIAL_GEOLOCATION_OPTIONS
+    );
 
     watcherIdRef.current = navigator.geolocation.watchPosition(
-      async (position) => {
-        try {
-          setStatus('saving');
-          await storePosition(position);
-          setStatus('live');
-        } catch (err) {
-          setStatus('error');
-          setError(err.message || 'Unable to save live location.');
-        }
-      },
+      handlePosition,
       (err) => {
-        setStatus('error');
-        setError(err.message || 'Unable to access live location.');
-        setIsWatching(false);
-        if (watcherIdRef.current !== null) {
-          navigator.geolocation.clearWatch(watcherIdRef.current);
-        }
-        watcherIdRef.current = null;
+        handleWatchPositionError(err);
       },
-      GEOLOCATION_OPTIONS
+      WATCH_GEOLOCATION_OPTIONS
     );
 
     return true;
   }, [storePosition]);
 
+  useEffect(() => {
+    startLiveLocationRef.current = startLiveLocation;
+  }, [startLiveLocation]);
+
   /** Clears the watchPosition listener and sets status back to 'saved' if was 'live'. */
-  const stopLiveLocation = useCallback(() => {
+  const stopLiveLocation = useCallback(({ persistPreference = true } = {}) => {
     if (watcherIdRef.current !== null && typeof navigator !== 'undefined') {
       navigator.geolocation.clearWatch(watcherIdRef.current);
       watcherIdRef.current = null;
     }
 
     setIsWatching(false);
+    hasLivePositionRef.current = false;
+    if (persistPreference) {
+      saveLocationSharingPreference(false);
+    }
     setStatus((currentStatus) => (currentStatus === 'live' ? 'saved' : currentStatus));
   }, []);
 
@@ -166,7 +249,31 @@ export function useGeolocation() {
     }
   }, [stopLiveLocation]);
 
-  useEffect(() => stopLiveLocation, [stopLiveLocation]);
+  useEffect(() => () => stopLiveLocation({ persistPreference: false }), [stopLiveLocation]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadLocationSharingPreference() {
+      try {
+        const response = await fetch('/api/users/preferences');
+        if (!response.ok) return;
+
+        const body = await response.json();
+        if (!cancelled && body.preferences?.locationSharingEnabled) {
+          startLiveLocationRef.current?.();
+        }
+      } catch {
+        // Keep location sharing off if preferences cannot be loaded.
+      }
+    }
+
+    loadLocationSharingPreference();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return {
     location,

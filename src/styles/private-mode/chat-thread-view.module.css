@@ -4,6 +4,13 @@
  * Styles for thread header, message bubbles, and message history.
  */
 
+.chatPanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .threadHeader {
   padding: 10px 12px;
   border-bottom: 1px solid var(--pm-border);
@@ -76,6 +83,43 @@
   height: 14px;
   flex-shrink: 0;
   color: var(--pm-muted-foreground);
+}
+
+.onlineDot,
+.awayDot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+.onlineDot {
+  color: #059669;
+}
+
+.awayDot {
+  color: #d97706;
+}
+
+.chatNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 16px;
+  background: rgba(234, 228, 216, 0.62);
+  color: var(--pm-muted-foreground);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  margin: 12px 16px 0;
+  flex-shrink: 0;
+}
+
+.noticeIcon {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .messages {

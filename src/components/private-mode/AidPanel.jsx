@@ -9,7 +9,7 @@
  *  - Tap-to-call functionality
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Lock, Phone, Map } from 'lucide-react';
 import MapboxMap from './MapboxMap';
 import styles from '../../styles/private-mode/aid.module.css';
@@ -37,58 +37,71 @@ const PLACEHOLDER_RESOURCES = {
   ],
 };
 
-export default function AidPanel({ location, isWatching }) {
+function hasValidCoords(loc) {
+  return Number.isFinite(loc?.latitude) && Number.isFinite(loc?.longitude);
+}
+
+export default function AidPanel({
+  location,
+  locationStatus,
+  locationError,
+  isWatching,
+  active,
+}) {
   const [activeFilter, setActiveFilter] = useState('shelter');
   const [resources, setResources] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedResource, setSelectedResource] = useState(null);
   const mapRef = useRef(null);
-  const hasFetchedRef = useRef(false);
-  const locationRef = useRef(location);
-  locationRef.current = location;
+  const lastFetchedCoordsRef = useRef('');
+  const latitude = location?.latitude;
+  const longitude = location?.longitude;
+
+  const fetchNearbyResources = useCallback(async (loc) => {
+    if (!hasValidCoords(loc)) return;
+
+    const coordsKey = `${loc.latitude.toFixed(4)},${loc.longitude.toFixed(4)}`;
+    if (lastFetchedCoordsRef.current === coordsKey) return;
+
+    lastFetchedCoordsRef.current = coordsKey;
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/resources/nearby', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude: loc.latitude, longitude: loc.longitude }),
+      });
+      if (!res.ok) throw new Error('Failed to fetch nearby resources.');
+      setResources(await res.json());
+    } catch (err) {
+      console.error('[AidPanel] Fetch error:', err);
+      setError('Could not load local resources. Showing defaults.');
+      setResources(PLACEHOLDER_RESOURCES);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Clear selection when switching filters
   useEffect(() => {
     setSelectedResource(null);
   }, [activeFilter]);
 
-  // Poll every 5 seconds while location sharing is on. Uses a ref for location
-  // to avoid stale closure — the interval always reads the latest coords.
   useEffect(() => {
-    hasFetchedRef.current = false;
+    lastFetchedCoordsRef.current = '';
     setResources(null);
     setError('');
-
-    if (!isWatching) return;
-
-    async function tryFetch() {
-      const loc = locationRef.current;
-      if (!loc || hasFetchedRef.current) return;
-      hasFetchedRef.current = true;
-      setLoading(true);
-      setError('');
-      try {
-        const res = await fetch('/api/resources/nearby', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ latitude: loc.latitude, longitude: loc.longitude }),
-        });
-        if (!res.ok) throw new Error('Failed to fetch nearby resources.');
-        setResources(await res.json());
-      } catch (err) {
-        console.error('[AidPanel] Fetch error:', err);
-        setError('Could not load local resources. Showing defaults.');
-        setResources(PLACEHOLDER_RESOURCES);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    tryFetch();
-    const interval = setInterval(tryFetch, 5000);
-    return () => clearInterval(interval);
+    setSelectedResource(null);
   }, [isWatching]);
+
+  useEffect(() => {
+    if (!active || !isWatching || !hasValidCoords({ latitude, longitude })) return;
+    setSelectedResource(null);
+    fetchNearbyResources({ latitude, longitude });
+  }, [active, fetchNearbyResources, isWatching, latitude, longitude]);
 
   /**
    * handleCall - Initiates phone call to resource phone number.
@@ -149,6 +162,17 @@ export default function AidPanel({ location, isWatching }) {
   };
 
   const activeResources = resources ? (resources[activeFilter] || []) : [];
+  const waitingForLocation = active && isWatching && !hasValidCoords({ latitude, longitude });
+  const locationFailed = active && locationStatus === 'error' && !hasValidCoords({ latitude, longitude });
+  const mapCaption = selectedResource
+    ? selectedResource.name
+    : hasValidCoords({ latitude, longitude })
+      ? 'Showing resources near you'
+      : locationFailed
+        ? 'Location unavailable'
+        : isWatching
+          ? 'Finding your location...'
+          : 'Enable location sharing to find nearby help';
 
   return (
     <div className={styles.aidPanel}>
@@ -162,10 +186,9 @@ export default function AidPanel({ location, isWatching }) {
           latitude={location ? Math.round(location.latitude * 10000) / 10000 : undefined}
           longitude={location ? Math.round(location.longitude * 10000) / 10000 : undefined}
           selectedResource={selectedResource}
+          active={active}
         />
-        <div className={styles.mapCaption}>
-          {selectedResource ? selectedResource.name : isWatching && location ? 'Showing resources near you' : isWatching ? 'Finding your location...' : 'Enable location sharing to find nearby help'}
-        </div>
+        <div className={styles.mapCaption}>{mapCaption}</div>
       </div>
 
       <div className={styles.filterScroller} aria-label="Resource filters">
@@ -185,9 +208,15 @@ export default function AidPanel({ location, isWatching }) {
         })}
       </div>
 
-      {loading && !resources && (
+      {(waitingForLocation || (loading && !resources)) && (
         <div style={{ textAlign: 'center', padding: '20px', opacity: 0.7 }}>
-          <p>Consulting secure directory...</p>
+          <p>{waitingForLocation ? 'Getting your current location...' : 'Consulting secure directory...'}</p>
+        </div>
+      )}
+
+      {locationFailed && (
+        <div style={{ textAlign: 'center', padding: '20px', opacity: 0.7 }}>
+          <p>{locationError || 'Unable to get your current location.'}</p>
         </div>
       )}
 
@@ -229,7 +258,7 @@ export default function AidPanel({ location, isWatching }) {
             </article>
           );
         })}
-        {activeResources.length === 0 && !loading && (
+        {activeResources.length === 0 && !loading && !waitingForLocation && !locationFailed && (
           <p style={{ textAlign: 'center', padding: '20px', color: 'var(--pm-muted-foreground)' }}>
             No specific resources found in this category.
           </p>

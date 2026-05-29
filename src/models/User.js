@@ -66,6 +66,11 @@ const userSchema = new mongoose.Schema({
     default: generateAnonymousName,
   },
 
+  locationSharingEnabled: {
+    type: Boolean,
+    default: false,
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

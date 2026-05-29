@@ -14,6 +14,10 @@ import { useEffect, useRef } from 'react';
 const TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 const DEFAULT_CENTER = [-121.4944, 38.5816];
 
+function hasValidCoords(latitude, longitude) {
+  return Number.isFinite(latitude) && Number.isFinite(longitude);
+}
+
 /**
  * makeMarkerEl - Creates styled DOM element for map marker.
  * Returns circular colored element with white border for visual prominence.
@@ -34,14 +38,34 @@ function makeMarkerEl(color) {
   return el;
 }
 
-export default function MapboxMap({ latitude, longitude, selectedResource }) {
+export default function MapboxMap({ latitude, longitude, selectedResource, active = true }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const userMarkerRef = useRef(null);
   const resourceMarkerRef = useRef(null);
   const hasInitialCenterRef = useRef(false);
+  const activeRef = useRef(active);
+  const selectedResourceRef = useRef(selectedResource);
   const coordsRef = useRef({ latitude, longitude });
+
+  activeRef.current = active;
+  selectedResourceRef.current = selectedResource;
   coordsRef.current = { latitude, longitude };
+
+  const resizeAndCenter = () => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    map.resize();
+
+    const resource = selectedResourceRef.current;
+    if (hasValidCoords(resource?.latitude, resource?.longitude)) return;
+
+    const { latitude: lat, longitude: lng } = coordsRef.current;
+    if (hasValidCoords(lat, lng)) {
+      map.flyTo({ center: [lng, lat], zoom: 14, duration: 400 });
+    }
+  };
 
   // Init map once
   useEffect(() => {
@@ -66,20 +90,23 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
       map.once('load', () => {
         if (cancelled) return;
         const { latitude: lat, longitude: lng } = coordsRef.current;
-        if (lat && lng) {
+        if (hasValidCoords(lat, lng)) {
           map.setCenter([lng, lat]);
           userMarkerRef.current = new mapboxgl.Marker({ element: makeMarkerEl('#1A73E8') })
             .setLngLat([lng, lat])
             .addTo(map);
         }
         mapRef.current = map;
+        if (activeRef.current) {
+          requestAnimationFrame(resizeAndCenter);
+        }
       });
 
       const observer = new ResizeObserver(() => {
         if (mapRef.current) {
           mapRef.current.resize();
           const { latitude: lat, longitude: lng } = coordsRef.current;
-          if (lat && lng) mapRef.current.setCenter([lng, lat]);
+          if (hasValidCoords(lat, lng)) mapRef.current.setCenter([lng, lat]);
         }
       });
       observer.observe(containerRef.current);
@@ -105,7 +132,7 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
 
   // Update user pin when location changes
   useEffect(() => {
-    if (!mapRef.current || !latitude || !longitude) return;
+    if (!mapRef.current || !hasValidCoords(latitude, longitude)) return;
 
     if (userMarkerRef.current) {
       userMarkerRef.current.setLngLat([longitude, latitude]);
@@ -125,6 +152,13 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
     }
   }, [latitude, longitude]);
 
+  // The Aid tab is mounted while hidden. Resize and recenter when it becomes
+  // visible so Mapbox renders tiles and markers at the correct dimensions.
+  useEffect(() => {
+    if (!active || !mapRef.current) return;
+    requestAnimationFrame(resizeAndCenter);
+  }, [active, latitude, longitude, selectedResource]);
+
   // Show/hide red resource pin and fit bounds
   useEffect(() => {
     if (!mapRef.current) return;
@@ -138,7 +172,7 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
     if (!selectedResource?.latitude || !selectedResource?.longitude) {
       // Deselected — fly back to user
       const { latitude: lat, longitude: lng } = coordsRef.current;
-      if (lat && lng) {
+      if (hasValidCoords(lat, lng)) {
         mapRef.current.flyTo({ center: [lng, lat], zoom: 14, duration: 600 });
       }
       return;
@@ -152,7 +186,7 @@ export default function MapboxMap({ latitude, longitude, selectedResource }) {
         .addTo(mapRef.current);
 
       const { latitude: userLat, longitude: userLng } = coordsRef.current;
-      if (userLat && userLng) {
+      if (hasValidCoords(userLat, userLng)) {
         const bounds = new mapboxgl.LngLatBounds();
         bounds.extend([userLng, userLat]);
         bounds.extend([selectedResource.longitude, selectedResource.latitude]);

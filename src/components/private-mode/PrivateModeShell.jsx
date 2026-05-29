@@ -42,7 +42,14 @@ const TABS = [
 
 export default function PrivateModeShell({ displayName, sosEnabled = false, onBackToApp, appName }) {
   const [activeTab, setActiveTab] = useState('home');
-  const { location, isWatching, startLiveLocation, stopLiveLocation } = useGeolocation();
+  const {
+    location,
+    status: locationStatus,
+    error: locationError,
+    isWatching,
+    startLiveLocation,
+    stopLiveLocation,
+  } = useGeolocation();
 
   const activeTitle = useMemo(
     () => TABS.find((tab) => tab.id === activeTab)?.title || 'Home',
@@ -80,7 +87,13 @@ export default function PrivateModeShell({ displayName, sosEnabled = false, onBa
             <JournalPanel />
           </Panel>
           <Panel active={activeTab === 'aid'}>
-            <AidPanel location={location} isWatching={isWatching} />
+            <AidPanel
+              location={location}
+              locationStatus={locationStatus}
+              locationError={locationError}
+              isWatching={isWatching}
+              active={activeTab === 'aid'}
+            />
           </Panel>
         </main>
 

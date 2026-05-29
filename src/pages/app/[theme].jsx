@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import PanicExit from '../../components/PanicExit';
 import PrivateModeButton from '../../components/PrivateModeButton';
@@ -110,7 +110,6 @@ export default function AppShell({
   session,
   sosEnabled,
 }) {
-  usePrivacyMode();
   const router = useRouter();
 
   const [installPrompt, setInstallPrompt] = useState(null);
@@ -120,6 +119,13 @@ export default function AppShell({
   const [showPrivateMode, setShowPrivateMode] = useState(false);
   // Track live login state separately from SSR session prop (which is stale after logout)
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(session));
+
+  const markLoggedOut = useCallback(() => {
+    setIsLoggedIn(false);
+    setShowPrivateMode(false);
+  }, []);
+
+  usePrivacyMode({ onLogout: markLoggedOut });
 
   // Platform detection + auto-enter on ?enter=1 after login redirect
   useEffect(() => {
@@ -136,7 +142,7 @@ export default function AppShell({
 
   const doLogout = () => {
     fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
-    setIsLoggedIn(false);
+    markLoggedOut();
   };
 
   const handleEnterPrivateMode = () => {
@@ -151,12 +157,12 @@ export default function AppShell({
   // Log out whenever private mode is dismissed back to the cover app
   const prevPrivateMode = useRef(false);
   useEffect(() => {
-    if (prevPrivateMode.current && !showPrivateMode) {
+    if (prevPrivateMode.current && !showPrivateMode && isLoggedIn) {
       doLogout();
     }
     prevPrivateMode.current = showPrivateMode;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showPrivateMode]);
+  }, [showPrivateMode, isLoggedIn]);
 
   const handleBackToApp = () => setShowPrivateMode(false);
 
@@ -224,7 +230,7 @@ export default function AppShell({
     if (themeKey === 'calculator') return <CalculatorShell />;
     if (themeKey === 'news') return <NewsShell />;
     if (themeKey === 'weather') return <WeatherModeShell />;
-    return <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />;
+    return null;
   };
 
   return (
@@ -268,7 +274,7 @@ export default function AppShell({
         )}
 
         {/* ── Main Content ── */}
-        {showPrivateMode ? (
+        {showPrivateMode && isLoggedIn ? (
           <PrivateModeShell displayName={session?.displayName} sosEnabled={sosEnabled} onBackToApp={handleBackToApp} appName={appName} />
         ) : (
           <>

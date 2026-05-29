@@ -4,6 +4,11 @@
  * Styles for the input field, send button, and speech-to-text button.
  */
 
+.composerWrap {
+  padding: 0 16px 96px;
+  flex-shrink: 0;
+}
+
 .composer {
   display: flex;
   align-items: center;

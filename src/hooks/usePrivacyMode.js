@@ -16,7 +16,7 @@ import { useEffect } from 'react';
  * a visibility listener that purges session state when the tab loses focus.
  * No-op in development — SW is removed to prevent stale chunk issues.
  */
-export function usePrivacyMode() {
+export function usePrivacyMode({ onLogout } = {}) {
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return undefined;
 
@@ -66,12 +66,13 @@ export function usePrivacyMode() {
         sessionStorage.clear();
         postToSW({ type: 'PURGE_CACHE' });
         navigator.sendBeacon('/api/auth/logout');
+        onLogout?.();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
     return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, []);
+  }, [onLogout]);
 }
 
 /**
