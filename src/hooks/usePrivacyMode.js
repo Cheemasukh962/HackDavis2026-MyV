@@ -104,13 +104,10 @@ export function triggerPanicExit() {
     ? `/app/${coverMatch[1]}`
     : (process.env.NEXT_PUBLIC_SAFE_EXIT_URL || 'https://www.google.com');
 
-  // Navigate first — browser starts loading the safe page immediately.
-  // JS continues synchronously so cleanup still runs before unload.
-  window.location.replace(safeUrl);
-
   sessionStorage.clear();
   postToSW({ type: 'PANIC' });
   fetch('/api/auth/logout', { method: 'POST', keepalive: true }).catch(() => {});
+  window.location.replace(safeUrl);
 }
 
 function postToSW(message) {
