@@ -20,7 +20,7 @@ import {
   Siren,
   Users,
 } from 'lucide-react';
-import styles from '../styles/Marketing.module.css';
+import styles from '../styles/marketing/marketing.module.css';
 
 function usePivotPhoneAnimation() {
   const tiltedPhoneRef = useRef(null);

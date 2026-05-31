@@ -1,10 +1,7 @@
 /**
- * Marketing.module.css — Homepage & Marketing Pages
- *
- * Comprehensive redesign for the public-facing marketing pages and homepage.
- * Features the SafeHaven brand identity with gradients, typography hierarchy,
- * and responsive iPhone Sanctuary Edition layout.
+ * marketing.module.css — Homepage & Marketing Pages
  */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -17,6 +14,7 @@
   font-family: var(--font-sans);
   overflow-x: hidden;
 }
+
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
 .header {
@@ -76,6 +74,7 @@
   height: 14px;
   color: #000; /* Black shield as requested */
 }
+
 
 /* ── Hero Section ──────────────────────── */
 
@@ -372,6 +371,7 @@
   height: 18px;
 }
 
+
 /* ── Ticker ────────────────────────────────────────────────────── */
 .tickerContainer {
   background: rgba(54, 46, 40, 0.02);
@@ -411,6 +411,12 @@
   opacity: 1;
   transform: none;
 }
+
+@keyframes scrollTicker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 
 /* ── Showcase Sections ─────────────────────────────────────────────────── */
 .section {
@@ -569,6 +575,7 @@
   color: var(--color-muted);
   line-height: 1.5;
 }
+
 
 /* ── Phone Mockups ──────────────────────────────────────────────────────── */
 .phoneWrap {
@@ -1630,6 +1637,7 @@
   transform: rotate(-9deg);
 }
 
+
 /* ── Bento Grid ──────────────────────────────────────────────────── */
 .bentoSection {
   padding: 120px 24px 64px;
@@ -1715,6 +1723,7 @@
   line-height: 1.5;
 }
 
+
 /* ── Mission ─────────────────────────────────────────────────────── */
 .missionSection {
   padding: 64px 24px 100px;
@@ -1741,10 +1750,6 @@
   font-weight: 400;
 }
 
-@keyframes scrollTicker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
 .footer {
@@ -1790,6 +1795,7 @@
   font-weight: 600;
   opacity: 0.8;
 }
+
 
 @media (max-width: 900px) {
   .bentoGrid { grid-template-columns: 1fr 1fr; }
@@ -1852,3 +1858,4 @@
     display: none;
   }
 }
+
