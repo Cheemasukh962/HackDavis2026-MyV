@@ -592,11 +592,14 @@ export default function LandingPage() {
             <div className={`${styles.sectionHeader} ${styles.reveal}`} data-reveal>
               <span className={styles.sectionLabel}>THE SANCTUARY CORE</span>
               <h2 className={styles.sectionTitle}>Hidden protection.</h2>
+              <p className={styles.sectionSubtitle}>Six tools, quietly working together — so you can stay safe, stay private, and stay in control.</p>
             </div>
             <div className={styles.bentoGrid}>
               {FEATURES.map(({ Icon, tag, title, body }) => (
                 <div className={`${styles.bentoCard} ${styles.reveal}`} data-reveal key={title}>
-                  <Icon className={styles.cardIcon} />
+                  <span className={styles.cardIconCircle}>
+                    <Icon className={styles.cardIcon} />
+                  </span>
                   <div className={styles.cardTag}>{tag}</div>
                   <h3>{title}</h3>
                   <p>{body}</p>
@@ -606,12 +609,30 @@ export default function LandingPage() {
           </section>
 
           <section className={styles.missionSection}>
-            <div className={`${styles.missionContent} ${styles.reveal}`} data-reveal>
-              <h2 className={styles.missionTitle}>Built with empathy</h2>
-              <p className={styles.missionText}>
-                We believe everyone deserves a space where they can be heard without fear.
-                SafeHaven is a bridge to independence. We keep your secrets so you can find your strength.
-              </p>
+            <div className={`${styles.missionRow} ${styles.reveal}`} data-reveal>
+              <div className={styles.missionContent}>
+                <h2 className={styles.missionTitle}>Built with empathy</h2>
+                <p className={styles.missionText}>
+                  SafeHaven was born from a simple belief — that everyone deserves a place to feel safe, heard, and free.
+                  We built this for the moments when you need help but can&apos;t ask out loud. For the times you need to document,
+                  reach out, or simply breathe — without leaving a trace. Every feature was designed with care, every detail
+                  considered with the people who need it most in mind. This is not just an app. It&apos;s a commitment.
+                  If you share that commitment or want to contribute, connect with the developers on the right.
+                </p>
+              </div>
+              <div className={styles.contributors}>
+                {[
+                  { login: 'Marqlo-C', avatar: 'https://avatars.githubusercontent.com/u/124465402?v=4' },
+                  { login: 'alfredts999', avatar: 'https://avatars.githubusercontent.com/u/260856211?v=4' },
+                  { login: 'Cheemasukh962', avatar: 'https://avatars.githubusercontent.com/u/188267351?v=4' },
+                  { login: 'amritbrar1250-alt', avatar: 'https://avatars.githubusercontent.com/u/235034893?v=4' },
+                ].map(({ login, avatar }) => (
+                  <a key={login} href={`https://github.com/${login}`} target="_blank" rel="noopener noreferrer" className={styles.contributor}>
+                    <img src={avatar} alt={login} className={styles.contributorAvatar} />
+                    <span className={styles.contributorName}>@{login}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           </section>
 
