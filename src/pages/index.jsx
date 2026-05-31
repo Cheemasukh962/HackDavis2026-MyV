@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   AlertTriangle,
   BriefcaseMedical,
@@ -22,11 +22,30 @@ import {
 } from 'lucide-react';
 import styles from '../styles/Marketing.module.css';
 
+function usePivotPhoneAnimation() {
+  const tiltedPhoneRef = useRef(null);
+  useEffect(() => {
+    const phone = tiltedPhoneRef.current;
+    if (!phone) return;
+    phone.style.transition = 'transform 1.4s cubic-bezier(0.22, 1, 0.36, 1)';
+    phone.style.transformOrigin = 'left bottom';
+    setTimeout(() => {
+      phone.style.transform = 'rotate(-18deg) scale(0.96)';
+    }, 1000);
+    return () => {
+      phone.style.transform = '';
+      phone.style.transition = '';
+      phone.style.transformOrigin = '';
+    };
+  }, []);
+  return tiltedPhoneRef;
+}
+
 const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
 
 const ShieldIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
@@ -480,6 +499,8 @@ function Capabilities() {
 
 export default function LandingPage() {
   useScrollReveal();
+  // Use the custom hook at the top of the component
+  const tiltedPhoneRef = usePivotPhoneAnimation();
 
   return (
     <>
@@ -524,7 +545,9 @@ export default function LandingPage() {
                   </p>
                   <div className={styles.heroActions}>
                     <Link href="/downloads" className={styles.primaryCta}>
-                      <ShieldIcon className={styles.buttonIconCta} />
+                      <span className={styles.ctaIconCircle}>
+                        <ShieldIcon className={styles.buttonIconCta} />
+                      </span>
                       Get Started Privately
                     </Link>
                     <span className={styles.secondaryText}>
@@ -538,13 +561,16 @@ export default function LandingPage() {
                     <div className="side-btn" />
                     <div className="side-btn side-btn-lower" />
                     <div className="side-btn-power" />
-                    <Phone>{<HomeScreen />}</Phone>
+                    <Phone float>{<HomeScreen />}</Phone>
                   </div>
-                  <div className={`${styles.heroPhone} ${styles.heroPhoneTilted}`}>
+                  <div
+                    className={`${styles.heroPhone} ${styles.heroPhoneTilted}`}
+                    ref={tiltedPhoneRef}
+                  >
                     <div className="side-btn" />
                     <div className="side-btn side-btn-lower" />
                     <div className="side-btn-power" />
-                    <Phone>{<CalculatorScreen />}</Phone>
+                    <Phone float>{<CalculatorScreen />}</Phone>
                   </div>
                 </div>
               </div>
@@ -588,8 +614,8 @@ export default function LandingPage() {
               </p>
             </div>
           </section>
-        </main>
 
+        </main>
         <footer className={styles.footer}>
           <div className={styles.footerContent}>
             <div className={`${styles.brand} ${styles.footerBrand}`}>
