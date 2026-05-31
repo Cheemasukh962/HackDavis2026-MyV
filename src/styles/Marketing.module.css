@@ -250,16 +250,30 @@
 }
 
 .badge {
-  background: rgba(252, 250, 247, 0.5);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--color-border);
-  padding: 6px 16px;
-  border-radius: 999px;
+  background: rgba(252, 250, 247, 0.4);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  padding: 8px 18px;
+  border-radius: 18px 18px 18px 0;
   font-size: 12px;
   font-weight: 700;
   color: var(--color-accent);
-  margin-bottom: 18px;
+  margin-bottom: 24px;
   letter-spacing: 0.02em;
+  display: inline-block;
+  position: relative;
+  filter: drop-shadow(0 0 0.75px rgba(210, 200, 185, 0.9));
+}
+
+.badge::before {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 11px solid rgba(252, 250, 247, 0.4);
+  border-right: 13px solid transparent;
 }
 
 .heroTitle {
