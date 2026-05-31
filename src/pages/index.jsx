@@ -509,24 +509,36 @@ export default function LandingPage() {
             <div className={styles.orbOne} />
             <div className={styles.orbTwo} />
             <div className={styles.orbThree} />
-            <div className={styles.heroContent}>
-              <MorphingIcon />
-              <div className={styles.badge}>Your private journey starts here</div>
-              <h1 className={styles.heroTitle}>
-                Safety, <br />
-                <span className={styles.textGradient}>beautifully disguised.</span>
-              </h1>
-              <p className={styles.heroSubtitle}>
-                A quiet digital sanctuary for survivors and those seeking a way out.
-                Disguised as calculator, news, or weather tools, SafeHaven gives you
-                space to find support, document your story, and reclaim your peace.
-              </p>
-              <div className={styles.heroActions}>
-                <Link href="/downloads" className={styles.primaryCta}>
-                  <ShieldIcon className={styles.buttonIconCta} />
-                  Get Started Privately
-                </Link>
-                <span className={styles.secondaryText}>Encrypted - Invisible - Free Forever</span>
+            <div className={styles.heroSplit}>
+                <div className={styles.heroTextCol}>
+                  <MorphingIcon />
+                  <div className={styles.badge}>Your private journey starts here</div>
+                  <h1 className={styles.heroTitle}>
+                    Safety, <br />
+                    <span className={styles.textGradient}>beautifully disguised.</span>
+                  </h1>
+                  <p className={styles.heroSubtitle}>
+                    A quiet digital sanctuary for survivors and those seeking a way out.
+                    Disguised as calculator, news, or weather tools, SafeHaven gives you
+                    space to find support, document your story, and reclaim your peace.
+                  </p>
+                  <div className={styles.heroActions}>
+                    <Link href="/downloads" className={styles.primaryCta}>
+                      <ShieldIcon className={styles.buttonIconCta} />
+                      Get Started Privately
+                    </Link>
+                    <span className={styles.secondaryText}>Encrypted - Invisible - Free Forever</span>
+                  </div>
+                </div>
+              <div className={styles.heroPhonesCol}>
+                <div className={styles.heroPhonesWrap}>
+                  <div className={styles.heroPhone}>
+                    <Phone>{<HomeScreen />}</Phone>
+                  </div>
+                  <div className={`${styles.heroPhone} ${styles.heroPhoneTilted}`}>
+                    <Phone>{<CalculatorScreen />}</Phone>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
