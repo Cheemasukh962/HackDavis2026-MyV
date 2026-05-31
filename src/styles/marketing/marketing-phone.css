@@ -1032,17 +1032,17 @@
 }
 
 .calloutChatList {
-  right: -220px;
-  top: 198px;
+  right: -210px;
+  top: 238px;
 }
 
 .calloutChatList .calloutLine {
   right: 100%;
   left: auto;
   top: 50%;
-  width: 184px;
+  width: 149px;
   transform-origin: right center;
-  transform: rotate(2deg);
+  transform: rotate(-5deg);
 }
 
 .calloutAidFilters {

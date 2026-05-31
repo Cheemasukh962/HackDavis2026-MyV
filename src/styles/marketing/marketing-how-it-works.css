@@ -35,11 +35,6 @@
   justify-items: center;
   width: calc(100% + 120px);
   margin-left: -60px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 28px;
-  padding: 40px;
-  box-shadow: 0 2px 16px rgba(54, 46, 40, 0.05);
 }
 
 .step {
@@ -48,19 +43,33 @@
   align-items: center;
   text-align: center;
   width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  box-shadow: 0 2px 16px rgba(54, 46, 40, 0.05);
 }
 
 .stepPhoneWrap {
   position: relative;
-  margin-bottom: 28px;
+  margin-bottom: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  border-radius: 20px;
-  padding: 24px 0;
+  padding: 32px 0;
   background-size: cover;
+  border-radius: 22px 22px 0 0;
 }
+
+.step h3,
+.step p {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.step .stepNum { margin-top: 20px; }
+.step h3 { margin-bottom: 8px; }
+.step p  { padding-bottom: 24px; }
 
 .step:nth-child(1) .stepPhoneWrap {
   background-image:
@@ -114,38 +123,49 @@
 .capabilities {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 28px;
-  box-shadow: 0 2px 16px rgba(54, 46, 40, 0.05);
+  gap: 24px;
+}
+
+.capability:nth-child(odd) {
+  transform: translateX(-100px);
+}
+
+.capability:nth-child(even) {
+  transform: translateX(100px);
 }
 
 .capability {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-  padding: 56px 48px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.capability:last-child {
-  border-bottom: none;
+  gap: 0;
+  align-items: stretch;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  box-shadow: 0 2px 16px rgba(54, 46, 40, 0.05);
+  width: calc(100% + 80px);
 }
 
 .capabilityFlip .capPhone {
   order: 2;
+  border-radius: 0 28px 28px 0;
 }
 
 .capPhone {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 32px;
+  border-radius: 0;
   padding: 40px 32px;
-  box-shadow: 0 8px 32px rgba(54, 46, 40, 0.12);
   background-size: cover;
+}
+
+.capability:not(.capabilityFlip) .capPhone {
+  border-radius: 28px 0 0 28px;
+}
+
+.capText {
+  padding: 48px;
 }
 
 .capability:nth-child(1) .capPhone {
