@@ -1,0 +1,40 @@
+/* marketing-ticker.css — Ticker strip and reveal animations */
+
+.tickerContainer {
+  background: rgba(54, 46, 40, 0.02);
+  padding: 16px 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+  width: 100%;
+}
+
+.tickerTrack {
+  display: flex;
+  width: max-content;
+  gap: 40px;
+  animation: scrollTicker 40s linear infinite;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.tickerTrack span {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.revealIn {
+  opacity: 1;
+  transform: none;
+}

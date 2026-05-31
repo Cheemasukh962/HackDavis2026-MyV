@@ -1,0 +1,99 @@
+/* marketing-bento.css — Bento grid section */
+
+.bentoSection {
+  padding: 120px 24px 64px;
+  max-width: none;
+  margin: 0;
+}
+
+.sectionHeader {
+  margin-bottom: 64px;
+  text-align: center;
+}
+
+.sectionLabel {
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.sectionTitle {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.sectionSubtitle {
+  font-size: 16px;
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  padding: 0 24px;
+}
+
+.bentoCard {
+  background: var(--color-foreground);
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  aspect-ratio: 2 / 3;
+}
+
+.bentoCard:hover {
+  background: var(--color-accent);
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px rgba(54, 46, 40, 0.15);
+}
+
+.cardIconCircle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: oklch(0.78 0.13 75);
+  color: oklch(0.25 0.05 40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.cardIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.cardTag {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(252, 250, 247, 0.5);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bentoCard h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.bentoCard p {
+  font-size: 14px;
+  color: rgba(252, 250, 247, 0.6);
+  line-height: 1.5;
+}

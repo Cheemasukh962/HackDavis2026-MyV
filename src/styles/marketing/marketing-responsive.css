@@ -1,0 +1,63 @@
+/* marketing-responsive.css — Responsive / media query overrides */
+
+@media (max-width: 900px) {
+  .bentoGrid { grid-template-columns: repeat(3, 1fr); }
+  .header { padding: 24px; }
+  .heroTitle { font-size: 64px; }
+}
+
+@media (max-width: 600px) {
+  .bentoGrid { grid-template-columns: 1fr; }
+  .heroSection { padding: 120px 24px 80px; }
+  .heroTitle { font-size: 48px; }
+}
+
+@media (max-width: 860px) {
+  .steps,
+  .capability,
+  .capabilityFlip {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .capabilityFlip .capPhone {
+    order: 0;
+  }
+
+  .capText {
+    text-align: center;
+  }
+
+  .capList {
+    max-width: 360px;
+    margin: 0 auto;
+    text-align: left;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding-top: 72px;
+  }
+
+  .phone {
+    width: 226px;
+    height: 464px;
+    border-radius: 36px;
+  }
+
+  .phoneScreen {
+    --phone-scale: 0.495;
+    border-radius: 28px;
+  }
+
+  .callout {
+    position: static;
+    display: inline-block;
+    margin: 14px auto 0;
+  }
+
+  .callout::after {
+    display: none;
+  }
+}

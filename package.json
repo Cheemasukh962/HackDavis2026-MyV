@@ -23,6 +23,7 @@
     "socket.io-client": "^4.7.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "postcss-import": "^16.1.1"
   }
 }

@@ -1,0 +1,294 @@
+/* marketing-hero.css — Hero section */
+
+.heroSection {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 12px 60px;
+  background:
+    linear-gradient(rgba(34, 30, 24, 0.38), rgba(34, 30, 24, 0.18)),
+    url('/resources/images/hero-landing.jpeg') center center/cover no-repeat;
+  background-color: var(--color-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSplit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: none;
+  gap: 16px;
+  z-index: 1;
+}
+
+.heroTextCol {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  max-width: none;
+  margin-right: 0;
+  padding-left: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.heroPhonesCol {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: none;
+  padding-right: 32px;
+}
+
+.heroPhonesWrap {
+  position: relative;
+  width: 370px;
+  height: 620px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.heroPhone {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.heroPhoneTilted {
+  right: 60px;
+  z-index: 1;
+  transform: rotate(-12deg) scale(0.96);
+  box-shadow: 0 12px 40px rgba(54, 46, 40, 0.10);
+}
+
+.orbOne,
+.orbTwo,
+.orbThree {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.orbOne {
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(201, 125, 87, 0.2), transparent 70%);
+  top: -120px;
+  left: -80px;
+  animation: driftOne 18s ease-in-out infinite;
+}
+
+.orbTwo {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(74, 109, 90, 0.14), transparent 70%);
+  right: -60px;
+  bottom: -100px;
+  animation: driftTwo 22s ease-in-out infinite;
+}
+
+.orbThree {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(217, 158, 82, 0.16), transparent 70%);
+  top: 40%;
+  left: 55%;
+  animation: driftOne 26s ease-in-out infinite reverse;
+}
+
+@keyframes driftOne {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 30px) scale(1.08); }
+}
+
+@keyframes driftTwo {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-36px, -26px) scale(1.1); }
+}
+
+/* ── Morphing Identity Animation ─────────────────────────────────── */
+.morphingIconContainer {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.morphingIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--color-accent);
+  position: absolute;
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  filter: blur(5px);
+  animation: morphCycle 12s infinite;
+}
+
+.morphingIcon:nth-child(1) { animation-delay: 0s; }
+.morphingIcon:nth-child(2) { animation-delay: 3s; }
+.morphingIcon:nth-child(3) { animation-delay: 6s; }
+.morphingIcon:nth-child(4) { animation-delay: 9s; }
+
+.morphingGlow {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(201, 125, 87, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes morphCycle {
+  0% { opacity: 0; transform: scale(0.8) translateY(10px); filter: blur(5px); }
+  5% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  20% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  25% { opacity: 0; transform: scale(1.1) translateY(-10px); filter: blur(5px); }
+  100% { opacity: 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.badge {
+  background: rgba(252, 250, 247, 0.4);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  padding: 8px 18px;
+  border-radius: 18px 18px 18px 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: 24px;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  position: relative;
+  filter: drop-shadow(0 0 0.75px rgba(210, 200, 185, 0.9));
+}
+
+.badge::before {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 11px solid rgba(252, 250, 247, 0.4);
+  border-right: 13px solid transparent;
+}
+
+.heroTitle {
+  font-size: clamp(48px, 12vw, 92px);
+  font-weight: 800;
+  line-height: 1.0; /* Tightened for that professional display look */
+  letter-spacing: -0.06em;
+  margin: 0 0 24px 0;
+  color: var(--color-foreground);
+  overflow: visible;
+}
+
+.textGradient {
+  background: linear-gradient(135deg, var(--color-accent) 0%, #a66a4a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  padding-bottom: 0.12em; /* Keep the 'y' safe */
+  margin-bottom: -0.12em;
+  padding-right: 0.05em;
+  vertical-align: top;
+}
+
+.heroSubtitle {
+  font-size: clamp(13px, 1.5vw, 15px);
+  line-height: 1.5;
+  color: #fff;
+  max-width: 600px;
+  margin-bottom: 18px;
+  font-weight: 400;
+  text-shadow: 0 2px 8px rgba(34,30,24,0.18);
+}
+
+.secondaryText {
+  color: #fff !important;
+  opacity: 0.92;
+  text-shadow: 0 1px 6px rgba(34,30,24,0.18);
+  font-size: 12px;
+  margin-top: -4px;
+  align-self: center;
+  text-align: center;
+  letter-spacing: 0.01em;
+  display: flex;
+  gap: 0.4em;
+}
+
+.bullet {
+  display: inline-block;
+  font-size: 1.1em;
+  vertical-align: middle;
+  margin: 0 0.18em;
+}
+
+.heroActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0;
+}
+
+.primaryCta {
+  background: var(--color-foreground);
+  color: white;
+  padding: 14px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 15px 30px rgba(54, 46, 40, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+.primaryCta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px rgba(54, 46, 40, 0.15);
+  background: var(--color-accent);
+}
+
+.ctaIconCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: oklch(0.78 0.13 75);
+  color: oklch(0.25 0.05 40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.buttonIconCta {
+  width: 18px;
+  height: 18px;
+}

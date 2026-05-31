@@ -1,0 +1,89 @@
+/* marketing-mission.css — Mission section and contributors */
+
+.missionSection {
+  padding: 30px 120px 42px 120px;
+  background: linear-gradient(to bottom, transparent, rgba(201, 125, 87, 0.03));
+}
+
+.missionRow {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.missionContent {
+  flex: 1;
+  text-align: left;
+}
+
+.missionTitle {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  letter-spacing: -0.03em;
+}
+
+.missionText {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+.contributors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  flex-shrink: 0;
+  align-self: flex-end;
+  padding-bottom: 8px;
+  position: relative;
+}
+
+.contributors .contributor { position: relative; z-index: 1; }
+
+.contributor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--color-muted);
+  transition: color 0.2s ease;
+}
+
+.contributor:hover {
+  color: var(--color-foreground);
+}
+
+.contributorAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-bg);
+  box-shadow: 0 0 0 2px var(--color-border), 0 4px 12px rgba(54, 46, 40, 0.12);
+  transition: box-shadow 0.2s ease;
+}
+
+.contributor:hover .contributorAvatar {
+  box-shadow: 0 0 0 2px var(--color-accent), 0 4px 16px rgba(54, 46, 40, 0.18);
+}
+
+.contributorName {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.contributorsX {
+  /* SVG connector line container — no extra styles needed beyond positioning */
+}
+
+.contributorsX line {
+  /* SVG line element inside the connector */
+}

@@ -1,0 +1,59 @@
+/* marketing-header.css — Header and navigation */
+
+.header {
+  padding: 32px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.05em;
+  color: var(--color-foreground);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.logo {
+  height: 43px;
+  width: auto;
+  border-radius: 8px; /* Soft rounding like an iOS icon */
+}
+
+.navButton {
+  background: rgba(252, 250, 247, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(232, 223, 212, 0.5);
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-foreground);
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(54, 46, 40, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navButton:hover {
+  background: white;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(54, 46, 40, 0.08);
+}
+
+.buttonIcon {
+  width: 14px;
+  height: 14px;
+  color: #000; /* Black shield as requested */
+}
