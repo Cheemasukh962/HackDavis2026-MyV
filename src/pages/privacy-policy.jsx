@@ -9,31 +9,14 @@ export default function PrivacyPolicy() {
         <meta name="robots" content="noindex" />
       </Head>
       <div style={{ minHeight: '100dvh', background: 'var(--color-bg, #faf8f5)', color: 'var(--color-foreground, #2a241f)', fontFamily: 'var(--font-sans, Inter, sans-serif)' }}>
-        <div style={{ maxWidth: 860, margin: '0 auto', padding: '80px 64px 140px' }}>
-
-          <Link href="/" style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 24px',
-            borderRadius: 999,
-            background: 'rgba(252, 250, 247, 0.4)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(232, 223, 212, 0.5)',
-            boxShadow: '0 4px 12px rgba(54, 46, 40, 0.03)',
-            fontSize: 13,
-            fontWeight: 600,
-            color: 'var(--color-foreground, #2a241f)',
-            textDecoration: 'none',
-            marginBottom: 56,
-            transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
-            </svg>
-            Back to SafeHaven
+        <header style={{ padding: '32px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border, #e8e0d4)' }}>
+          <Link href="/" style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.05em', color: 'var(--color-foreground, #2a241f)', display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+            <img src="/resources/images/logos/safe_harbor_logo.png" alt="" style={{ height: 43, borderRadius: 8 }} />
+            SafeHaven
           </Link>
+          <Link href="/" style={{ background: 'rgba(252, 250, 247, 0.5)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(232, 223, 212, 0.6)', padding: '10px 22px', borderRadius: 999, fontSize: 13, fontWeight: 600, color: 'var(--color-foreground, #2a241f)', textDecoration: 'none' }}>← Home</Link>
+        </header>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 40px 140px' }}>
 
           <h1 style={{ fontSize: 40, fontWeight: 800, letterSpacing: '-0.04em', marginBottom: 8 }}>Privacy Policy</h1>
           <p style={{ fontSize: 13, color: 'var(--color-muted, #7a6e62)', marginBottom: 56 }}>Last updated: May 2026 · Applies to the SafeHaven reference deployment</p>

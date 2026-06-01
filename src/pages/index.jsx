@@ -232,8 +232,8 @@ export default function LandingPage() {
               SafeHaven
             </div>
             <p className={styles.footerDisclaimer}>
-              <strong>Note:</strong> If you are in immediate danger, please use a safe device
-              to call local emergency services or the National Hotline at 1-800-799-7233.
+              <strong>If you are in immediate danger</strong>, please use a safe device
+              to call local emergency services or the National Hotline at <strong>1-800-799-7233</strong>.
             </p>
             <div className={styles.footerLinks}>
               <Link href="/downloads">Install PWA</Link>

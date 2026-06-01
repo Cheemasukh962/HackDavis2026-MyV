@@ -1,34 +1,29 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import styles from '../styles/CoverPages.module.css';
+import { ShieldIcon } from '../components/marketing/index-icons';
+import styles from '../styles/downloads.module.css';
 
-const ShieldIcon = ({ className }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="currentColor" 
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-  </svg>
-);
+const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
 
 const APPS = [
   {
     theme: 'calculator',
     name: 'Calculator Pro',
-    description: 'Fully functional calculator. Hides your journal and chat behind your PIN.',
+    tag: 'Most Popular',
+    description: 'Fully functional calculator. Hides your journal and chat behind your username and password.',
     icon: '/resources/images/logos/calculator_icon.png',
   },
   {
     theme: 'news',
     name: 'Daily News Reader',
-    description: 'Live daily headlines. Safety tools hidden in the settings menu.',
+    tag: 'Low-Key Cover',
+    description: 'Live daily headlines. Safety tools hidden behind a small orange button in the lower left corner.',
     icon: '/resources/images/logos/news_icon.png',
   },
   {
     theme: 'weather',
     name: 'Weather Now',
+    tag: 'Simple & Clean',
     description: 'Real-time local forecasts. A disguised safe space.',
     icon: '/resources/images/logos/weather_icon.png',
   },
@@ -38,47 +33,66 @@ export default function Downloads() {
   return (
     <>
       <Head>
-        <title>Select Your Disguise</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <link rel="icon" href="/resources/images/logos/safe_harbor_logo.png" />
+        <title>Select Your Disguise — SafeHaven</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Choose how SafeHaven appears on your device. Hidden in plain sight." />
+        <link rel="icon" href={LOGO_SRC} />
       </Head>
 
       <div className={styles.page}>
         <header className={styles.header}>
-          <Link href="/" className={styles.backLink}>← Back to Home</Link>
-          <span className={styles.headerTitle}>Downloads</span>
+          <Link href="/" className={styles.brand}>
+            <img src={LOGO_SRC} alt="" className={styles.logo} />
+            SafeHaven
+          </Link>
+          <nav>
+            <Link href="/" className={styles.navButton}>← Home</Link>
+          </nav>
         </header>
 
         <main className={styles.main}>
           <section className={styles.hero}>
-            <h1 className={styles.heroTitle}>
-              Choose your shield 
-              <ShieldIcon className={styles.titleIcon} />
-            </h1>
-            <p className={styles.heroSubtitle}>
-              Select how SafeHaven will appear on your device. Once installed, the app functions exactly like the utility you choose. Your safety tools are hidden until you unlock them.
-            </p>
+            <div className={styles.heroContent}>
+              <span className={styles.sectionLabel}>Choose your cover</span>
+              <h1 className={styles.heroTitle}>
+                Select your <br />
+                <span className={styles.textGradient}>disguise.</span>
+              </h1>
+              <p className={styles.heroSubtitle}>
+                Once installed, the app works exactly like the utility you choose.
+                Your safety tools stay hidden until you unlock them with your username and password.
+              </p>
+            </div>
           </section>
 
-          <section className={styles.appList}>
+          <section className={styles.appGrid}>
             {APPS.map((app) => (
-              <Link
-                key={app.theme}
-                href={`/preview/${app.theme}`}
-                className={styles.pillCard}
-              >
-                <img src={app.icon} alt="" className={styles.pillIcon} />
-                <div className={styles.pillInfo}>
-                  <h2 className={styles.pillName}>{app.name}</h2>
-                  <p className={styles.pillDesc}>{app.description}</p>
+              <Link key={app.theme} href={`/preview/${app.theme}`} className={styles.appCard}>
+                <div className={styles.cardTop}>
+                  <span className={styles.cardTag}>{app.tag}</span>
+                  <img src={app.icon} alt="" className={styles.cardIcon} />
                 </div>
-                <div className={styles.pillAction}>
-                  <span className={styles.installBtn}>Select</span>
+                <div className={styles.cardBody}>
+                  <h2 className={styles.cardName}>{app.name}</h2>
+                  <p className={styles.cardDesc}>{app.description}</p>
+                </div>
+                <div className={styles.cardCta}>
+                  <span className={styles.ctaBtn}>
+                    <ShieldIcon className={styles.ctaBtnIcon} />
+                    Select Cover
+                  </span>
                 </div>
               </Link>
             ))}
           </section>
         </main>
+
+        <footer className={styles.footer}>
+          <p className={styles.footerNote}>
+            <strong>If you are in immediate danger</strong>, please use a safe device to call
+            emergency services or the National Hotline at <strong>1-800-799-7233</strong>.
+          </p>
+        </footer>
       </div>
     </>
   );

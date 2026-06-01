@@ -297,6 +297,33 @@
     max-width: 72px;
   }
 
+  /* ── Footer ─────────────────────────────────────────────── */
+  .footer {
+    background:
+      linear-gradient(rgba(34, 30, 24, 0.38), rgba(34, 30, 24, 0.18)),
+      url('/resources/images/index-mobile-footer.png') center center / cover no-repeat;
+    border-top-color: rgba(255, 255, 255, 0.14);
+    padding: 24px;
+  }
+
+  .footerBrand { display: none; }
+
+  .footerDisclaimer {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 14px;
+  }
+
+  .footerDisclaimer strong {
+    color: rgba(255, 255, 255, 0.80);
+  }
+
+  .footerLinks {
+    font-size: 12px;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.60);
+  }
+
   /* ── Bento dark card ────────────────────────────────────── */
   .mobileBentoSlide {
     display: flex;
