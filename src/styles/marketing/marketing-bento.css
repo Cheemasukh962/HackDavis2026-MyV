@@ -50,6 +50,7 @@
   flex-direction: column;
   justify-content: flex-start;
   aspect-ratio: 2 / 3;
+  box-shadow: 0 4px 20px rgba(54, 46, 40, 0.18), 0 1px 4px rgba(54, 46, 40, 0.10);
 }
 
 .bentoCard:hover {

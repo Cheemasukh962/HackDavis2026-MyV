@@ -648,11 +648,11 @@ export default function LandingPage() {
               to call local emergency services or the National Hotline at 1-800-799-7233.
             </p>
             <div className={styles.footerLinks}>
-              <Link href="/downloads">Install Now</Link>
+              <Link href="/downloads">Install PWA</Link>
               <span>•</span>
-              <a href="#">Security Guide</a>
+              <Link href="/security-guide">Security Guide</Link>
               <span>•</span>
-              <a href="#">Privacy Policy</a>
+              <Link href="/privacy-policy">Privacy Policy</Link>
             </div>
           </div>
         </footer>

@@ -966,15 +966,15 @@
 }
 
 .calloutCoverDot {
-  left: -225px;
-  bottom: 24px;
+  left: -224px;
+  bottom: -18px;
 }
 
 .calloutCoverDot .calloutLine {
-  left: calc(100% - 2px);
+  left: 100%;
   top: 56%;
-  width: 45px;
-  transform: rotate(26deg);
+  width: 43px;
+  transform: rotate(-20deg);
 }
 
 .calloutCoverDot .calloutLine::after {
@@ -992,7 +992,7 @@
   top: 50%;
   width: 148px;
   transform-origin: right center;
-  transform: rotate(-2deg);
+  transform: rotate(-8deg);
 }
 
 .calloutLocationToggle .calloutLine::after,
@@ -1018,21 +1018,22 @@
 }
 
 .calloutSosButton {
-  right: -222px;
-  top: 172px;
+  right: -70%;
+  bottom: 35%;
+  z-index: 25;
 }
 
 .calloutSosButton .calloutLine {
-  right: 100%;
+  right: 96%;
   left: auto;
-  top: 70%;
-  width: 145px;
+  top: 0;
+  width: 180px;
   transform-origin: right center;
-  transform: rotate(3deg);
+  transform: rotate(55deg);
 }
 
 .calloutChatList {
-  right: -210px;
+  right: -190px;
   top: 238px;
 }
 
@@ -1040,14 +1041,14 @@
   right: 100%;
   left: auto;
   top: 50%;
-  width: 149px;
+  width: 120px;
   transform-origin: right center;
   transform: rotate(-5deg);
 }
 
 .calloutAidFilters {
   right: -222px;
-  top: 266px;
+  bottom: 35%;
 }
 
 .calloutAidFilters .calloutLine {
@@ -1056,5 +1057,5 @@
   top: 50%;
   width: 164px;
   transform-origin: right center;
-  transform: rotate(-9deg);
+  transform: rotate(20deg);
 }

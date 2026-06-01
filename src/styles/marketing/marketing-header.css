@@ -30,8 +30,8 @@
 
 .navButton {
   background: rgba(252, 250, 247, 0.4);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border: 1px solid rgba(232, 223, 212, 0.5);
   padding: 10px 24px;
   border-radius: 999px;
