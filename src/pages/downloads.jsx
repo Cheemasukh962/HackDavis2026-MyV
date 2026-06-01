@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Calculator, Newspaper, CloudSun, House } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import styles from '../styles/downloads.module.css';
 
 const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
@@ -12,8 +13,6 @@ const APPS = [
     tag: 'Most Popular',
     description: 'Fully functional calculator. Hides your journal and chat behind your username and password.',
     icon: '/resources/images/logos/calculator_icon.png',
-    qr: '/resources/images/calculator-qr.png',
-    BtnIcon: Calculator,
   },
   {
     theme: 'news',
@@ -21,8 +20,6 @@ const APPS = [
     tag: 'Low-Key Cover',
     description: 'Live daily headlines. Safety tools hidden behind a small orange button in the lower left corner.',
     icon: '/resources/images/logos/news_icon.png',
-    qr: '/resources/images/news-qr.png',
-    BtnIcon: Newspaper,
   },
   {
     theme: 'weather',
@@ -30,12 +27,76 @@ const APPS = [
     tag: 'Simple & Clean',
     description: 'Real-time local forecasts. A disguised safe space.',
     icon: '/resources/images/logos/weather_icon.png',
-    qr: '/resources/images/weather-qr.png',
-    BtnIcon: CloudSun,
   },
 ];
 
+function MotionAppCard({ app, pointer, layoutTick }) {
+  const itemRef = useRef(null);
+  const y = useMotionValue(0);
+  const scale = useMotionValue(1);
+  const smoothY = useSpring(y, { stiffness: 360, damping: 28, mass: 0.8 });
+  const smoothScale = useSpring(scale, { stiffness: 360, damping: 28, mass: 0.8 });
+  const [zIndex, setZIndex] = useState(1);
+
+  useEffect(() => {
+    const item = itemRef.current;
+    if (!item || !pointer.inside || pointer.x == null || pointer.y == null) {
+      y.set(0);
+      scale.set(1);
+      setZIndex(1);
+      return;
+    }
+
+    const rect = item.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distanceX = Math.abs(pointer.x - centerX);
+    const distanceY = Math.abs(pointer.y - centerY);
+    const proximity = Math.max(0, 1 - Math.hypot(distanceX / 220, distanceY / 160));
+
+    y.set(-proximity * 18);
+    scale.set(1 + proximity * 0.045);
+    setZIndex(Math.round(1 + proximity * 20));
+  }, [pointer.x, pointer.y, pointer.inside, layoutTick, y, scale]);
+
+  return (
+    <motion.div
+      ref={itemRef}
+      className={styles.appCardMotion}
+      style={{ y: smoothY, scale: smoothScale, zIndex }}
+    >
+      <Link href={`/preview/${app.theme}`} className={styles.appCard}>
+        <div className={styles.cardTop}>
+          <span className={styles.cardTag}>{app.tag}</span>
+          <img src={app.icon} alt="" className={styles.cardIcon} />
+        </div>
+        <div className={styles.cardBody}>
+          <h2 className={styles.cardName}>{app.name}</h2>
+          <p className={styles.cardDesc}>{app.description}</p>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 export default function Downloads() {
+  const gridRef = useRef(null);
+  const [pointer, setPointer] = useState({ x: null, y: null, inside: false });
+  const [layoutTick, setLayoutTick] = useState(0);
+
+  useEffect(() => {
+    const onLayout = () => setLayoutTick((tick) => tick + 1);
+    const grid = gridRef.current;
+    if (!grid) return undefined;
+
+    window.addEventListener('resize', onLayout);
+    window.addEventListener('scroll', onLayout, { passive: true });
+    return () => {
+      window.removeEventListener('resize', onLayout);
+      window.removeEventListener('scroll', onLayout);
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -52,7 +113,7 @@ export default function Downloads() {
             SafeHaven
           </Link>
           <nav>
-            <Link href="/" className={styles.navButton}><House size={14} /> Home</Link>
+            <Link href="/" className={styles.navButton}>Back to Home</Link>
           </nav>
         </header>
 
@@ -67,35 +128,22 @@ export default function Downloads() {
               <p className={styles.heroSubtitle}>
                 Once installed, the app works exactly like the utility you choose.
                 Your safety tools stay hidden until you unlock them with your credentials.
-                On desktop? Hover the button on any cover below to scan its QR code and install directly on your phone.
               </p>
             </div>
           </section>
 
-          <section className={styles.appGrid}>
+          <section
+            className={styles.appGrid}
+            ref={gridRef}
+            onMouseMove={(event) => {
+              setPointer({ x: event.clientX, y: event.clientY, inside: true });
+            }}
+            onMouseLeave={() => {
+              setPointer({ x: null, y: null, inside: false });
+            }}
+          >
             {APPS.map((app) => (
-              <Link key={app.theme} href={`/preview/${app.theme}`} className={styles.appCard}>
-                <div className={styles.cardTop}>
-                  <span className={styles.cardTag}>{app.tag}</span>
-                  <img src={app.icon} alt="" className={styles.cardIcon} />
-                </div>
-                <div className={styles.cardBody}>
-                  <h2 className={styles.cardName}>{app.name}</h2>
-                  <p className={styles.cardDesc}>{app.description}</p>
-                </div>
-                <div className={styles.cardCta}>
-                  <span className={styles.ctaBtn}>
-                    <app.BtnIcon size={16} />
-                    Select Cover
-                  </span>
-                  {app.qr && (
-                    <span className={styles.qrPopover}>
-                      <img src={app.qr} alt="Scan to install on mobile" className={styles.qrPopoverImg} />
-                      <span className={styles.qrPopoverLabel}>Scan to open on your phone</span>
-                    </span>
-                  )}
-                </div>
-              </Link>
+              <MotionAppCard key={app.theme} app={app} pointer={pointer} layoutTick={layoutTick} />
             ))}
           </section>
         </main>

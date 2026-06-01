@@ -28,6 +28,7 @@ const APPS = {
     icon: '/resources/images/logos/calculator_icon.png',
     appleTouchIcon: '/resources/images/logos/calculator_icon_192x192.png',
     manifestUrl: '/manifests/calculator.json',
+    qr: '/resources/images/calculator-qr.png',
     themeColor: '#1a1a2e',
   },
   news: {
@@ -38,6 +39,7 @@ const APPS = {
     icon: '/resources/images/logos/news_icon.png',
     appleTouchIcon: '/resources/images/logos/news_icon_192x192.png',
     manifestUrl: '/manifests/news.json',
+    qr: '/resources/images/news-qr.png',
     themeColor: '#0d1b2a',
   },
   weather: {
@@ -48,6 +50,7 @@ const APPS = {
     icon: '/resources/images/logos/weather_icon.png',
     appleTouchIcon: '/resources/images/logos/weather_icon_192x192.png',
     manifestUrl: '/manifests/weather.json',
+    qr: '/resources/images/weather-qr.png',
     themeColor: '#0c2340',
   },
 };
@@ -343,6 +346,18 @@ export default function AppPreview({ themeKey }) {
               <p className={styles.panicText}>You can also set up a Duress Password at signup (or add one later in your settings). If you are ever forced to open the app, entering this specific code bypasses your real data and triggers a completely safe, decoy interface. Your sensitive information stays hidden, invisible, and secure&mdash;every single time.</p>
             </div>
           </section>
+
+          {app.qr && (
+            <section className={`${styles.section} ${styles.qrSection}`}>
+              <div className={styles.qrCard}>
+                <img src={app.qr} alt={`QR code to open ${app.name} on mobile`} className={styles.qrImage} />
+                <div className={styles.qrCopy}>
+                  <strong>Open on your phone</strong>
+                  <span>Hover to enlarge, then scan to install this cover.</span>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* CTAs */}
           <div className={styles.ctaSection}>

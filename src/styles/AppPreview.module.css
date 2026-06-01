@@ -561,6 +561,75 @@
   margin: 0;
 }
 
+/* ── QR install ── */
+.qrSection {
+  align-items: center;
+  overflow: visible;
+}
+
+.qrCard {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  width: min(100%, 440px);
+  padding: 14px 16px;
+  border: 1px solid rgba(232, 223, 212, 0.72);
+  border-radius: 22px;
+  background: rgba(252, 250, 247, 0.62);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 12px 28px rgba(54, 46, 40, 0.06);
+  overflow: visible;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.qrCard:hover {
+  z-index: 8;
+  transform: translateY(-3px);
+  border-color: rgba(201, 125, 87, 0.55);
+  box-shadow: 0 22px 46px rgba(54, 46, 40, 0.14);
+}
+
+.qrImage {
+  width: 88px;
+  height: 88px;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 8px 20px rgba(54, 46, 40, 0.08);
+  transform-origin: center;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+}
+
+.qrCard:hover .qrImage {
+  transform: scale(1.72);
+  box-shadow: 0 22px 48px rgba(34, 30, 24, 0.26);
+}
+
+.qrCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  min-width: 0;
+}
+
+.qrCopy strong {
+  font-size: 15px;
+  color: var(--color-foreground);
+  letter-spacing: -0.01em;
+}
+
+.qrCopy span {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
 /* ── CTA ── */
 .ctaSection {
   position: sticky;
@@ -685,6 +754,14 @@
 
   .ctaSection {
     border-radius: 24px;
+  }
+
+  .qrCard {
+    width: 100%;
+  }
+
+  .qrCard:hover .qrImage {
+    transform: scale(1.28);
   }
 
   .screensTrack {
