@@ -1,26 +1,29 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Home, Siren, Bot, Users, BookLock, MapPin } from 'lucide-react';
+import { Phone } from '../../components/marketing/index-phone';
+import { CalculatorScreen, CalculatorSciScreen, HomeScreen, SosScreen, ChatScreen, FriendsScreen, SafeBotScreen, JournalScreen, AidScreen, AidOverviewScreen } from '../../components/marketing/index-screens';
 import styles from '../../styles/AppPreview.module.css';
 import landingStyles from '../../styles/CoverPages.module.css';
+
+const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
+
+const PRIVATE_FEATURES = [
+  { Icon: Home,     name: 'Your Personal Dashboard',        desc: 'A centralized, discreet space for your SOS protocols, trusted contacts, and daily grounding, all accessible the moment you need it.' },
+  { Icon: Siren,    name: 'One-Tap Emergency Alert',        desc: "Instantly share your live location with trusted contacts. Coming soon: Passive, silent AI integration that reads your situation and briefs 911 dispatchers so you don't have to." },
+  { Icon: Bot,      name: 'Always-Available Support',       desc: 'Need a safe ear at 3:00 AM? SafeBot is here 24/7 to listen, help you navigate your options, and provide resources, all while keeping your identity fully anonymous.' },
+  { Icon: Users,    name: 'A Community That Understands',   desc: 'Connect in a private, friend-gated, and completely anonymous network. No real names, no photos, and no digital trace left behind.' },
+  { Icon: BookLock, name: 'Safe Evidence Documentation',    desc: "Record photos, audio, or text notes without them ever appearing in your device's primary gallery or storage. Your experiences are yours to keep, securely encrypted." },
+  { Icon: MapPin,   name: 'Context-Aware Resources',        desc: 'Find local support including shelters, legal aid, and counseling with precision and privacy. Our AI provides clear summaries of exactly what services they offer, so you know what to expect before you go.' },
+];
 
 const APPS = {
   calculator: {
     name: 'Calculator Pro',
-    developer: 'DevTools Inc.',
-    category: 'Utilities',
-    rating: '4.8',
-    reviews: '12.4K',
-    size: '8.2 MB',
+    tagline: 'This interface is a fully encrypted vault designed for the moments you need it most. Masked as a tool for math so your safety is never compromised.',
     description:
-      'The most powerful calculator on your device. Supports basic arithmetic, scientific functions, calculation history, and unit conversions. Clean interface with no ads or tracking.',
-    features: [
-      'Scientific & basic modes',
-      'Calculation history',
-      'Unit conversions',
-      'Customizable display',
-      'Dark mode support',
-    ],
+      "You shouldn't have to compromise your safety for the sake of privacy. SafeHaven provides a secure, hidden sanctuary that blends perfectly into your device, disguised as a standard scientific calculator. To everyone else, it's just a tool for math. To you, it's a lifeline.",
     icon: '/resources/images/logos/calculator_icon.png',
     appleTouchIcon: '/resources/images/logos/calculator_icon_192x192.png',
     manifestUrl: '/manifests/calculator.json',
@@ -28,20 +31,9 @@ const APPS = {
   },
   news: {
     name: 'Daily News Reader',
-    developer: 'Newsroom Labs',
-    category: 'News',
-    rating: '4.6',
-    reviews: '8.1K',
-    size: '6.4 MB',
+    tagline: 'This interface is a fully encrypted vault designed for the moments you need it most. Masked as a news reader so your safety is never compromised.',
     description:
-      'Your personalized daily briefing. Get top headlines from trusted sources curated by topic and location. Distraction-free reading with no algorithm manipulation.',
-    features: [
-      'Top stories by category',
-      'Offline reading mode',
-      'No ad tracking',
-      'Clean reader view',
-      'Customizable topics',
-    ],
+      "You shouldn't have to choose between your safety and your privacy. SafeHaven gives you both — hidden inside a news reader. Anyone who opens it sees a legitimate app with real live headlines. There is nothing here to find — unless you want there to be.",
     icon: '/resources/images/logos/news_icon.png',
     appleTouchIcon: '/resources/images/logos/news_icon_192x192.png',
     manifestUrl: '/manifests/news.json',
@@ -49,25 +41,49 @@ const APPS = {
   },
   weather: {
     name: 'Weather Now',
-    developer: 'SkyData Apps',
-    category: 'Weather',
-    rating: '4.7',
-    reviews: '21.2K',
-    size: '11.1 MB',
+    tagline: 'This interface is a fully encrypted vault designed for the moments you need it most. Masked as a weather app so your safety is never compromised.',
     description:
-      'Accurate, real-time forecasts for your location. Get hourly and 7-day outlooks, precipitation radar, UV index, and severe weather alerts — all in one clean app.',
-    features: [
-      'Hourly & 7-day forecast',
-      'Precipitation radar',
-      'Severe weather alerts',
-      'Multiple saved locations',
-      'Widgets for home screen',
-    ],
+      "You shouldn't have to choose between your safety and your privacy. SafeHaven gives you both — hidden inside a weather app. Simple. Everyday. The kind of app no one looks twice at. There is nothing here to find — unless you want there to be.",
     icon: '/resources/images/logos/weather_icon.png',
     appleTouchIcon: '/resources/images/logos/weather_icon_192x192.png',
     manifestUrl: '/manifests/weather.json',
     themeColor: '#0c2340',
   },
+};
+
+const SCREEN_SETS = {
+  calculator: [
+    { Component: CalculatorScreen,    label: 'Cover App' },
+    { Component: CalculatorSciScreen, label: 'Scientific Mode' },
+    { Component: HomeScreen,          label: 'Private Home' },
+    { Component: SosScreen,           label: 'SOS Alert' },
+    { Component: ChatScreen,          label: 'Messages' },
+    { Component: SafeBotScreen,       label: 'SafeBot' },
+    { Component: FriendsScreen,       label: 'Friends' },
+    { Component: JournalScreen,       label: 'Journal' },
+    { Component: AidScreen,           label: 'Find Resources' },
+    { Component: AidOverviewScreen,   label: 'Resource Detail' },
+  ],
+  news: [
+    { Component: HomeScreen,        label: 'Private Home' },
+    { Component: SosScreen,         label: 'SOS Alert' },
+    { Component: ChatScreen,        label: 'Messages' },
+    { Component: SafeBotScreen,     label: 'SafeBot' },
+    { Component: FriendsScreen,     label: 'Friends' },
+    { Component: JournalScreen,     label: 'Journal' },
+    { Component: AidScreen,         label: 'Find Resources' },
+    { Component: AidOverviewScreen, label: 'Resource Detail' },
+  ],
+  weather: [
+    { Component: HomeScreen,        label: 'Private Home' },
+    { Component: SosScreen,         label: 'SOS Alert' },
+    { Component: ChatScreen,        label: 'Messages' },
+    { Component: SafeBotScreen,     label: 'SafeBot' },
+    { Component: FriendsScreen,     label: 'Friends' },
+    { Component: JournalScreen,     label: 'Journal' },
+    { Component: AidScreen,         label: 'Find Resources' },
+    { Component: AidOverviewScreen, label: 'Resource Detail' },
+  ],
 };
 
 function InstallModal({ isOpen, onClose, onInstall, canInstall, platform, appName }) {
@@ -119,6 +135,7 @@ function InstallModal({ isOpen, onClose, onInstall, canInstall, platform, appNam
 
 export default function AppPreview({ themeKey }) {
   const app = APPS[themeKey];
+  const screens = SCREEN_SETS[themeKey] || [];
 
   const [installPrompt, setInstallPrompt] = useState(null);
   const [installed, setInstalled] = useState(false);
@@ -179,56 +196,78 @@ export default function AppPreview({ themeKey }) {
       />
 
       <div className={styles.page}>
-        <header className={styles.header}>
-          <Link href="/downloads" className={styles.backLink}>← Back</Link>
-        </header>
+        <div className={`${styles.heroBand} ${themeKey === 'calculator' ? styles.heroBandBg : ''}`}>
+          <header className={styles.header}>
+            <Link href="/" className={styles.brand}>
+              <img src={LOGO_SRC} alt="" className={styles.logo} />
+              SafeHaven
+            </Link>
+            <Link href="/downloads" className={styles.backLink}>← Back</Link>
+          </header>
+
+          {/* App identity row — left-aligned at header margin */}
+          <div className={styles.appHeroWrap}>
+            <div className={styles.appHero}>
+              <img src={app.icon} alt="" className={styles.appIcon} />
+              <div className={styles.appMeta}>
+                <h1 className={styles.appName}>{app.name}</h1>
+                {app.tagline && <p className={styles.appTagline}>{app.tagline}</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Phone mockup gallery */}
+          {screens.length > 0 && (
+            <div className={styles.screensSection}>
+              <div className={styles.screensTrack}>
+                <div className={styles.screensScroll}>
+                  {screens.map(({ Component, label }) => (
+                    <div className={styles.screenItem} key={label}>
+                      <div className={styles.phoneScaleWrap}>
+                        <div className={styles.phoneScale}>
+                          <Phone><Component /></Phone>
+                        </div>
+                      </div>
+                      <p className={styles.screenLabel}>{label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         <main className={styles.main}>
-          {/* App identity row */}
-          <div className={styles.appHero}>
-            <img src={app.icon} alt="" className={styles.appIcon} />
-            <div className={styles.appMeta}>
-              <h1 className={styles.appName}>{app.name}</h1>
-              <p className={styles.appDev}>{app.developer}</p>
-              <span className={styles.categoryBadge}>{app.category}</span>
-            </div>
-          </div>
-
-          {/* Stats row */}
-          <div className={styles.statsRow}>
-            <div className={styles.statItem}>
-              <strong>{app.rating}</strong>
-              <span>★★★★★</span>
-              <small>{app.reviews} ratings</small>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.statItem}>
-              <strong>{app.size}</strong>
-              <span>Size</span>
-            </div>
-            <div className={styles.statDivider} />
-            <div className={styles.statItem}>
-              <strong>4+</strong>
-              <span>Age</span>
-            </div>
-          </div>
-
-          {/* Description */}
+          {/* Cover app pitch */}
           <section className={styles.section}>
-            <p className={styles.description}>{app.description}</p>
+            <h2 className={styles.pitchTitle}>SafeHaven: A Private Sanctuary, Built into Your Daily Tools</h2>
+            <p className={styles.pitch}>{app.description}</p>
           </section>
 
-          {/* Features */}
+          <div className={styles.sectionDivider} />
+
+          {/* Private features */}
           <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>What&apos;s included</h2>
-            <ul className={styles.featureList}>
-              {app.features.map((f) => (
-                <li key={f} className={styles.featureItem}>
-                  <span className={styles.featureCheck}>✓</span>
-                  {f}
+            <p className={styles.privateLabel}>Built for the moments that matter</p>
+            <ul className={styles.privateList}>
+              {PRIVATE_FEATURES.map(({ Icon, name, desc }) => (
+                <li key={name} className={styles.privateItem}>
+                  <span className={styles.privateIcon}><Icon size={16} /></span>
+                  <div>
+                    <strong className={styles.privateName}>{name}</strong>
+                    <span className={styles.privateDesc}>{desc}</span>
+                  </div>
                 </li>
               ))}
             </ul>
+            <div className={styles.panicBlock}>
+              <p className={styles.panicLabel}>Need an exit strategy?</p>
+              <p className={styles.panicText}>If you ever need to leave in a hurry, simply swipe left or right, tap the red lock icon, or press Escape. These are your Panic Exits&mdash;they instantly wipe your current session and clear the cache, leaving absolutely no trace of your activity.</p>
+            </div>
+            <div className={styles.panicBlock}>
+              <p className={styles.panicLabel}>Designed for high-pressure moments:</p>
+              <p className={styles.panicText}>You can also set up a Duress Password at signup (or add one later in your settings). If you are ever forced to open the app, entering this specific code bypasses your real data and triggers a completely safe, decoy interface. Your sensitive information stays hidden, invisible, and secure&mdash;every single time.</p>
+            </div>
           </section>
 
           {/* CTAs */}

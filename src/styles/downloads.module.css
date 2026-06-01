@@ -60,6 +60,9 @@
   color: #fff;
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .navButton:hover {

@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { Calculator, Newspaper, CloudSun } from 'lucide-react';
+import { Calculator, Newspaper, CloudSun, House } from 'lucide-react';
 import styles from '../styles/downloads.module.css';
 
 const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
@@ -52,7 +52,7 @@ export default function Downloads() {
             SafeHaven
           </Link>
           <nav>
-            <Link href="/" className={styles.navButton}>← Home</Link>
+            <Link href="/" className={styles.navButton}><House size={14} /> Home</Link>
           </nav>
         </header>
 
