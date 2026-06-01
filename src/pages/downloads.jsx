@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { ShieldIcon } from '../components/marketing/index-icons';
+import { Calculator, Newspaper, CloudSun } from 'lucide-react';
 import styles from '../styles/downloads.module.css';
 
 const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
@@ -12,6 +12,8 @@ const APPS = [
     tag: 'Most Popular',
     description: 'Fully functional calculator. Hides your journal and chat behind your username and password.',
     icon: '/resources/images/logos/calculator_icon.png',
+    qr: '/resources/images/calculator-qr.png',
+    BtnIcon: Calculator,
   },
   {
     theme: 'news',
@@ -19,6 +21,8 @@ const APPS = [
     tag: 'Low-Key Cover',
     description: 'Live daily headlines. Safety tools hidden behind a small orange button in the lower left corner.',
     icon: '/resources/images/logos/news_icon.png',
+    qr: '/resources/images/news-qr.png',
+    BtnIcon: Newspaper,
   },
   {
     theme: 'weather',
@@ -26,6 +30,8 @@ const APPS = [
     tag: 'Simple & Clean',
     description: 'Real-time local forecasts. A disguised safe space.',
     icon: '/resources/images/logos/weather_icon.png',
+    qr: '/resources/images/weather-qr.png',
+    BtnIcon: CloudSun,
   },
 ];
 
@@ -60,7 +66,8 @@ export default function Downloads() {
               </h1>
               <p className={styles.heroSubtitle}>
                 Once installed, the app works exactly like the utility you choose.
-                Your safety tools stay hidden until you unlock them with your username and password.
+                Your safety tools stay hidden until you unlock them with your credentials.
+                On desktop? Hover the button on any cover below to scan its QR code and install directly on your phone.
               </p>
             </div>
           </section>
@@ -78,9 +85,15 @@ export default function Downloads() {
                 </div>
                 <div className={styles.cardCta}>
                   <span className={styles.ctaBtn}>
-                    <ShieldIcon className={styles.ctaBtnIcon} />
+                    <app.BtnIcon size={16} />
                     Select Cover
                   </span>
+                  {app.qr && (
+                    <span className={styles.qrPopover}>
+                      <img src={app.qr} alt="Scan to install on mobile" className={styles.qrPopoverImg} />
+                      <span className={styles.qrPopoverLabel}>Scan to open on your phone</span>
+                    </span>
+                  )}
                 </div>
               </Link>
             ))}
