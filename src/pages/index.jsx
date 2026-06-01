@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle,
   BriefcaseMedical,
@@ -226,6 +226,45 @@ function Phone({ children, float = false, callout }) {
   );
 }
 
+function MobileSlideshow({ items, renderItem, className }) {
+  const [active, setActive] = useState(0);
+  const touchStartX = useRef(null);
+  const go = (i) => setActive(Math.max(0, Math.min(i, items.length - 1)));
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 40) go(active + (dx > 0 ? 1 : -1));
+    touchStartX.current = null;
+  };
+  return (
+    <div className={`${styles.mobileSlideshow} ${className || ''}`}>
+      <div className={styles.slideshowOuter}>
+        <div
+          className={styles.slideshowTrack}
+          style={{ transform: `translateX(-${active * 100}%)` }}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          {items.map((item, i) => (
+            <div className={styles.slideshowSlide} key={i}>{renderItem(item, i)}</div>
+          ))}
+        </div>
+      </div>
+      <div className={styles.slideshowDots}>
+        {items.map((_, i) => (
+          <button
+            key={i}
+            className={`${styles.slideshowDot} ${i === active ? styles.slideshowDotActive : ''}`}
+            onClick={() => go(i)}
+            aria-label={`Slide ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CalculatorScreen() {
   const keys = ['⌫', 'AC', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '−', '1', '2', '3', '+', '+/-', '0', '.', '='];
   return (
@@ -419,13 +458,12 @@ function HowItWorks() {
         <h2>Hidden in plain sight.</h2>
         <p>SafeHaven lives behind everyday utility apps, then opens into a private safety space only you know how to reach.</p>
       </div>
-      <div className={styles.steps}>
+      {/* Desktop */}
+      <div className={`${styles.steps} ${styles.desktopSteps}`}>
         {steps.map((step, index) => (
           <div className={`${styles.step} ${styles.reveal}`} data-reveal key={step.title}>
             <div className={styles.stepPhoneWrap}>
-              <Phone callout={step.callout}>
-                {step.screen}
-              </Phone>
+              <Phone callout={step.callout}>{step.screen}</Phone>
             </div>
             <span className={styles.stepNum}>{index + 1}</span>
             <h3>{step.title}</h3>
@@ -433,6 +471,18 @@ function HowItWorks() {
           </div>
         ))}
       </div>
+      {/* Mobile slideshow */}
+      <MobileSlideshow
+        items={steps}
+        renderItem={(step, index) => (
+          <div className={styles.mobileSlide}>
+            <Phone callout={step.callout}>{step.screen}</Phone>
+            <span className={styles.stepNum}>{index + 1}</span>
+            <h3>{step.title}</h3>
+            <p>{step.copy}</p>
+          </div>
+        )}
+      />
     </section>
   );
 }
@@ -458,6 +508,36 @@ function Capability({ flip = false, label, title, lead, screen, items, callout }
   );
 }
 
+const CAPABILITIES = [
+  {
+    label: 'Emergency SOS',
+    title: 'Reach safety in one tap',
+    lead: 'When seconds count, a single press alerts everyone you trust with your location and a timestamp.',
+    screen: <SosScreen />,
+    callout: <div className={`${styles.callout} ${styles.calloutAccent} ${styles.calloutSosButton}`}><span className={styles.calloutLine} /><strong>Send SOS button</strong><small>Alerts trusted contacts in chat</small></div>,
+    items: [['Trusted contacts', 'Notified in real time.'], ['Location control', 'Shared only when you choose.'], ['Panic exit', 'Hide the private app instantly.']],
+    flip: false,
+  },
+  {
+    label: 'Support & Community',
+    title: 'You are never alone',
+    lead: 'Talk to a trauma-informed advocate, then connect anonymously only with accepted friends.',
+    screen: <ChatScreen />,
+    callout: <div className={`${styles.callout} ${styles.calloutChatList}`}><span className={styles.calloutLine} /><strong>SafeBot + friend chats</strong><small>Message accepted friends only</small></div>,
+    items: [['AI advocate', 'Safety planning at any hour.'], ['Accepted friends', 'Messages stay controlled.'], ['Quiet interface', 'Built for repeated use.']],
+    flip: true,
+  },
+  {
+    label: 'Resources Nearby',
+    title: 'Find help close to home',
+    lead: 'Discover shelters, legal aid, financial help, and counseling near you with clear next actions.',
+    screen: <AidScreen />,
+    callout: <div className={`${styles.callout} ${styles.calloutAidFilters}`}><span className={styles.calloutLine} /><strong>Filter nearby resources</strong><small>Shelter, legal, financial, counseling</small></div>,
+    items: [['Local results', 'Sorted around your location.'], ['Real organizations', 'Shelters, legal aid, and counseling.'], ['Context-aware', 'Searches are not stored on-device.']],
+    flip: false,
+  },
+];
+
 function Capabilities() {
   return (
     <section className={styles.section} id="capabilities">
@@ -466,33 +546,34 @@ function Capabilities() {
         <h2>Everything you need, quietly.</h2>
         <p>Each tool mirrors the actual private app experience: fast, warm, and designed for stressful moments.</p>
       </div>
-      <div className={styles.capabilities}>
-        <Capability
-          label="Emergency SOS"
-          title="Reach safety in one tap"
-          lead="When seconds count, a single press alerts everyone you trust with your location and a timestamp."
-          screen={<SosScreen />}
-          callout={<div className={`${styles.callout} ${styles.calloutAccent} ${styles.calloutSosButton}`}><span className={styles.calloutLine} /><strong>Send SOS button</strong><small>Alerts trusted contacts in chat</small></div>}
-          items={[['Trusted contacts', 'Notified in real time.'], ['Location control', 'Shared only when you choose.'], ['Panic exit', 'Hide the private app instantly.']]}
-        />
-        <Capability
-          flip
-          label="Support & Community"
-          title="You are never alone"
-          lead="Talk to a trauma-informed advocate, then connect anonymously only with accepted friends."
-          screen={<ChatScreen />}
-          callout={<div className={`${styles.callout} ${styles.calloutChatList}`}><span className={styles.calloutLine} /><strong>SafeBot + friend chats</strong><small>Message accepted friends only</small></div>}
-          items={[['AI advocate', 'Safety planning at any hour.'], ['Accepted friends', 'Messages stay controlled.'], ['Quiet interface', 'Built for repeated use.']]}
-        />
-        <Capability
-          label="Resources Nearby"
-          title="Find help close to home"
-          lead="Discover shelters, legal aid, financial help, and counseling near you with clear next actions."
-          screen={<AidScreen />}
-          callout={<div className={`${styles.callout} ${styles.calloutAidFilters}`}><span className={styles.calloutLine} /><strong>Filter nearby resources</strong><small>Shelter, legal, financial, counseling</small></div>}
-          items={[['Local results', 'Sorted around your location.'], ['Real organizations', 'Shelters, legal aid, and counseling.'], ['Context-aware', 'Searches are not stored on-device.']]}
-        />
+      {/* Desktop */}
+      <div className={`${styles.capabilities} ${styles.desktopCaps}`}>
+        {CAPABILITIES.map((cap) => (
+          <Capability key={cap.title} {...cap} />
+        ))}
       </div>
+      {/* Mobile slideshow */}
+      <MobileSlideshow
+        items={CAPABILITIES}
+        renderItem={(cap) => (
+          <div className={styles.mobileSlide}>
+            <Phone float callout={cap.callout}>{cap.screen}</Phone>
+            <div className={styles.mobileCapText}>
+              <span>{cap.label}</span>
+              <h3>{cap.title}</h3>
+              <p>{cap.lead}</p>
+              <div className={styles.capList}>
+                {cap.items.map(([itemTitle, copy]) => (
+                  <div className={styles.capItem} key={itemTitle}>
+                    <span><Check size={14} /></span>
+                    <div><strong>{itemTitle}</strong><small>{copy}</small></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      />
     </section>
   );
 }
@@ -577,6 +658,18 @@ export default function LandingPage() {
             </div>
           </section>
 
+          {/* Mobile-only: phones live BELOW the banner, not inside it */}
+          <div className={styles.mobileHeroPhones}>
+            <div className={styles.heroPhonesWrap}>
+              <div className={styles.heroPhone}>
+                <Phone float><HomeScreen /></Phone>
+              </div>
+              <div className={`${styles.heroPhone} ${styles.heroPhoneTilted}`}>
+                <Phone float><CalculatorScreen /></Phone>
+              </div>
+            </div>
+          </div>
+
           <div className={styles.tickerContainer}>
             <div className={styles.tickerTrack}>
               {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, index) => (
@@ -594,18 +687,29 @@ export default function LandingPage() {
               <h2 className={styles.sectionTitle}>Hidden protection.</h2>
               <p className={styles.sectionSubtitle}>Six tools, quietly working together — so you can stay safe, stay private, and stay in control.</p>
             </div>
-            <div className={styles.bentoGrid}>
+            {/* Desktop grid */}
+            <div className={`${styles.bentoGrid} ${styles.desktopBento}`}>
               {FEATURES.map(({ Icon, tag, title, body }) => (
                 <div className={`${styles.bentoCard} ${styles.reveal}`} data-reveal key={title}>
-                  <span className={styles.cardIconCircle}>
-                    <Icon className={styles.cardIcon} />
-                  </span>
+                  <span className={styles.cardIconCircle}><Icon className={styles.cardIcon} /></span>
                   <div className={styles.cardTag}>{tag}</div>
                   <h3>{title}</h3>
                   <p>{body}</p>
                 </div>
               ))}
             </div>
+            {/* Mobile slideshow */}
+            <MobileSlideshow
+              items={FEATURES}
+              renderItem={({ Icon, tag, title, body }) => (
+                <div className={styles.mobileBentoSlide}>
+                  <span className={styles.cardIconCircle}><Icon className={styles.cardIcon} /></span>
+                  <div className={styles.cardTag}>{tag}</div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                </div>
+              )}
+            />
           </section>
 
           <section className={styles.missionSection}>

@@ -1,17 +1,65 @@
 /* marketing-responsive.css — Responsive / media query overrides */
 
+/* ── Slideshow base (always defined, hidden until mobile) ──────── */
+.mobileSlideshow { display: none; }
+.mobileHeroPhones { display: none; }
+
+.slideshowOuter {
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 100%;
+}
+
+.slideshowTrack {
+  display: flex;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.slideshowSlide {
+  flex: 0 0 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.slideshowDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding-bottom: 8px;
+}
+
+.slideshowDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border, #e8e0d4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.slideshowDotActive {
+  background: var(--color-accent);
+  width: 22px;
+  border-radius: 4px;
+}
+
+/* ── 900px ─────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .bentoGrid { grid-template-columns: repeat(3, 1fr); }
   .header { padding: 24px; }
   .heroTitle { font-size: 64px; }
 }
 
-@media (max-width: 600px) {
-  .bentoGrid { grid-template-columns: 1fr; }
-  .heroSection { padding: 120px 24px 80px; }
-  .heroTitle { font-size: 48px; }
-}
-
+/* ── 860px ─────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .steps,
   .capability,
@@ -20,13 +68,8 @@
     gap: 36px;
   }
 
-  .capabilityFlip .capPhone {
-    order: 0;
-  }
-
-  .capText {
-    text-align: center;
-  }
+  .capabilityFlip .capPhone { order: 0; }
+  .capText { text-align: center; }
 
   .capList {
     max-width: 360px;
@@ -35,29 +78,250 @@
   }
 }
 
+/* ── 600px — full mobile ───────────────────────────────────────── */
 @media (max-width: 600px) {
-  .section {
-    padding-top: 72px;
+  /* ── General ───────────────────────────────────────────── */
+  .section { padding-top: 72px; }
+  .bentoGrid { grid-template-columns: 1fr; }
+  .heroSection { padding: 80px 24px 56px; }
+  .heroTitle {
+    font-size: 76px;
+    margin-bottom: 36px;
+    -webkit-text-stroke: 1.5px rgba(252, 250, 247, 0.45);
+    paint-order: stroke fill;
   }
 
+  .textGradient {
+    -webkit-text-stroke: 0;
+    paint-order: normal;
+  }
+  .heroSubtitle { font-size: 18px; font-weight: 400; max-width: 100%; }
+  .primaryCta { font-size: 17px; padding: 18px 28px; width: 100%; justify-content: center; }
+  .ctaIconCircle { width: 48px; height: 48px; }
+  .buttonIconCta { width: 22px; height: 22px; }
+  .badge { font-size: 13px; }
+
+  /* ── Hero: text only, hide phones column inside banner ──── */
+  .heroSplit {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .heroTextCol {
+    padding-left: 0;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+  .badge { display: none; }
+  .navButton { font-size: 15px; padding: 11px 22px; }
+  .buttonIcon { width: 17px; height: 17px; }
+  .heroActions { align-items: center; width: 100%; margin-top: 28px; }
+  .heroPhonesCol { display: none; }
+
+  /* ── Below-banner phones section ───────────────────────── */
+  .mobileHeroPhones {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 0 56px;
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+
+  /* Size the wrap so both overlapping phones stay on screen.
+     Front phone (HomeScreen): right 0, 226px wide.
+     Back phone (tilted): right 60px → needs 286px total.
+     300px gives 14px clearance on the left. */
+  .mobileHeroPhones .heroPhonesWrap {
+    width: 300px;
+    height: 490px;
+  }
+
+  /* ── Only clip horizontally so float animation isn't cut ── */
+  .slideshowOuter { overflow-x: hidden; overflow-y: visible; }
+  .slideshowSlide { padding-top: 16px; } /* room for upward float */
+
+  /* ── Phone sizing ───────────────────────────────────────── */
   .phone {
     width: 226px;
     height: 464px;
     border-radius: 36px;
   }
 
+  /* Scale so mock content fills height exactly:
+     available = 464 - 18px padding = 446px
+     446 / 927 = 0.481 */
   .phoneScreen {
-    --phone-scale: 0.495;
+    --phone-scale: 0.481;
     border-radius: 28px;
   }
 
-  .callout {
-    position: static;
-    display: inline-block;
-    margin: 14px auto 0;
+  /* ── Show slideshows, hide desktop-only layouts ─────────── */
+  .mobileSlideshow { display: block; width: 100%; }
+  .desktopSteps { display: none !important; }
+  .desktopCaps  { display: none !important; }
+  .desktopBento { display: none !important; }
+
+  /* ── Callout: hide line, stack centered below phone ─────── */
+  .calloutLine { display: none; }
+
+  .phoneWrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .callout::after {
-    display: none;
+  .callout {
+    position: static !important;
+    width: auto !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    display: block;
+    margin: 12px auto 0;
+    text-align: left;
+  }
+
+  /* ── Slide content ──────────────────────────────────────── */
+  .mobileSlide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 24px 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobileSlide .stepNum { margin-top: 18px; }
+
+  .mobileSlide > h3 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 8px 0 6px;
+  }
+
+  .mobileSlide > p {
+    font-size: 14px;
+    color: var(--color-muted);
+    line-height: 1.55;
+    max-width: 280px;
+    margin: 0;
+  }
+
+  /* ── Capability text block inside slide ─────────────────── */
+  .mobileCapText {
+    text-align: center;
+    margin-top: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobileCapText > span {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .mobileCapText > h3 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 10px;
+  }
+
+  .mobileCapText > p {
+    font-size: 14px;
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .mobileCapText .capList {
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  /* ── Mission / Built with empathy ──────────────────────── */
+  .missionSection {
+    padding: 48px 24px 56px;
+  }
+
+  .missionRow {
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .missionContent {
+    text-align: center;
+  }
+
+  .missionTitle {
+    font-size: 26px;
+    margin-bottom: 16px;
+  }
+
+  .missionText {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .contributors {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 100%;
+    align-self: auto;
+  }
+
+  .contributorAvatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .contributorName {
+    font-size: 10px;
+    padding: 2px 8px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 72px;
+  }
+
+  /* ── Bento dark card ────────────────────────────────────── */
+  .mobileBentoSlide {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: var(--color-foreground);
+    border-radius: 20px;
+    padding: 28px 24px;
+    color: white;
+    width: calc(100% - 48px);
+    min-height: 220px;
+    box-shadow: 0 4px 20px rgba(54, 46, 40, 0.18), 0 1px 4px rgba(54, 46, 40, 0.10);
+    box-sizing: border-box;
+  }
+
+  .mobileBentoSlide h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mobileBentoSlide p {
+    font-size: 14px;
+    color: rgba(252, 250, 247, 0.6);
+    line-height: 1.5;
   }
 }
