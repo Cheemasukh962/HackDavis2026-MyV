@@ -169,6 +169,7 @@
   transform: translateY(-6px) scale(1.015);
   border-color: rgba(201, 125, 87, 0.5);
   box-shadow: 0 24px 50px rgba(20, 15, 10, 0.30);
+  z-index: 10;
 }
 
 .appCard:hover::before {
