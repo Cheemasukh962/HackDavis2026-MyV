@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { ChevronDown, Home, Siren, Bot, Users, BookLock, MapPin } from 'lucide-react';
 import { Phone } from '../../components/marketing/index-phone';
-import { CalculatorScreen, CalculatorSciScreen, HomeScreen, SosScreen, ChatScreen, FriendsScreen, SafeBotScreen, JournalScreen, AidScreen, AidOverviewScreen } from '../../components/marketing/index-screens';
+import { WeatherScreen, CalculatorScreen, CalculatorSciScreen, NewsPlusScreen, WorldNewsScreen, SportsNewsScreen, NewsSearchScreen, NewsArticleScreen, HomeScreen, SosScreen, ChatScreen, FriendsScreen, SafeBotScreen, JournalScreen, AidScreen, AidOverviewScreen } from '../../components/marketing/index-screens';
 import styles from '../../styles/AppPreview.module.css';
 import landingStyles from '../../styles/CoverPages.module.css';
 
@@ -69,6 +69,11 @@ const SCREEN_SETS = {
     { Component: AidOverviewScreen,   label: 'Resource Detail' },
   ],
   news: [
+    { Component: NewsPlusScreen,     label: 'News+' },
+    { Component: WorldNewsScreen,    label: 'World' },
+    { Component: SportsNewsScreen,   label: 'Sports' },
+    { Component: NewsArticleScreen,  label: 'Article View' },
+    { Component: NewsSearchScreen,   label: 'Search' },
     { Component: HomeScreen,        label: 'Private Home' },
     { Component: SosScreen,         label: 'SOS Alert' },
     { Component: ChatScreen,        label: 'Messages' },
@@ -79,6 +84,7 @@ const SCREEN_SETS = {
     { Component: AidOverviewScreen, label: 'Resource Detail' },
   ],
   weather: [
+    { Component: WeatherScreen,     label: 'Cover App' },
     { Component: HomeScreen,        label: 'Private Home' },
     { Component: SosScreen,         label: 'SOS Alert' },
     { Component: ChatScreen,        label: 'Messages' },

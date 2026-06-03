@@ -20,10 +20,331 @@ import {
   ChevronLeft,
   Send,
   Phone,
+  Menu,
+  UserCircle,
 } from 'lucide-react';
 import { HistoryIcon, SciToggleIcon, BackspaceIcon, HeartIcon, ClockIcon } from './index-icons';
 import { StatusBar, AppHeader, BottomTabs } from './index-phone';
+import { getSourceBrand } from '../../utils/sourceBrands';
 import styles from '../../styles/marketing/marketing.module.css';
+import weatherStyles from '../../styles/weather-mode/weathercover.module.css';
+
+const NEWS_MOCK_FEEDS = {
+  today: {
+    title: 'Discover',
+    label: 'News+',
+    activeTab: 'today',
+    filters: ['All', 'Tech', 'Science', 'Economy'],
+    hero: {
+      tag: 'Top Story',
+      source: 'Reuters',
+      headline: 'Dow, S&P 500 scale peaks as HPE, Alphabet fuel AI momentum',
+      summary: 'Investors pushed major indexes higher as new infrastructure bets strengthened confidence in the AI buildout.',
+      image: 'https://cdn.zonebourse.com/static/resize/768/432//images/reuters/2026-05/2026-05-28T092715Z_1_LYNXMPEM4R0IW_RTROPTP_4_USA-STOCKS.JPG',
+    },
+    stories: [
+      { source: 'Associated Press', headline: 'Protests, outbreaks and global unrest: May in AP photos', topic: 'In Pictures', image: 'https://www.ap.org/wp-content/uploads/bis-images/62614/AP26148457409326-375x375-f50_50.jpg' },
+      { source: 'Reuters', headline: 'AI-driven labor displacement risks to remain low in near term, Bridgewater says', topic: 'Economy', image: 'linear-gradient(135deg, #14532d 0%, #16a34a 52%, #bbf7d0 100%)' },
+      { source: 'The Guardian', headline: 'European cities prepare for another round of climate votes', topic: 'Climate', image: 'linear-gradient(135deg, #164e63 0%, #0891b2 55%, #a5f3fc 100%)' },
+    ],
+  },
+  world: {
+    title: 'World',
+    label: 'World',
+    activeTab: 'world',
+    filters: ['All', 'Politics', 'Trade', 'Security'],
+    hero: {
+      tag: 'World',
+      source: 'Reuters',
+      headline: 'UN chief gives urgent climate warning as El Nino looms',
+      summary: 'The latest climate briefing warns that warming oceans could intensify heat, storms, and food security pressures.',
+      image: 'https://wmo.int/sites/default/files/styles/prose_1x/public/2026-06/Jul-Aug%202026%20El%20Ni%C3%B1o%20and%20La%20Ni%C3%B1a%20Update%20-%20square.png?itok=7xHJaXYa',
+    },
+    stories: [
+      { source: 'BBC News', headline: 'Diplomats open new round of global security talks', topic: 'Diplomacy', image: 'https://wmo.int/sites/default/files/styles/prose_1x/public/2026-06/Jul-Aug%202026%20El%20Ni%C3%B1o%20and%20La%20Ni%C3%B1a%20Update%20-%20square.png?itok=7xHJaXYa' },
+      { source: 'Al Jazeera', headline: 'Coalition talks stall as deadline approaches', topic: 'Politics', image: 'linear-gradient(135deg, #052e16 0%, #15803d 50%, #bbf7d0 100%)' },
+      { source: 'Associated Press', headline: 'World Cup organizers monitor travel and security plans', topic: 'Global', image: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #bfdbfe 100%)' },
+    ],
+  },
+  sports: {
+    title: 'Sports',
+    label: 'Sports',
+    activeTab: 'sports',
+    filters: ['All', 'NBA', 'Soccer', 'Olympics'],
+    hero: {
+      tag: 'Sports Highlight',
+      source: 'Associated Press',
+      headline: 'Wembanyama and the Spurs host New York to start NBA Finals',
+      summary: "The championship series opens with a new matchup and one of basketball's biggest young stars at center stage.",
+      image: 'https://cdn.nba.com/manage/2026/05/GettyImages_wemby_vs_knicks.png',
+    },
+    stories: [
+      { source: 'ESPN', headline: 'Playoff race heats up as final week tips off', topic: 'NBA', image: 'https://cdn.nba.com/manage/2026/05/GettyImages_wemby_vs_knicks.png' },
+      { source: 'Sports Illustrated', headline: 'World Cup concert series adds four-city summer slate', topic: 'Soccer', image: 'linear-gradient(135deg, #0f172a 0%, #0ea5e9 52%, #bae6fd 100%)' },
+      { source: 'The Athletic', headline: 'Front offices prepare for a pivotal draft window', topic: 'Analysis', image: 'linear-gradient(135deg, #111827 0%, #4b5563 55%, #d1d5db 100%)' },
+    ],
+  },
+};
+
+function newsImageStyle(image) {
+  if (!image) return undefined;
+  if (/^https?:\/\//i.test(image)) {
+    return { backgroundImage: `url("${image.replace(/"/g, '\\"')}")` };
+  }
+  return { background: image };
+}
+
+function NewsKiwiIcon() {
+  return (
+    <span className={styles.newsKiwiIcon} aria-hidden="true">
+      <span />
+    </span>
+  );
+}
+
+function NewsSourceLogo({ source }) {
+  const brand = getSourceBrand(source);
+  const initials = source
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
+  if (brand.domain) {
+    return (
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${brand.domain}&sz=64`}
+        alt=""
+        className={styles.newsMockLogo}
+      />
+    );
+  }
+
+  return (
+    <span className={styles.newsMockLogoFallback} style={brand.color ? { color: brand.color } : undefined}>
+      {initials || 'N'}
+    </span>
+  );
+}
+
+function NewsMockHeader({ title }) {
+  return (
+    <>
+      <StatusBar />
+      <header className={styles.newsMockHeader}>
+        <button type="button" aria-label="Menu"><Menu size={19} /></button>
+        <div>
+          <p><NewsKiwiIcon /> News+</p>
+          <h2>{title}</h2>
+        </div>
+        <img className={styles.newsHeaderLogo} src="/resources/images/logos/news_icon_selected.png" alt="" />
+        <button className={styles.newsHeaderAccount} type="button" aria-label="Account"><UserCircle size={21} /></button>
+      </header>
+    </>
+  );
+}
+
+function NewsFilterRow({ filters }) {
+  return (
+    <div className={styles.newsMockFilterRow} aria-label="Filter stories">
+      {filters.map((filter, index) => (
+        <span className={index === 0 ? styles.newsMockFilterActive : ''} key={filter}>
+          {filter}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function NewsMockTabs({ active }) {
+  const tabs = [
+    { id: 'today', label: 'News+', icon: 'logo' },
+    { id: 'world', label: 'World', icon: 'world' },
+    { id: 'sports', label: 'Sports', icon: 'sports' },
+  ];
+  return (
+    <nav className={styles.newsMockTabs} aria-label="News sections">
+      <div className={styles.newsMockTabsGroup}>
+        {tabs.map((tab) => (
+          <span className={active === tab.id ? styles.newsMockTabActive : ''} key={tab.id}>
+            {tab.icon === 'logo' ? (
+              <img src={active === tab.id ? '/resources/images/logos/news_icon_selected.png' : '/resources/images/logos/news_icon_unselected.png'} alt="" />
+            ) : tab.icon === 'world' ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9.5" />
+                <ellipse cx="12" cy="12" rx="4" ry="9.5" />
+                <line x1="2.5" y1="12" x2="21.5" y2="12" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M8 21h8M12 17v4" />
+                <path d="M6 3h12v8a6 6 0 0 1-12 0V3z" />
+                <path d="M6 7H3a1 1 0 0 0-1 1v1a4 4 0 0 0 4 4" />
+                <path d="M18 7h3a1 1 0 0 1 1 1v1a4 4 0 0 1-4 4" />
+              </svg>
+            )}
+            <small>{tab.label}</small>
+          </span>
+        ))}
+      </div>
+      <span className={`${styles.newsMockSearchTab} ${active === 'search' ? styles.newsMockSearchTabActive : ''}`}>
+        <Search size={21} />
+      </span>
+    </nav>
+  );
+}
+
+function NewsPrivateButton() {
+  return (
+    <span className={styles.newsPrivateButton} aria-hidden="true" />
+  );
+}
+
+function NewsMockStoryRow({ story }) {
+  const brand = getSourceBrand(story.source);
+  return (
+    <article className={styles.newsMockStoryCard}>
+      <span className={styles.newsMockStoryImage} style={newsImageStyle(story.image)} aria-hidden="true" />
+      <div className={styles.newsMockStoryBody}>
+        <span className={styles.newsMockPlusBar}>
+          <span>News+</span>
+        </span>
+        <span className={styles.newsMockCardMeta}>
+          <NewsSourceLogo source={story.source} />
+          <strong style={brand.color ? { color: brand.color } : undefined}>{story.source}</strong>
+          {story.topic && <small>{story.topic}</small>}
+        </span>
+        <h3>{story.headline}</h3>
+        <span className={styles.newsMockDots} aria-hidden="true">...</span>
+      </div>
+    </article>
+  );
+}
+
+function NewsMockFeedScreen({ feed }) {
+  return (
+    <div className={`${styles.mockScreen} ${styles.newsMockScreen}`}>
+      <NewsMockHeader title={feed.title} />
+      <main className={styles.newsMockBody}>
+        <NewsFilterRow filters={feed.filters} />
+        <section className={styles.newsMockHero} style={newsImageStyle(feed.hero.image)}>
+          <span>{feed.hero.tag}</span>
+          <NewsSourceLogo source={feed.hero.source} />
+          <h3>{feed.hero.headline}</h3>
+          <p>{feed.hero.summary}</p>
+        </section>
+
+        <div className={styles.newsMockSectionHead}>
+          <strong>Latest</strong>
+          <small>See All</small>
+        </div>
+        {feed.stories.slice(0, 1).map((story) => <NewsMockStoryRow story={story} key={story.headline} />)}
+      </main>
+      <NewsPrivateButton />
+      <NewsMockTabs active={feed.activeTab} />
+    </div>
+  );
+}
+
+export function NewsPlusScreen() {
+  return <NewsMockFeedScreen feed={NEWS_MOCK_FEEDS.today} />;
+}
+
+export function WorldNewsScreen() {
+  return <NewsMockFeedScreen feed={NEWS_MOCK_FEEDS.world} />;
+}
+
+export function SportsNewsScreen() {
+  return <NewsMockFeedScreen feed={NEWS_MOCK_FEEDS.sports} />;
+}
+
+export function NewsSearchScreen() {
+  return (
+    <div className={`${styles.mockScreen} ${styles.newsMockScreen}`}>
+      <main className={styles.newsSearchOverlay}>
+        <div className={styles.newsSearchHeader}>
+          <label className={styles.newsSearchField}>
+            <span className={styles.newsSearchIcon} aria-hidden="true" />
+            <span>Search News</span>
+          </label>
+          <button type="button">Cancel</button>
+        </div>
+
+        <section className={styles.newsSearchBody}>
+          <h2>Trending Searches</h2>
+          <div className={styles.newsSearchList}>
+            {['Climate deal', 'Tech antitrust', 'Space tourism', 'AI models', 'Electric vehicles', 'Cancer research'].map((term) => (
+              <div className={styles.newsSearchTerm} key={term}>
+                <span>{term}</span>
+                <span className={styles.newsSearchIcon} aria-hidden="true" />
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+      <NewsPrivateButton />
+    </div>
+  );
+}
+
+export function NewsArticleScreen() {
+  const article = NEWS_MOCK_FEEDS.today.hero;
+  const brand = getSourceBrand(article.source);
+  return (
+    <div className={`${styles.mockScreen} ${styles.newsMockScreen}`}>
+      <StatusBar />
+      <header className={styles.newsArticleNav}>
+        <button type="button" aria-label="Back"><ChevronLeft size={23} /></button>
+        <span className={styles.newsArticleNavLogo}>
+          <NewsSourceLogo source={article.source} />
+        </span>
+        <span aria-hidden="true" />
+      </header>
+      <main className={styles.newsArticleBody}>
+        <div className={styles.newsArticleImage} style={newsImageStyle(article.image)}>
+          <NewsSourceLogo source={article.source} />
+        </div>
+        <p className={styles.newsArticleSource} style={brand.color ? { color: brand.color } : undefined}>{article.source}</p>
+        <h1>{article.headline}</h1>
+        <p className={styles.newsArticleDate}>June 2, 2026 at 4:18 PM</p>
+        <p>{article.summary}</p>
+        <p>Markets climbed after a set of technology updates and infrastructure commitments renewed investor confidence across the sector.</p>
+        <p>Analysts said the move reflects continuing demand for compute capacity, cloud services, and chips tied to new AI systems.</p>
+      </main>
+      <NewsPrivateButton />
+    </div>
+  );
+}
+
+export function WeatherScreen() {
+  return (
+    <div
+      className={styles.mockScreen}
+      style={{
+        background: 'linear-gradient(180deg, rgba(14, 62, 116, 0.08), rgba(5, 21, 42, 0.22)), linear-gradient(155deg, #1174b8 0%, #51a9d8 46%, #c8e6ef 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        color: '#fff',
+      }}
+    >
+      <div className={weatherStyles.sky}>
+        <div className={weatherStyles.sun} style={{ width: 88, height: 88 }} />
+        <div className={weatherStyles.cloudOne} style={{ width: 170, height: 56 }} />
+        <div className={weatherStyles.cloudTwo} style={{ width: 150, height: 50 }} />
+      </div>
+      <div className={weatherStyles.shell}>
+        <p className={weatherStyles.location}>Current Conditions</p>
+        <h1 className={weatherStyles.temperature} style={{ fontSize: 100 }}>72&deg;</h1>
+        <p className={weatherStyles.summary}>Weather Now</p>
+        <span className={weatherStyles.forecastLink}>Open forecast</span>
+      </div>
+      <span className={styles.privateDot} />
+    </div>
+  );
+}
 
 export function CalculatorScreen() {
   const keys = ['⌫', 'AC', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '−', '1', '2', '3', '+', '+/-', '0', '.', '='];
