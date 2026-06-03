@@ -327,13 +327,30 @@
   }
 
   .appGrid {
-    grid-template-columns: 1fr;
-    max-width: 480px;
+    display: flex;
+    max-width: none;
+    width: 100%;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: visible;
     padding: 0 24px 64px;
+    scroll-padding-inline: 24px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .appGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .appCardMotion {
+    flex: 0 0 min(82vw, 360px);
+    scroll-snap-align: center;
   }
 
   .appCard {
     padding: 24px;
+    min-height: 100%;
   }
 }
 
@@ -356,7 +373,7 @@
   }
 
   .sectionLabel {
-    margin-left: 4px;
+    display: none;
   }
 
   .heroTitle {
@@ -369,6 +386,11 @@
 
   .appGrid {
     padding: 0 16px 56px;
+    scroll-padding-inline: 16px;
+  }
+
+  .appCardMotion {
+    flex-basis: min(84vw, 328px);
   }
 
 }
