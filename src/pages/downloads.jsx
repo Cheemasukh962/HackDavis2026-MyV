@@ -10,25 +10,60 @@ const APPS = [
   {
     theme: 'calculator',
     name: 'Calculator Pro',
-    tag: 'Most Popular',
-    description: 'Fully functional calculator. Hides your journal and chat behind your username and password.',
     icon: '/resources/images/logos/calculator_icon.png',
+    preview: 'calculator',
+    installAs: 'Calculator Pro',
   },
   {
     theme: 'news',
     name: 'Daily News Reader',
-    tag: 'Low-Key Cover',
-    description: 'Live daily headlines. Safety tools hidden behind a small orange button in the lower left corner.',
     icon: '/resources/images/logos/news_icon.png',
+    preview: 'news',
+    installAs: 'Daily News Reader',
   },
   {
     theme: 'weather',
     name: 'Weather Now',
-    tag: 'Simple & Clean',
-    description: 'Real-time local forecasts. A disguised safe space.',
     icon: '/resources/images/logos/weather_icon.png',
+    preview: 'weather',
+    installAs: 'Weather Now',
   },
 ];
+
+function CardPreview({ type }) {
+  if (type === 'calculator') {
+    return (
+      <div className={`${styles.coverPreview} ${styles.calcPreview}`}>
+        <span className={styles.calcPreviewDisplay}>1,240</span>
+        <div className={styles.calcPreviewKeys}>
+          {['AC', '%', '÷', '7', '8', '9', '4', '5', '6'].map((key) => <span key={key}>{key}</span>)}
+        </div>
+      </div>
+    );
+  }
+
+  if (type === 'news') {
+    return (
+      <div className={`${styles.coverPreview} ${styles.newsPreview}`}>
+        <span className={styles.newsPreviewBrand}>News+</span>
+        <strong>Global markets rise as technology shares lead</strong>
+        <div>
+          <span>World</span>
+          <span>Sports</span>
+          <span>Search</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${styles.coverPreview} ${styles.weatherPreview}`}>
+      <span className={styles.weatherPreviewSun} />
+      <span className={styles.weatherPreviewTemp}>72&deg;</span>
+      <small>Sunny now</small>
+    </div>
+  );
+}
 
 function MotionAppCard({ app, pointer, layoutTick }) {
   const itemRef = useRef(null);
@@ -66,13 +101,13 @@ function MotionAppCard({ app, pointer, layoutTick }) {
       style={{ y: smoothY, scale: smoothScale, zIndex }}
     >
       <Link href={`/preview/${app.theme}`} className={styles.appCard}>
+        <CardPreview type={app.preview} />
         <div className={styles.cardTop}>
-          <span className={styles.cardTag}>{app.tag}</span>
           <img src={app.icon} alt="" className={styles.cardIcon} />
         </div>
-        <div className={styles.cardBody}>
-          <h2 className={styles.cardName}>{app.name}</h2>
-          <p className={styles.cardDesc}>{app.description}</p>
+        <div className={styles.cardFooter}>
+          <span>Installs as {app.installAs}</span>
+          <strong>Preview cover</strong>
         </div>
       </Link>
     </motion.div>
