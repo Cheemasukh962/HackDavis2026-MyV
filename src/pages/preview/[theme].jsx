@@ -96,14 +96,13 @@ function MotionScreenCard({ Component, label, pointer, layoutTick }) {
   const scale = useMotionValue(0.96);
   const smoothY = useSpring(y, { stiffness: 360, damping: 28, mass: 0.8 });
   const smoothScale = useSpring(scale, { stiffness: 360, damping: 28, mass: 0.8 });
-  const [zIndex, setZIndex] = useState(1);
 
   useEffect(() => {
     const item = itemRef.current;
     if (!item || !pointer.inside || pointer.x == null || pointer.y == null) {
       y.set(0);
       scale.set(0.96);
-      setZIndex(3);
+      item.style.zIndex = '1';
       return;
     }
 
@@ -116,14 +115,14 @@ function MotionScreenCard({ Component, label, pointer, layoutTick }) {
 
     y.set(-proximity * 30);
     scale.set(0.96 + proximity * 0.1);
-    setZIndex(Math.round(10 + proximity * 40));
+    item.style.zIndex = String(Math.round(10 + proximity * 40));
   }, [pointer.x, pointer.y, pointer.inside, layoutTick, y, scale]);
 
   return (
     <motion.div
       className={styles.screenItem}
       ref={itemRef}
-      style={{ y: smoothY, scale: smoothScale, zIndex }}
+      style={{ y: smoothY, scale: smoothScale }}
     >
       <div className={styles.phoneScaleWrap}>
         <div className={styles.phoneScale}>
@@ -272,7 +271,10 @@ export default function AppPreview({ themeKey }) {
               <img src={LOGO_SRC} alt="" className={styles.logo} />
               SafeHaven
             </Link>
-            <Link href="/downloads" className={styles.backLink}>Choose Different Cover</Link>
+            <Link href="/downloads" className={styles.backLink}>
+              <span className={styles.labelFull}>Choose Different Cover</span>
+              <span className={styles.labelShort}>Go Back</span>
+            </Link>
           </header>
 
           {/* Phone mockup gallery */}

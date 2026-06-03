@@ -113,7 +113,10 @@ export default function Downloads() {
             SafeHaven
           </Link>
           <nav>
-            <Link href="/" className={styles.navButton}>Back to Home</Link>
+            <Link href="/" className={styles.navButton}>
+              <span className={styles.labelFull}>Back to Home</span>
+              <span className={styles.labelShort}>Go Home</span>
+            </Link>
           </nav>
         </header>
 

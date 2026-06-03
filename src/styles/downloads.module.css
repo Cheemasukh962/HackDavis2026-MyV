@@ -67,6 +67,9 @@
   border-radius: 8px;
 }
 
+.labelFull { display: inline; }
+.labelShort { display: none; }
+
 .navButton {
   background: rgba(252, 250, 247, 0.18);
   -webkit-backdrop-filter: blur(20px);
@@ -335,12 +338,33 @@
 }
 
 @media (max-width: 600px) {
+  .labelFull { display: none; }
+  .labelShort { display: inline; }
+
+  .navButton {
+    font-size: 15px;
+    padding: 11px 22px;
+  }
+
   .header {
     padding: 20px 24px;
   }
 
   .hero {
     padding: 116px 24px 60px;
+    text-align: left;
+  }
+
+  .sectionLabel {
+    margin-left: 4px;
+  }
+
+  .heroTitle {
+    font-size: 76px;
+  }
+
+  .heroSubtitle {
+    font-size: 18px;
   }
 
   .appGrid {
