@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
       </Head>
       <div style={{ minHeight: '100dvh', background: 'var(--color-bg, #faf8f5)', color: 'var(--color-foreground, #2a241f)', fontFamily: 'var(--font-sans, Inter, sans-serif)' }}>
         <header style={{ padding: '32px 48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--color-border, #e8e0d4)' }}>
-          <Link href="/" style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.05em', color: 'var(--color-foreground, #2a241f)', display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+          <Link href="/" style={{ fontFamily: 'var(--font-script)', fontWeight: 400, fontSize: 19, letterSpacing: 0, color: 'var(--color-foreground, #2a241f)', WebkitTextStroke: '0.85px currentColor', textShadow: '0.5px 0 currentColor, -0.5px 0 currentColor, 0 0.5px currentColor', display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
             <MorphingIcon small />
             SafeHaven
           </Link>

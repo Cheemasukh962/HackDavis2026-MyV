@@ -13,10 +13,16 @@
 }
 
 .brand {
-  font-weight: 800;
-  font-size: 20px;
-  letter-spacing: -0.05em;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: 0;
   color: var(--color-foreground);
+  -webkit-text-stroke: 0.75px currentColor;
+  text-shadow:
+    0.45px 0 currentColor,
+    -0.45px 0 currentColor,
+    0 0.45px currentColor;
   display: flex;
   align-items: center;
   gap: 6px;

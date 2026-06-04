@@ -49,10 +49,16 @@
 }
 
 .brand {
-  font-weight: 800;
-  font-size: 20px;
-  letter-spacing: -0.05em;
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: 0;
   color: #fff;
+  -webkit-text-stroke: 0.85px currentColor;
+  text-shadow:
+    0.5px 0 currentColor,
+    -0.5px 0 currentColor,
+    0 0.5px currentColor;
   display: flex;
   align-items: center;
   gap: 8px;
