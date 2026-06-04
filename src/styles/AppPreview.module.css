@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   background:
     radial-gradient(circle at 50% -20%, rgba(201, 125, 87, 0.08), transparent 70%),
     radial-gradient(circle at 20% 80%, rgba(74, 109, 90, 0.04), transparent 50%);
@@ -80,11 +80,12 @@
 .labelShort { display: none; }
 
 .backLink {
+  font-family: var(--font-ui);
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
   text-decoration: none;
   background: rgba(252, 250, 247, 0.18);
@@ -106,7 +107,7 @@
   position: relative;
   z-index: 1;
   flex: 1;
-  max-width: 820px;
+  max-width: 1100px;
   margin: 0 auto;
   width: 100%;
   padding: 32px 48px 80px;
@@ -148,7 +149,8 @@
 }
 
 .appName {
-  font-size: clamp(20px, 2.4vw, 28px);
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.2vw, 40px);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.08;
@@ -157,8 +159,8 @@
 }
 
 .appTagline {
-  font-size: 12px;
-  line-height: 1.42;
+  font-size: clamp(12px, 1.2vw, 14px);
+  line-height: 1.5;
   color: var(--color-muted);
   margin: 0;
   max-width: 620px;
@@ -458,9 +460,10 @@
 
 /* ── Cover pitch ── */
 .pitchTitle {
+  font-family: var(--font-heading);
   font-size: clamp(24px, 3.6vw, 38px);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   color: var(--color-foreground);
   margin: 0 0 12px;
   line-height: 1.25;
@@ -480,12 +483,13 @@
 
 /* ── Private features ── */
 .privateLabel {
-  font-size: 11px;
+  font-family: var(--font-ui);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin: 0 0 18px;
+  margin: 0 0 20px;
 }
 
 .privateList {
@@ -493,58 +497,67 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
 .privateItem {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
-  min-height: 138px;
-  padding: 18px;
-  border: 1px solid rgba(232, 223, 212, 0.66);
-  border-radius: 18px;
-  background: rgba(252, 250, 247, 0.44);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  transition: transform 0.35s var(--ease, ease), border-color 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+  padding: 20px;
+  border-radius: 20px;
+  background: var(--color-foreground);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(54, 46, 40, 0.18), 0 1px 4px rgba(54, 46, 40, 0.10);
+  transition: background 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .privateItem:hover {
-  transform: translateY(-3px);
-  border-color: rgba(201, 125, 87, 0.7);
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 18px 34px rgba(54, 46, 40, 0.07);
+  background: var(--color-accent);
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px rgba(54, 46, 40, 0.15);
 }
 
 .privateIcon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: rgba(201, 125, 87, 0.1);
-  color: var(--color-accent);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #daa06a;
+  color: #3a2c20;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-bottom: 16px;
+}
+
+.privateTag {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(252, 250, 247, 0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
 }
 
 .privateName {
   display: block;
-  font-size: 15px;
+  font-family: var(--font-heading);
+  font-size: clamp(16px, 1.6vw, 20px);
   font-weight: 700;
-  color: var(--color-foreground);
+  color: #fff;
   letter-spacing: -0.01em;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
+  line-height: 1.15;
 }
 
 .privateDesc {
   display: block;
-  font-size: 13px;
-  color: var(--color-muted);
-  line-height: 1.45;
+  font-size: 14px;
+  color: rgba(252, 250, 247, 0.6);
+  line-height: 1.5;
 }
 
 .panicBlock {
@@ -700,6 +713,35 @@
   box-shadow: 0 10px 24px rgba(201, 125, 87, 0.25);
 }
 
+/* ── Feature slideshow (mobile only) ── */
+.slideshowDots {
+  display: none;
+}
+
+.slideshowDot {
+  height: 7px;
+  width: 7px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--color-border);
+  transition: background 0.25s ease, width 0.25s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+}
+
+.slideshowDotActive {
+  background: var(--color-accent);
+  width: 20px;
+}
+
+@keyframes featureSlideIn {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes previewDriftOne {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(34px, 26px) scale(1.08); }
@@ -718,6 +760,12 @@
   50% {
     transform: translateY(8px);
     opacity: 1;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 960px) {
+  .privateList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -754,21 +802,42 @@
   }
 
   .appName {
-    font-size: 20px;
+    font-size: clamp(22px, 5vw, 30px);
   }
 
   .appTagline {
-    font-size: 11px;
-    line-height: 1.35;
+    font-size: 12px;
+    line-height: 1.4;
   }
 
   .main {
     padding: 28px 24px 72px;
   }
 
-  .privateList,
   .ctaSection {
     grid-template-columns: 1fr;
+  }
+
+  .privateList {
+    display: block;
+    min-height: 200px;
+  }
+
+  .privateItem {
+    display: none;
+  }
+
+  .featureActive {
+    display: flex;
+    animation: featureSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .slideshowDots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
   }
 
   .ctaSection {

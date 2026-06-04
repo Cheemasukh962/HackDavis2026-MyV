@@ -94,6 +94,7 @@
   .textGradient {
     -webkit-text-stroke: 0;
     paint-order: normal;
+    white-space: normal;
   }
   .heroSubtitle { font-size: 18px; font-weight: 400; max-width: 100%; }
   .primaryCta { font-size: 17px; padding: 18px 28px; width: 100%; justify-content: center; }

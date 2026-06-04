@@ -1,14 +1,12 @@
 /* marketing-base.css — Base page layout, fonts, and ticker keyframe */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 .page {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg);
   color: var(--color-foreground);
-  font-family: var(--font-sans);
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
 

@@ -18,6 +18,7 @@ import {
   FileText,
   Bot,
   ChevronLeft,
+  ChevronRight,
   Send,
   Phone,
   Menu,
@@ -393,10 +394,11 @@ export function HomeScreen() {
       <div className={styles.screenBody}>
         <p className={styles.eyebrow}>Good evening</p>
         <h3>You&apos;re safe here.</h3>
-        <p className={styles.screenLead}>Take a breath. Everything in this space is private.</p>
+        <p className={styles.screenLead}>Take a breath. Everything here is private.</p>
         <div className={styles.sosCard}>
-          <span><Siren size={20} /></span>
+          <span><Siren size={22} /></span>
           <div><strong>Send an SOS</strong><small>Alert your trusted contacts in one tap</small></div>
+          <ChevronRight size={18} style={{ flexShrink: 0, opacity: 0.72 }} />
         </div>
         <div className={styles.setupCard}>
           <div className={styles.setupTitle}><Shield size={14} /> Your safety setup</div>
@@ -415,6 +417,7 @@ export function HomeScreen() {
             <p>&quot;Started a new journal. The old one I had to leave behind. This one is mine.&quot;</p>
           </div>
         </div>
+        <p className={styles.listLabel}>Quick actions</p>
         <div className={styles.quickGrid}>
           <div><MessageCircle size={18} /><strong>Talk to an advocate</strong><small>Available now</small></div>
           <div><PenLine size={18} /><strong>Add to journal</strong><small>Save evidence</small></div>

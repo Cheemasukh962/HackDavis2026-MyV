@@ -6,8 +6,6 @@
  * Includes radial gradients for visual depth and brand-consistent styling.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 .page {
   min-height: 100dvh;
   display: flex;

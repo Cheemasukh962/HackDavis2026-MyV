@@ -11,12 +11,12 @@ import landingStyles from '../../styles/CoverPages.module.css';
 const LOGO_SRC = '/resources/images/logos/safe_harbor_logo.png';
 
 const PRIVATE_FEATURES = [
-  { Icon: Home,     name: 'Your Personal Dashboard',        desc: 'A centralized, discreet space for your SOS protocols, trusted contacts, and daily grounding, all accessible the moment you need it.' },
-  { Icon: Siren,    name: 'One-Tap Emergency Alert',        desc: "Instantly share your live location with trusted contacts. Coming soon: Passive, silent AI integration that reads your situation and briefs 911 dispatchers so you don't have to." },
-  { Icon: Bot,      name: 'Always-Available Support',       desc: 'Need a safe ear at 3:00 AM? SafeBot is here 24/7 to listen, help you navigate your options, and provide resources, all while keeping your identity fully anonymous.' },
-  { Icon: Users,    name: 'A Community That Understands',   desc: 'Connect in a private, friend-gated, and completely anonymous network. No real names, no photos, and no digital trace left behind.' },
-  { Icon: BookLock, name: 'Safe Evidence Documentation',    desc: "Record photos, audio, or text notes without them ever appearing in your device's primary gallery or storage. Your experiences are yours to keep, securely encrypted." },
-  { Icon: MapPin,   name: 'Context-Aware Resources',        desc: 'Find local support including shelters, legal aid, and counseling with precision and privacy. Our AI provides clear summaries of exactly what services they offer, so you know what to expect before you go.' },
+  { Icon: Home,     tag: 'Dashboard',  name: 'Your Personal Dashboard',        desc: 'A centralized, discreet space for your SOS protocols, trusted contacts, and daily grounding, all accessible the moment you need it.' },
+  { Icon: Siren,    tag: 'Emergency',  name: 'One-Tap Emergency Alert',        desc: "Instantly share your live location with trusted contacts. Coming soon: Passive, silent AI integration that reads your situation and briefs 911 dispatchers so you don't have to." },
+  { Icon: Bot,      tag: 'Support',    name: 'Always-Available Support',       desc: 'Need a safe ear at 3:00 AM? SafeBot is here 24/7 to listen, help you navigate your options, and provide resources, all while keeping your identity fully anonymous.' },
+  { Icon: Users,    tag: 'Community',  name: 'A Community That Understands',   desc: 'Connect in a private, friend-gated, and completely anonymous network. No real names, no photos, and no digital trace left behind.' },
+  { Icon: BookLock, tag: 'Evidence',   name: 'Safe Evidence Documentation',    desc: "Record photos, audio, or text notes without them ever appearing in your device's primary gallery or storage. Your experiences are yours to keep, securely encrypted." },
+  { Icon: MapPin,   tag: 'Resources',  name: 'Context-Aware Resources',        desc: 'Find local support including shelters, legal aid, and counseling with precision and privacy. Our AI provides clear summaries of exactly what services they offer, so you know what to expect before you go.' },
 ];
 
 const APPS = {
@@ -199,6 +199,21 @@ export default function AppPreview({ themeKey }) {
   const [platform, setPlatform] = useState('other');
   const [pointer, setPointer] = useState({ x: null, y: null, inside: false });
   const [layoutTick, setLayoutTick] = useState(0);
+  const [activeFeature, setActiveFeature] = useState(0);
+  const featureIntervalRef = useRef(null);
+
+  const startFeatureInterval = () => {
+    clearInterval(featureIntervalRef.current);
+    featureIntervalRef.current = setInterval(() => {
+      setActiveFeature((prev) => (prev + 1) % PRIVATE_FEATURES.length);
+    }, 3800);
+  };
+
+  useEffect(() => {
+    startFeatureInterval();
+    return () => clearInterval(featureIntervalRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -335,16 +350,28 @@ export default function AppPreview({ themeKey }) {
           <section className={styles.section}>
             <p className={styles.privateLabel}>Built for the moments that matter</p>
             <ul className={styles.privateList}>
-              {PRIVATE_FEATURES.map(({ Icon, name, desc }) => (
-                <li key={name} className={styles.privateItem}>
-                  <span className={styles.privateIcon}><Icon size={16} /></span>
-                  <div>
-                    <strong className={styles.privateName}>{name}</strong>
-                    <span className={styles.privateDesc}>{desc}</span>
-                  </div>
+              {PRIVATE_FEATURES.map(({ Icon, tag, name, desc }, index) => (
+                <li
+                  key={name}
+                  className={`${styles.privateItem}${index === activeFeature ? ` ${styles.featureActive}` : ''}`}
+                >
+                  <span className={styles.privateIcon}><Icon size={18} /></span>
+                  <p className={styles.privateTag}>{tag}</p>
+                  <strong className={styles.privateName}>{name}</strong>
+                  <span className={styles.privateDesc}>{desc}</span>
                 </li>
               ))}
             </ul>
+            <div className={styles.slideshowDots}>
+              {PRIVATE_FEATURES.map((_, index) => (
+                <button
+                  key={index}
+                  className={`${styles.slideshowDot}${index === activeFeature ? ` ${styles.slideshowDotActive}` : ''}`}
+                  onClick={() => { setActiveFeature(index); startFeatureInterval(); }}
+                  aria-label={`View feature ${index + 1}`}
+                />
+              ))}
+            </div>
             <div className={styles.panicBlock}>
               <p className={styles.panicLabel}>Need an exit strategy?</p>
               <p className={styles.panicText}>If you ever need to leave in a hurry, simply swipe left or right, tap the red lock icon, or press Escape. These are your Panic Exits&mdash;they instantly wipe your current session and clear the cache, leaving absolutely no trace of your activity.</p>

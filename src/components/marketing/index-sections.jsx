@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react';
 import { Phone, MobileSlideshow } from './index-phone';
 import { CalculatorScreen, HomeScreen, SosScreen, ChatScreen, AidScreen } from './index-screens';
 import styles from '../../styles/marketing/marketing.module.css';
@@ -14,7 +13,7 @@ function Capability({ flip = false, label, title, lead, screen, items, callout }
         <div className={styles.capList}>
           {items.map(([itemTitle, copy]) => (
             <div className={styles.capItem} key={itemTitle}>
-              <span><Check size={14} /></span>
+              <span>•</span>
               <div><strong>{itemTitle}</strong><small>{copy}</small></div>
             </div>
           ))}
@@ -153,7 +152,7 @@ export function Capabilities() {
               <div className={styles.capList}>
                 {cap.items.map(([itemTitle, copy]) => (
                   <div className={styles.capItem} key={itemTitle}>
-                    <span><Check size={14} /></span>
+                    <span>•</span>
                     <div><strong>{itemTitle}</strong><small>{copy}</small></div>
                   </div>
                 ))}

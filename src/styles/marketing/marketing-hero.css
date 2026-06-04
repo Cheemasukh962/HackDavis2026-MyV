@@ -170,6 +170,7 @@
 }
 
 .badge {
+  font-family: var(--font-ui);
   background: rgba(252, 250, 247, 0.4);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -197,13 +198,24 @@
 }
 
 .heroTitle {
+  font-family: var(--font-heading);
   font-size: clamp(48px, 12vw, 92px);
   font-weight: 800;
-  line-height: 1.0; /* Tightened for that professional display look */
-  letter-spacing: -0.06em;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
   margin: 0 0 24px 0;
   color: var(--color-foreground);
   overflow: visible;
+}
+
+.heroTitle br {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .heroTitle br {
+    display: block;
+  }
 }
 
 .textGradient {
@@ -215,6 +227,9 @@
   margin-bottom: -0.12em;
   padding-right: 0.05em;
   vertical-align: top;
+  white-space: nowrap;
+  -webkit-text-stroke: 1.5px rgba(252, 250, 247, 0.45);
+  paint-order: stroke fill;
 }
 
 .heroSubtitle {
@@ -256,12 +271,13 @@
 }
 
 .primaryCta {
+  font-family: var(--font-ui);
   background: var(--color-foreground);
   color: white;
   padding: 14px 20px;
   border-radius: 24px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 15px 30px rgba(54, 46, 40, 0.1);
   display: inline-flex;

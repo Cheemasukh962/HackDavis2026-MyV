@@ -29,6 +29,7 @@
 }
 
 .navButton {
+  font-family: var(--font-ui);
   background: rgba(252, 250, 247, 0.4);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -36,7 +37,7 @@
   padding: 10px 24px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-foreground);
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);

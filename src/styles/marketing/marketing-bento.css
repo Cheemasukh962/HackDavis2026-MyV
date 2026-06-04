@@ -12,18 +12,20 @@
 }
 
 .sectionLabel {
+  font-family: var(--font-ui);
   color: var(--color-accent);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   margin-bottom: 12px;
   display: block;
 }
 
 .sectionTitle {
+  font-family: var(--font-heading);
   font-size: 40px;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
 .sectionSubtitle {
@@ -78,8 +80,9 @@
 }
 
 .cardTag {
+  font-family: var(--font-ui);
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   color: rgba(252, 250, 247, 0.5);
   margin-bottom: 8px;
   letter-spacing: 0.1em;
@@ -87,10 +90,11 @@
 }
 
 .bentoCard h3 {
+  font-family: var(--font-heading);
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 8px;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .bentoCard p {

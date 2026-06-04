@@ -13,9 +13,10 @@
 }
 
 .sectionHead h2 {
+  font-family: var(--font-heading);
   font-size: clamp(30px, 5vw, 42px);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   margin: 12px 0 0;
 }
 
@@ -61,15 +62,15 @@
   border-radius: 22px 22px 0 0;
 }
 
-.step h3,
-.step p {
+.step > h3,
+.step > p {
   padding-left: 20px;
   padding-right: 20px;
 }
 
 .step .stepNum { margin-top: 20px; }
-.step h3 { margin-bottom: 8px; }
-.step p  { padding-bottom: 24px; }
+.step > h3 { margin-bottom: 8px; }
+.step > p  { padding-bottom: 24px; }
 
 .step:nth-child(1) .stepPhoneWrap {
   background-image:
@@ -106,10 +107,11 @@
   margin-bottom: 14px;
 }
 
-.step h3 {
+.step > h3 {
+  font-family: var(--font-heading);
   font-size: 19px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   margin: 0 0 8px;
 }
 
@@ -190,18 +192,20 @@
 }
 
 .capText > span {
+  font-family: var(--font-ui);
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-accent);
 }
 
 .capText h3 {
+  font-family: var(--font-heading);
   font-size: 30px;
   font-weight: 800;
   line-height: 1.08;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   margin: 14px 0;
 }
 
@@ -225,16 +229,11 @@
 }
 
 .capItem > span {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
-  background: var(--color-accent);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: var(--color-accent);
+  font-size: 18px;
+  line-height: 1;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .capItem strong {
