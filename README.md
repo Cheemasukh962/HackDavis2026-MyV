@@ -1,4 +1,5 @@
 # SafeHaven — HackDavis 2026
+<img width="1909" height="940" alt="image" src="https://github.com/user-attachments/assets/c81524a3-e11a-4810-bcff-bcd177eb12b2" />
 
 ## The Platform for Safety You Can Hide
 
